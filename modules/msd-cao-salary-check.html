@@ -1,598 +1,1985 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MSD Calculator</title>
+<title>MSD CAO Salary Check v19</title>
 <style>
 :root{
-  color-scheme:light;
-  --page:#f3f3f3;
-  --surface:#f9f9f9;
-  --display:#f3f3f3;
-  --key:#ffffff;
-  --key-hover:#f4f4f4;
-  --operator:#fafafa;
-  --accent:#0067c0;
-  --accent-hover:#005a9e;
-  --text:#1f1f1f;
-  --muted:#5f5f5f;
-  --line:#dedede;
-  --shadow:0 18px 45px rgba(0,0,0,.16);
+  --page:#f7f8fa;
+  --surface:#ffffff;
+  --surface-soft:#fbfcfd;
+  --text:#1f2933;
+  --muted:#667085;
+  --line:#d8dee7;
+  --teal:#00857c;
+  --teal-soft:#e6f4f2;
+  --blue:#2f5f8f;
+  --blue-soft:#eef5fb;
+  --green:#087443;
+  --green-soft:#ecfdf3;
+  --amber:#b54708;
+  --amber-soft:#fff7ed;
+  --red:#b42318;
+  --red-soft:#fff1f0;
+  --shadow:0 10px 24px rgba(31,41,51,.07);
 }
 *{box-sizing:border-box}
-html,body{min-height:100%}
+[hidden]{display:none!important}
 body{
   margin:0;
-  display:grid;
-  place-items:center;
-  padding:22px;
-  background:
-    radial-gradient(circle at 50% 0%,#ffffff 0,#f3f3f3 44%,#e9e9e9 100%);
+  font-family:Segoe UI,Roboto,Arial,sans-serif;
+  background:var(--page);
   color:var(--text);
-  font-family:"Segoe UI Variable","Segoe UI",Arial,sans-serif;
 }
-button{font:inherit}
-.calculator{
-  width:min(100%,390px);
-  overflow:hidden;
-  border:1px solid #d5d5d5;
-  border-radius:12px;
+.topbar{
+  border-bottom:1px solid var(--line);
   background:var(--surface);
-  box-shadow:var(--shadow);
 }
-.titlebar{
+.topbar-inner{
+  max-width:1180px;
+  margin:0 auto;
+  padding:18px 16px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  min-height:50px;
-  padding:0 18px;
+  gap:16px;
 }
-.titlebar h1{
+h1{
   margin:0;
-  font-size:16px;
-  font-weight:650;
+  font-size:22px;
+  line-height:1.2;
+  letter-spacing:0;
 }
-.memory-indicator{
-  min-width:24px;
+.version{
   color:var(--muted);
-  font-size:12px;
+  font-size:13px;
   font-weight:700;
-  text-align:right;
 }
-.display{
-  min-height:116px;
-  padding:15px 18px 14px;
-  background:var(--display);
-  text-align:right;
+.topbar-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
 }
-.history{
-  display:block;
-  min-height:24px;
-  overflow:hidden;
+.language-switch{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.language-switch-label{
   color:var(--muted);
-  font-size:14px;
-  line-height:24px;
-  text-overflow:ellipsis;
-  white-space:nowrap;
+  font-size:13px;
+  font-weight:800;
 }
-.current{
-  display:block;
-  min-height:58px;
-  overflow:hidden;
-  font-size:46px;
-  font-weight:650;
-  line-height:58px;
-  letter-spacing:-1.5px;
-  text-overflow:ellipsis;
-  white-space:nowrap;
+.language-switch-buttons{
+  display:flex;
+  gap:4px;
+  padding:3px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
 }
-.current.medium{font-size:36px}
-.current.small{font-size:27px;letter-spacing:-.5px}
-.memory-row{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:2px;
-  padding:0 4px 4px;
-}
-.memory-row button{
-  min-height:36px;
+.language-switch-buttons button{
+  min-height:30px;
+  min-width:42px;
   border:0;
-  border-radius:5px;
+  border-radius:6px;
   background:transparent;
-  color:#242424;
+  color:var(--muted);
   cursor:pointer;
+  font:inherit;
   font-size:12px;
-  font-weight:650;
+  font-weight:850;
 }
-.memory-row button:hover{background:#e9e9e9}
-.memory-row button:active{background:#dedede}
-.memory-row button:disabled{
-  color:#a5a5a5;
-  cursor:default;
-  background:transparent;
-}
-.keys{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:2px;
-  padding:0 4px 4px;
-}
-.key{
-  min-height:60px;
-  border:1px solid rgba(0,0,0,.035);
-  border-radius:5px;
-  background:var(--key);
-  color:var(--text);
-  cursor:pointer;
-  font-size:19px;
-  font-weight:500;
-  transition:background .08s ease,transform .04s ease;
-}
-.key:hover{background:var(--key-hover)}
-.key:active{
-  background:#e7e7e7;
-  transform:scale(.985);
-}
-.key.function,
-.key.operator{
-  background:var(--operator);
-  font-size:17px;
-}
-.key.function:hover,
-.key.operator:hover{background:#ededed}
-.key.digit{font-weight:650}
-.key.equals{
-  border-color:transparent;
-  background:var(--accent);
+.language-switch-buttons button.active{
+  background:var(--teal);
   color:#fff;
 }
-.key.equals:hover{background:var(--accent-hover)}
-.key.equals:active{background:#004f8b}
-.key svg{
-  width:21px;
-  height:21px;
-  vertical-align:middle;
-  fill:none;
-  stroke:currentColor;
-  stroke-width:1.8;
-  stroke-linecap:round;
-  stroke-linejoin:round;
+.calculator-launch{
+  min-height:38px;
+  padding:0 14px;
+  border:1px solid var(--teal);
+  border-radius:8px;
+  background:var(--teal);
+  color:#fff;
+  cursor:pointer;
+  font:inherit;
+  font-size:13px;
+  font-weight:850;
 }
-@media(max-width:460px){
-  body{display:block;padding:0;background:var(--surface)}
-  .calculator{
-    width:100%;
-    min-height:100vh;
-    border:0;
-    border-radius:0;
-    box-shadow:none;
+.calculator-launch:hover{background:#006f68}
+.calculator-launch:focus-visible,
+.calculator-panel-close:focus-visible{
+  outline:3px solid rgba(0,133,124,.25);
+  outline-offset:2px;
+}
+.calculator-overlay{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  justify-content:flex-end;
+  background:rgba(15,23,42,.46);
+}
+.calculator-panel{
+  width:min(430px,100%);
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  background:#f3f3f3;
+  box-shadow:-18px 0 48px rgba(15,23,42,.24);
+}
+.calculator-panel-head{
+  min-height:54px;
+  padding:10px 12px 10px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  border-bottom:1px solid #d2d6dc;
+  background:#fff;
+}
+.calculator-panel-head strong{font-size:16px}
+.calculator-panel-close{
+  width:36px;
+  height:36px;
+  border:0;
+  border-radius:6px;
+  background:transparent;
+  color:#344054;
+  cursor:pointer;
+  font:inherit;
+  font-size:27px;
+  line-height:1;
+}
+.calculator-panel-close:hover{background:#edf0f3}
+.calculator-frame{
+  width:100%;
+  min-height:0;
+  flex:1;
+  border:0;
+  background:#f3f3f3;
+}
+main{
+  max-width:1180px;
+  margin:22px auto 36px;
+  padding:0 16px;
+}
+.layout{
+  display:grid;
+  grid-template-columns:minmax(300px,380px) minmax(0,1fr);
+  gap:18px;
+  align-items:start;
+}
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+}
+.panel{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:8px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.panel-head{
+  padding:15px 17px;
+  border-bottom:1px solid var(--line);
+  background:var(--surface-soft);
+  font-size:16px;
+  font-weight:800;
+}
+.panel-body{
+  padding:17px;
+}
+.field{
+  margin-bottom:14px;
+}
+.field label{
+  display:block;
+  margin-bottom:6px;
+  color:#344054;
+  font-size:13px;
+  font-weight:750;
+}
+input,select,textarea{
+  width:100%;
+  min-height:42px;
+  padding:10px 12px;
+  border:1px solid #c8d3df;
+  border-radius:8px;
+  background:#fff;
+  color:#101828;
+  font:inherit;
+  font-size:14px;
+}
+textarea{
+  min-height:174px;
+  resize:vertical;
+  line-height:1.45;
+  font-family:Consolas,Menlo,monospace;
+  font-size:12px;
+}
+input:focus,select:focus,textarea:focus{
+  outline:3px solid rgba(0,133,124,.16);
+  border-color:var(--teal);
+}
+.inline{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+@media(max-width:540px){
+  .inline{grid-template-columns:1fr}
+}
+.segments{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+.segment{
+  min-height:44px;
+  border:1px solid #c8d3df;
+  border-radius:8px;
+  background:#fff;
+  color:#1f2933;
+  cursor:pointer;
+  font-weight:800;
+}
+.segment.active{
+  border-color:var(--teal);
+  background:var(--teal-soft);
+  color:#00645e;
+  box-shadow:0 0 0 3px rgba(0,133,124,.12);
+}
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-top:16px;
+}
+.btn{
+  min-height:40px;
+  border:0;
+  border-radius:8px;
+  padding:10px 13px;
+  font:inherit;
+  font-weight:800;
+  cursor:pointer;
+}
+.btn.primary{background:var(--teal);color:#fff}
+.btn.secondary{background:#e8eef5;color:#1f2933}
+.btn.ghost{background:#fff;border:1px solid #c8d3df;color:#1f2933}
+.result-strip{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:16px 17px;
+  border-bottom:1px solid var(--line);
+  background:#fff;
+}
+@media(max-width:620px){
+  .result-strip{align-items:flex-start;flex-direction:column}
+}
+.scale-block small{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:850;
+  text-transform:uppercase;
+}
+.scale-block strong{
+  display:block;
+  margin-top:4px;
+  font-size:42px;
+  line-height:1;
+  color:var(--teal);
+}
+.path-text{
+  margin-top:6px;
+  color:#475467;
+  font-size:13px;
+}
+.status{
+  display:inline-flex;
+  align-items:center;
+  min-height:32px;
+  padding:7px 10px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:850;
+  background:var(--blue-soft);
+  color:var(--blue);
+  white-space:nowrap;
+}
+.status.ok{background:var(--green-soft);color:var(--green)}
+.status.warn{background:var(--amber-soft);color:var(--amber)}
+.status.stop{background:var(--red-soft);color:var(--red)}
+.summary-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+@media(max-width:960px){
+  .summary-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:560px){
+  .summary-grid{grid-template-columns:1fr}
+}
+.metric{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:12px;
+  background:#fff;
+  min-height:84px;
+}
+.metric small{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:850;
+  text-transform:uppercase;
+}
+.metric strong{
+  display:block;
+  margin-top:6px;
+  color:#1f2933;
+  font-size:20px;
+}
+.metric span{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:12px;
+}
+.point-grid{
+  display:none;
+  grid-template-columns:repeat(3,1fr);
+  gap:0;
+  margin:0 0 14px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow:hidden;
+  background:#fff;
+}
+@media(max-width:760px){
+  .point-grid{grid-template-columns:1fr}
+  .point-card{
+    border-right:0;
+    border-bottom:1px solid var(--line);
   }
-  .display{min-height:128px;padding-top:25px}
-  .key{min-height:64px}
+  .point-card:last-child{border-bottom:0}
 }
-@media(max-height:700px){
-  body{padding:8px}
-  .titlebar{min-height:42px}
-  .display{min-height:94px;padding-top:7px;padding-bottom:8px}
-  .history{min-height:20px;line-height:20px}
-  .current{min-height:54px;line-height:54px}
-  .memory-row button{min-height:30px}
-  .key{min-height:48px}
+.point-card{
+  border:0;
+  border-right:1px solid var(--line);
+  border-radius:0;
+  padding:12px 14px;
+  background:#fff;
+}
+.point-card:last-child{border-right:0}
+.point-card.mid{
+  border-color:var(--line);
+  background:#f3fbfa;
+}
+.point-card small{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:850;
+  text-transform:uppercase;
+}
+.point-card strong{
+  display:block;
+  margin-top:6px;
+  color:#1f2933;
+  font-size:22px;
+}
+.point-card span{
+  display:none;
+  margin-top:4px;
+  color:var(--muted);
+  font-size:12px;
+}
+.range-line{
+  margin-top:14px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:13px;
+  background:#fff;
+}
+.range-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  color:#344054;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:10px;
+}
+.track{
+  position:relative;
+  height:12px;
+  border-radius:999px;
+  background:#e7edf4;
+  overflow:hidden;
+}
+.track-fill{
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,var(--blue),var(--teal));
+  transition:width .2s ease;
+}
+.message{
+  margin-top:14px;
+  border-radius:8px;
+  padding:12px;
+  font-size:13px;
+  line-height:1.45;
+  font-weight:700;
+  background:var(--blue-soft);
+  color:var(--blue);
+  border:1px solid #cadeee;
+}
+.message.ok{background:var(--green-soft);color:var(--green);border-color:#abefc6}
+.message.warn{background:var(--amber-soft);color:var(--amber);border-color:#fedf89}
+.message.stop{background:var(--red-soft);color:var(--red);border-color:#fecdca}
+.visual-panel{
+  margin-bottom:14px;
+  border:1px solid #bfd8e8;
+  border-radius:8px;
+  padding:18px 18px 16px;
+  background:linear-gradient(180deg,#ffffff 0%,#f7fbff 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9);
+}
+.visual-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:12px;
+}
+.visual-title{
+  color:#344054;
+  font-size:15px;
+  font-weight:850;
+}
+.visual-value{display:none}
+.range-map{
+  --mid-pos:50%;
+  --rate-pos:50%;
+  --excess-start:50%;
+  --excess-width:0%;
+  position:relative;
+}
+.range-alert,
+.range-ok-notice{
+  display:block;
+  margin:0 0 10px;
+  border-radius:8px;
+  padding:10px 12px;
+  box-shadow:none;
+}
+.range-alert{
+  border:1px solid #d13438;
+  border-left:4px solid #d13438;
+  background:#fff4f4;
+  color:#a4262c;
+}
+.range-ok-notice{
+  border:1px solid #107c10;
+  border-left:4px solid #107c10;
+  background:#f1faf4;
+  color:#087443;
+}
+.range-alert[hidden],
+.range-ok-notice[hidden],
+.rate-pin[hidden],
+.rate-beam[hidden]{
+  display:none;
+}
+.range-alert-copy strong,
+.range-ok-copy strong{
+  display:block;
+  font-size:14px;
+  line-height:1.25;
+  font-weight:850;
+}
+.range-board{
+  position:relative;
+  min-height:214px;
+  border:1px solid #d1d1d1;
+  border-radius:8px;
+  overflow:hidden;
+  padding:18px;
+  background:#ffffff;
+  box-shadow:none;
+}
+.range-board::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,transparent 0,transparent calc(var(--mid-pos,50%) - 1px),rgba(96,94,92,.045) calc(var(--mid-pos,50%) - 1px),rgba(96,94,92,.045) 100%);
+  opacity:1;
+}
+.range-map.range-ok .range-board::before{
+  background:
+    linear-gradient(90deg,rgba(16,124,16,.07) 0,rgba(16,124,16,.07) var(--mid-pos,50%),rgba(96,94,92,.035) var(--mid-pos,50%),rgba(96,94,92,.035) 100%);
+}
+.range-map.mid-exceeded .range-board::before{
+  background:
+    linear-gradient(90deg,transparent 0,transparent calc(var(--mid-pos,50%) - 1px),rgba(209,52,56,.08) calc(var(--mid-pos,50%) - 1px),rgba(209,52,56,.08) 100%);
+}
+.range-board-top,
+.range-corridor{
+  position:relative;
+  z-index:1;
+}
+.range-board-top{
+  display:none;
+  justify-content:space-between;
+  gap:14px;
+  align-items:flex-start;
+}
+.range-threshold-copy span,
+.range-board-status span{
+  display:block;
+  color:#605e5c;
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+}
+.range-threshold-copy strong{
+  display:block;
+  margin-top:4px;
+  color:#201f1e;
+  font-size:20px;
+  line-height:1;
+}
+.range-board-status{
+  min-width:160px;
+  text-align:right;
+}
+.range-board-status strong{
+  display:block;
+  margin-top:4px;
+  color:#0078d4;
+  font-size:20px;
+  line-height:1.1;
+}
+.range-map.range-ok .range-board-status strong{
+  color:#107c10;
+}
+.range-map.mid-exceeded .range-board-status strong{
+  color:#a4262c;
+}
+.range-corridor{
+  height:118px;
+  margin-top:18px;
+  padding:46px 0 0;
+}
+.range-rail{
+  position:relative;
+  height:22px;
+  border-radius:4px;
+  overflow:hidden;
+  background:#f3f2f1;
+  box-shadow:inset 0 0 0 1px #d2d0ce;
+}
+.range-rail-safe{
+  position:absolute;
+  inset:0 auto 0 0;
+  width:var(--mid-pos,50%);
+  border-radius:4px 0 0 4px;
+  background:#deecf9;
+  border-right:1px solid rgba(0,120,212,.25);
+}
+.range-rail-risk{
+  position:absolute;
+  inset:0 0 0 var(--mid-pos,50%);
+  border-radius:0 4px 4px 0;
+  background:#faf9f8;
+  border-left:1px solid rgba(96,94,92,.16);
+  opacity:1;
+}
+.range-map.range-ok .range-rail-safe{
+  background:#dff6dd;
+  border-right:1px solid rgba(16,124,16,.34);
+}
+.range-map.mid-exceeded .range-rail-risk{
+  background:#fde7e9;
+}
+.range-excess{
+  position:absolute;
+  left:var(--excess-start,50%);
+  top:0;
+  width:var(--excess-width,0%);
+  height:22px;
+  border-radius:0 4px 4px 0;
+  background:#d13438;
+  box-shadow:none;
+  opacity:0;
+  transform-origin:left center;
+}
+.range-map.mid-exceeded .range-excess{
+  opacity:1;
+  animation:excessReveal .28s ease-out;
+}
+.range-mid-gate{
+  position:absolute;
+  left:var(--mid-pos,50%);
+  top:30px;
+  bottom:20px;
+  width:0;
+  transform:translateX(-50%);
+  z-index:5;
+}
+.range-mid-gate::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:0;
+  bottom:0;
+  width:3px;
+  transform:translateX(-50%);
+  border-radius:2px;
+  background:#605e5c;
+  box-shadow:none;
+}
+.range-map.range-ok .range-mid-gate::before{
+  background:#107c10;
+}
+.range-map.mid-exceeded .range-mid-gate::before{
+  background:#d13438;
+}
+.range-mid-gate::after{
+  display:none;
+}
+.mid-gate-label{
+  position:absolute;
+  left:50%;
+  bottom:-20px;
+  transform:translateX(-50%);
+  min-width:92px;
+  text-align:center;
+  color:#605e5c;
+  font-size:11px;
+  font-weight:850;
+  white-space:nowrap;
+}
+.range-map.range-ok .mid-gate-label{
+  color:#107c10;
+}
+.range-map.mid-exceeded .mid-gate-label{
+  color:#a4262c;
+}
+.rate-beam{
+  position:absolute;
+  left:var(--rate-pos,50%);
+  top:24px;
+  bottom:20px;
+  width:2px;
+  transform:translateX(-50%);
+  background:#0078d4;
+  box-shadow:none;
+  z-index:4;
+}
+.range-map.mid-exceeded .rate-beam{
+  background:#a4262c;
+}
+.range-map.range-ok .rate-beam{
+  background:#107c10;
+}
+.rate-pin{
+  position:absolute;
+  left:var(--rate-pos,50%);
+  top:4px;
+  transform:translateX(var(--pin-shift,-50%));
+  z-index:7;
+  transition:left .24s ease-out;
+}
+.pin-card{
+  min-width:104px;
+  border:1px solid #8a8886;
+  border-radius:4px;
+  padding:7px 9px;
+  background:#fff;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+.pin-card span{
+  display:block;
+  color:#605e5c;
+  font-size:10px;
+  font-weight:850;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+}
+.pin-card strong{
+  display:block;
+  margin-top:2px;
+  color:#201f1e;
+  font-size:17px;
+  line-height:1;
+}
+.pin-card em{
+  display:none;
+  margin-top:4px;
+  color:#a4262c;
+  font-size:11px;
+  font-style:normal;
+  font-weight:800;
+}
+.rate-pin.stop .pin-card{
+  border-color:#d13438;
+  background:#fff;
+  box-shadow:0 4px 14px rgba(209,52,56,.14);
+}
+.rate-pin.ok .pin-card{
+  border-color:#107c10;
+  background:#fff;
+  box-shadow:0 4px 14px rgba(16,124,16,.14);
+}
+.rate-pin.stop .pin-card span,
+.rate-pin.stop .pin-card strong{
+  color:#a4262c;
+}
+.rate-pin.ok .pin-card span,
+.rate-pin.ok .pin-card strong{
+  color:#087443;
+}
+.rate-pin.stop .pin-card em{
+  display:block;
+}
+.range-scale{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:12px;
+}
+.range-scale span{
+  min-width:0;
+  border:0;
+  border-top:1px solid #edebe9;
+  border-radius:0;
+  padding:9px 0 0;
+  background:transparent;
+}
+.range-scale small{
+  display:block;
+  color:#605e5c;
+  font-size:11px;
+  font-weight:850;
+  text-transform:uppercase;
+}
+.range-scale strong{
+  display:block;
+  margin-top:3px;
+  color:#201f1e;
+  font-size:15px;
+  white-space:nowrap;
+}
+.range-scale .mid-scale{
+  border-color:#edebe9;
+  background:transparent;
+  text-align:center;
+}
+.range-scale span:last-child{
+  text-align:right;
+}
+.range-scale .mid-scale small,
+.range-scale .mid-scale strong{
+  color:#605e5c;
+}
+.range-map.range-ok .range-scale .mid-scale small,
+.range-map.range-ok .range-scale .mid-scale strong{
+  color:#087443;
+}
+.range-map.mid-exceeded .range-scale .mid-scale small,
+.range-map.mid-exceeded .range-scale .mid-scale strong{
+  color:#a4262c;
+}
+@media(max-width:620px){
+  .range-alert,
+  .range-ok-notice{
+    padding:10px;
+  }
+  .range-alert-copy strong,
+  .range-ok-copy strong{
+    font-size:13px;
+  }
+  .mid-gate-label{
+    font-size:10px;
+  }
+  .range-board{
+    min-height:214px;
+    padding:14px 12px;
+  }
+  .range-board-top{
+    display:none;
+  }
+  .range-board-status{
+    margin-top:9px;
+    min-width:0;
+    text-align:left;
+  }
+  .range-corridor{
+    height:112px;
+    margin-top:10px;
+    padding:44px 0 0;
+  }
+  .pin-card{
+    min-width:88px;
+    padding:7px 8px;
+  }
+  .pin-card strong{
+    font-size:16px;
+  }
+  .range-scale{
+    grid-template-columns:1fr;
+    gap:7px;
+  }
+  .range-scale span{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+  }
+  .range-scale strong{
+    margin-top:0;
+  }
+}
+@keyframes warningReveal{
+  from{opacity:0;transform:translateY(-8px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes excessReveal{
+  from{transform:scaleX(.08);opacity:.25}
+  to{transform:scaleX(1);opacity:.95}
 }
 @media(prefers-reduced-motion:reduce){
-  .key{transition:none}
+  .range-alert,
+  .range-ok-notice,
+  .range-map.mid-exceeded .range-excess,
+  .range-map.mid-exceeded .range-mid-gate::before,
+  .range-map.mid-exceeded .range-mid-gate::after{
+    animation:none;
+  }
+  .rate-pin{
+    transition:none;
+  }
+}
+.check-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:0;
+}
+@media(max-width:760px){
+  .check-grid{grid-template-columns:1fr}
+}
+.check-card{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:12px;
+  background:#fff;
+  min-height:92px;
+}
+.check-card.ok{border-color:#abefc6;background:var(--green-soft)}
+.check-card.warn{border-color:#fedf89;background:var(--amber-soft)}
+.check-card.stop{border-color:#fecdca;background:var(--red-soft)}
+.check-card small{
+  display:block;
+  color:#475467;
+  font-size:11px;
+  font-weight:850;
+  text-transform:uppercase;
+}
+.check-card strong{
+  display:block;
+  margin-top:7px;
+  color:#1f2933;
+  font-size:18px;
+}
+.check-card span{
+  display:block;
+  margin-top:5px;
+  color:#475467;
+  font-size:12px;
+  line-height:1.35;
+}
+.midpoint-alert{
+  margin:0 0 14px;
+  border:2px solid var(--red);
+  border-radius:8px;
+  padding:16px;
+  background:var(--red-soft);
+  color:var(--red);
+  font-size:24px;
+  line-height:1.2;
+  font-weight:900;
+  text-align:center;
+}
+.secondary-field{
+  display:none;
+}
+.main-actions{
+  margin:12px 0 0;
+}
+.midpoint-alert span{
+  display:block;
+  margin-top:6px;
+  font-size:13px;
+  font-weight:750;
+}
+details{
+  margin-top:10px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  overflow:hidden;
+}
+summary{
+  cursor:pointer;
+  padding:13px 15px;
+  background:var(--surface-soft);
+  font-weight:850;
+}
+.details-body{
+  padding:14px 15px 15px;
+  border-top:1px solid var(--line);
+}
+.scenario-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+@media(max-width:760px){
+  .scenario-grid{grid-template-columns:1fr}
+}
+.scenario{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:12px;
+  background:#fff;
+}
+.scenario.active{
+  border-color:#8cd4ce;
+  background:#f3fbfa;
+}
+.scenario-name{
+  color:#344054;
+  font-size:13px;
+  font-weight:850;
+}
+.scenario-scale{
+  margin-top:5px;
+  color:var(--teal);
+  font-size:26px;
+  font-weight:900;
+}
+.scenario-sub{
+  margin-top:3px;
+  color:var(--muted);
+  font-size:12px;
+}
+.scenario-points{
+  margin-top:7px;
+  color:#344054;
+  font-size:12px;
+  line-height:1.45;
+}
+.scenario-status{
+  display:inline-flex;
+  margin-top:9px;
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:12px;
+  font-weight:850;
+  background:var(--blue-soft);
+  color:var(--blue);
+}
+.scenario-status.ok{background:var(--green-soft);color:var(--green)}
+.scenario-status.warn{background:var(--amber-soft);color:var(--amber)}
+.scenario-status.stop{background:var(--red-soft);color:var(--red)}
+.table-wrap{
+  overflow:auto;
+  border:1px solid var(--line);
+  border-radius:8px;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+  font-size:13px;
+}
+th{
+  padding:10px;
+  background:#f0f3f7;
+  color:#344054;
+  text-align:left;
+  white-space:nowrap;
+  border-bottom:1px solid var(--line);
+}
+td{
+  padding:10px;
+  border-top:1px solid var(--line);
+  white-space:nowrap;
+}
+tr.selected td{
+  background:#f3fbfa;
+  color:#00645e;
+  font-weight:850;
+}
+.note{
+  margin:10px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45;
+}
+@media print{
+  .topbar,.input-panel,.actions,summary,.calculator-overlay{display:none!important}
+  body{background:#fff}
+  main{max-width:none;margin:0}
+  .layout{display:block}
+  .panel{border:0;box-shadow:none}
+  details{border:0}
+  .details-body{border:0;padding:0}
 }
 </style>
 </head>
 <body>
-<main class="calculator" aria-label="Kalkulator standardowy">
-  <header class="titlebar">
-    <h1>Kalkulator</h1>
-    <span class="memory-indicator" id="memoryIndicator" aria-label="Pamięć kalkulatora"></span>
-  </header>
-
-  <section class="display" aria-live="polite" aria-atomic="true">
-    <output class="history" id="history"></output>
-    <output class="current" id="display">0</output>
-  </section>
-
-  <div class="memory-row" aria-label="Pamięć">
-    <button type="button" data-action="memory-clear" id="memoryClear" disabled>MC</button>
-    <button type="button" data-action="memory-recall" id="memoryRecall" disabled>MR</button>
-    <button type="button" data-action="memory-add">M+</button>
-    <button type="button" data-action="memory-subtract">M−</button>
-    <button type="button" data-action="memory-store">MS</button>
+<header class="topbar">
+  <div class="topbar-inner">
+    <h1>MSD CAO Salary Check</h1>
+      <div class="topbar-actions">
+      <button class="calculator-launch" id="openStandardCalculator" type="button" aria-controls="standardCalculatorOverlay" aria-expanded="false">Calculator</button>
+      <div class="language-switch">
+        <span class="language-switch-label" id="languageSwitchLabel">Language</span>
+        <div class="language-switch-buttons">
+          <button id="langEn" type="button" class="active">EN</button>
+          <button id="langNl" type="button">NL</button>
+        </div>
+      </div>
+      <div class="version">v19</div>
+    </div>
   </div>
+</header>
 
-  <div class="keys">
-    <button class="key function" type="button" data-action="percent" aria-label="Procent">%</button>
-    <button class="key function" type="button" data-action="clear-entry">CE</button>
-    <button class="key function" type="button" data-action="clear-all">C</button>
-    <button class="key function" type="button" data-action="backspace" aria-label="Usuń ostatnią cyfrę">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h10v14H9l-6-7 6-7Z"></path><path d="m12 9 4 6m0-6-4 6"></path></svg>
-    </button>
+<div class="calculator-overlay" id="standardCalculatorOverlay" hidden>
+  <section class="calculator-panel" role="dialog" aria-modal="true" aria-labelledby="standardCalculatorTitle">
+    <header class="calculator-panel-head">
+      <strong id="standardCalculatorTitle">Calculator</strong>
+      <button class="calculator-panel-close" id="closeStandardCalculator" type="button" aria-label="Close calculator">×</button>
+    </header>
+    <iframe class="calculator-frame" id="standardCalculatorFrame" data-src="standard-calculator.html" title="Standard calculator"></iframe>
+  </section>
+</div>
 
-    <button class="key function" type="button" data-action="reciprocal">¹⁄ₓ</button>
-    <button class="key function" type="button" data-action="square">x²</button>
-    <button class="key function" type="button" data-action="sqrt">√x</button>
-    <button class="key operator" type="button" data-action="operator" data-value="/" aria-label="Dzielenie">÷</button>
+<main>
+  <div class="layout">
+    <section class="panel input-panel">
+      <div class="panel-head" id="inputsHead">Inputs</div>
+      <div class="panel-body">
+        <div class="field secondary-field">
+          <label for="candidate" id="candidateLabel">Candidate name</label>
+          <input id="candidate" autocomplete="off" placeholder="Optional" />
+        </div>
 
-    <button class="key digit" type="button" data-action="digit" data-value="7">7</button>
-    <button class="key digit" type="button" data-action="digit" data-value="8">8</button>
-    <button class="key digit" type="button" data-action="digit" data-value="9">9</button>
-    <button class="key operator" type="button" data-action="operator" data-value="*" aria-label="Mnożenie">×</button>
+        <div class="field">
+          <label for="position" id="positionLabel">Position</label>
+          <select id="position"></select>
+        </div>
 
-    <button class="key digit" type="button" data-action="digit" data-value="4">4</button>
-    <button class="key digit" type="button" data-action="digit" data-value="5">5</button>
-    <button class="key digit" type="button" data-action="digit" data-value="6">6</button>
-    <button class="key operator" type="button" data-action="operator" data-value="-" aria-label="Odejmowanie">−</button>
+        <div class="field">
+          <label for="scaleSelect" id="scaleSelectLabel">CAO scale</label>
+          <select id="scaleSelect"></select>
+          <p class="note" id="scaleSelectNote"></p>
+        </div>
 
-    <button class="key digit" type="button" data-action="digit" data-value="1">1</button>
-    <button class="key digit" type="button" data-action="digit" data-value="2">2</button>
-    <button class="key digit" type="button" data-action="digit" data-value="3">3</button>
-    <button class="key operator" type="button" data-action="operator" data-value="+" aria-label="Dodawanie">+</button>
+        <div class="field">
+          <label id="profileLabel">Point selection</label>
+          <div class="segments" role="group" aria-label="Point selection">
+            <button class="segment" type="button" data-profile="starter">Min point</button>
+            <button class="segment active" type="button" data-profile="matching">Mid point</button>
+            <button class="segment" type="button" data-profile="senior">Max point</button>
+          </div>
+        </div>
 
-    <button class="key function" type="button" data-action="sign" aria-label="Zmień znak">⁺⁄₋</button>
-    <button class="key digit" type="button" data-action="digit" data-value="0">0</button>
-    <button class="key" type="button" data-action="decimal" aria-label="Przecinek dziesiętny">,</button>
-    <button class="key equals" type="button" data-action="equals" aria-label="Równa się">=</button>
+        <div class="inline">
+          <div class="field">
+            <label for="age" id="ageLabel">Age</label>
+            <select id="age"></select>
+          </div>
+          <div class="field">
+            <label for="rate" id="rateLabel">Hourly rate</label>
+            <input id="rate" type="number" step="0.01" min="0" placeholder="e.g. 29.27" />
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="result-strip">
+        <div class="scale-block">
+          <small id="recommendedScaleLabel">Recommended CAO scale</small>
+          <strong id="scaleOut">-</strong>
+          <div class="path-text" id="pathOut">-</div>
+        </div>
+        <div class="status" id="statusOut">Enter hourly rate</div>
+      </div>
+
+      <div class="panel-body">
+        <div class="visual-panel">
+          <div class="visual-head">
+            <div class="visual-title" id="visualTitle">Salary range</div>
+            <div class="visual-value" id="visualValue">Enter hourly rate</div>
+          </div>
+          <div class="range-map" id="rangeMap">
+            <div class="range-ok-notice" id="rangeOkNotice" hidden>
+              <div class="range-ok-copy">
+                <strong id="rangeOkTitle">Rate is within required range</strong>
+              </div>
+            </div>
+            <div class="range-alert" id="rangeAlert" hidden>
+              <div class="range-alert-copy">
+                <strong id="rangeAlertTitle">Rate exceeds mid point</strong>
+              </div>
+            </div>
+            <div class="range-board" role="img" aria-labelledby="rangeBoardTitle rangeBoardDesc">
+              <span id="rangeBoardTitle" hidden>Salary range</span>
+              <span id="rangeBoardDesc" hidden>Minimum, mid point, maximum and entered hourly rate shown on one decision line.</span>
+              <div class="range-board-top">
+                <div class="range-threshold-copy">
+                  <span id="rangeThresholdLabel">Mid point threshold</span>
+                  <strong id="rangeThresholdValue">-</strong>
+                </div>
+                <div class="range-board-status">
+                  <span id="rangeStatusLabel">Current rate</span>
+                  <strong id="rangeBoardStatus">Enter hourly rate</strong>
+                </div>
+              </div>
+              <div class="range-corridor">
+                <div class="range-rail">
+                  <div class="range-rail-safe"></div>
+                  <div class="range-rail-risk"></div>
+                  <div class="range-excess" id="rangeExcess"></div>
+                </div>
+                <div class="range-mid-gate" id="rangeMidGate">
+                  <div class="mid-gate-label" id="midGateLabel">Mid point</div>
+                </div>
+                <div class="rate-beam" id="rateBeam" hidden></div>
+                <div class="rate-pin" id="ratePin" hidden>
+                  <div class="pin-card">
+                    <span id="ratePinLabel">Rate</span>
+                    <strong id="ratePinValue">-</strong>
+                    <em id="ratePinMeta"></em>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="range-scale">
+              <span><small id="axisMinLabel">Minimum point</small><strong id="axisMin">-</strong></span>
+              <span class="mid-scale"><small id="axisMidLabel">Mid point</small><strong id="axisMid">-</strong></span>
+              <span><small id="axisMaxLabel">Maximum point</small><strong id="axisMax">-</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="point-grid">
+          <div class="point-card">
+            <small id="minPointLabel">Minimum point</small>
+            <strong id="minPoint">-</strong>
+            <span id="minPointAnnual">-</span>
+          </div>
+          <div class="point-card mid">
+            <small id="midPointLabel">Mid point</small>
+            <strong id="midPoint">-</strong>
+            <span id="midPointAnnual">-</span>
+          </div>
+          <div class="point-card">
+            <small id="maxPointLabel">Maximum point</small>
+            <strong id="maxPoint">-</strong>
+            <span id="maxPointAnnual">-</span>
+          </div>
+        </div>
+
+        <div class="message" id="messageOut">Enter the hourly rate to calculate checks.</div>
+
+        <details>
+          <summary id="moreDetailsSummary">Details</summary>
+          <div class="details-body">
+            <h3 id="checksSummary" style="margin:0 0 10px;font-size:15px">Checks</h3>
+            <div class="check-grid">
+              <div class="check-card" id="visualWageCheck">
+                <small id="visualWageTitle">Minimum wage</small>
+                <strong id="visualWageStatus">-</strong>
+                <span id="visualWageText">-</span>
+              </div>
+              <div class="check-card" id="visualRangeCheck">
+                <small id="visualRangeTitle">CAO range</small>
+                <strong id="visualRangeStatus">-</strong>
+                <span id="visualRangeText">-</span>
+              </div>
+              <div class="check-card" id="visualMidpointCheck">
+                <small id="visualMidpointTitle">Mid point</small>
+                <strong id="visualMidpointStatus">-</strong>
+                <span id="visualMidpointText">-</span>
+              </div>
+            </div>
+            <div class="summary-grid" style="margin-top:10px">
+              <div class="metric">
+                <small id="proposedRateLabel">Proposed rate</small>
+                <strong id="rateOut">-</strong>
+                <span id="rateText">-</span>
+              </div>
+              <div class="metric">
+                <small id="caoRangeCheckLabel">CAO range check</small>
+                <strong id="rangeCheck">-</strong>
+                <span id="rangeText">-</span>
+              </div>
+              <div class="metric">
+                <small id="midpointPositionLabel">Mid point position</small>
+                <strong id="midpointOut">-</strong>
+                <span id="midpointText">-</span>
+              </div>
+              <div class="metric">
+                <small id="minimumWageLabel">Minimum wage</small>
+                <strong id="wageOut">-</strong>
+                <span id="wageText">-</span>
+              </div>
+            </div>
+            <div class="range-line" aria-hidden="true">
+              <div class="range-top">
+                <span id="meterTitle">Position against mid point</span>
+                <span id="meterLabel">-</span>
+              </div>
+              <div class="track"><div class="track-fill" id="meterFill"></div></div>
+            </div>
+
+            <h3 id="scenarioSummary" style="margin:18px 0 10px;font-size:15px">Scenario comparison</h3>
+            <div class="scenario-grid" id="scenarioGrid"></div>
+
+            <h3 id="recommendationSummary" style="margin:18px 0 10px;font-size:15px">Recommendation summary</h3>
+            <div class="field">
+              <textarea id="summary" readonly></textarea>
+            </div>
+            <div class="actions main-actions">
+              <button class="btn primary" id="copyBtn" type="button">Copy summary</button>
+              <button class="btn secondary" id="printBtn" type="button" onclick="window.print()">Print / save PDF</button>
+              <button class="btn ghost" id="resetBtn" type="button">Reset</button>
+            </div>
+
+            <h3 id="pointsSummary" style="margin:18px 0 10px;font-size:15px">Minimum / Mid / Maximum by selected position</h3>
+            <div class="table-wrap"><table id="availableTable"></table></div>
+            <p class="note" id="auditNote">Point selection maps to the lower, middle or higher scale available for the selected position.</p>
+
+          </div>
+        </details>
+      </div>
+    </section>
   </div>
 </main>
 
 <script>
-const MAX_DIGITS = 16;
-const MEMORY_KEY = "msd_standard_calculator_memory";
-const symbols = {"+":"+","-":"−","*":"×","/":"÷"};
-
-const state = {
-  current:"0",
-  stored:null,
-  pending:null,
-  awaitingOperand:false,
-  overwrite:false,
-  lastOperator:null,
-  lastOperand:null,
-  history:"",
-  error:"",
-  memory:0,
-  hasMemory:false
+const scales = {
+  A:{annual:[24300,33600,42300],hour:[10.49,14.50,18.26]},
+  B:{annual:[31400,42400,53400],hour:[13.55,18.30,23.05]},
+  C:{annual:[34400,46500,58600],hour:[14.85,20.07,25.29]},
+  D:{annual:[37800,51100,64400],hour:[16.32,22.06,27.80]},
+  E:{annual:[41600,56100,70600],hour:[17.96,24.21,30.47]},
+  F:{annual:[45800,61800,77800],hour:[19.77,26.68,33.58]},
+  G:{annual:[50200,67800,85400],hour:[21.67,29.27,36.86]},
+  H:{annual:[55200,74600,93900],hour:[23.83,32.20,40.53]},
+  I:{annual:[60700,81900,103200],hour:[26.20,35.35,44.55]},
+  J:{annual:[66800,90200,113600],hour:[28.83,38.93,49.03]},
+  K:{annual:[73400,99000,124700],hour:[31.68,42.73,53.83]},
+  L:{annual:[80800,109000,137300],hour:[34.88,47.05,59.26]},
+  M:{annual:[88800,119900,150900],hour:[38.33,51.75,65.13]}
 };
 
-const display = document.getElementById("display");
-const historyOut = document.getElementById("history");
-const memoryIndicator = document.getElementById("memoryIndicator");
-const memoryClear = document.getElementById("memoryClear");
-const memoryRecall = document.getElementById("memoryRecall");
+const pathways = {
+  "Business Support":{B1:["A"],B2:["B","C"],B3:["D"],B4:["E","F"]},
+  "Research / Data & Digital":{R1:["E","F","G"],R2:["G","H","I"],R3:["J","K"],R4:["L","M"]},
+  "Production & Operations":{O1:["A"],"O2 Low":["A","B"],"O2 Mid":["B","C","D"],"O2 High":["C","D"],O3:["D","E"],O4:["F","G"]},
+  "Sales":{S1:["G"],S2:["H","I"],S3:["J"],"M1 Sales":["I"],"M2 Sales":["K","L"]},
+  "Professional":{P1:["F","G"],P2:["G","H"],P3:["I","J","K"],P4:["K","L","M"]},
+  "Management":{M1:["I","J"],M2:["K","L","M"]}
+};
 
-function loadMemory(){
-  try{
-    const saved = localStorage.getItem(MEMORY_KEY);
-    if(saved !== null && Number.isFinite(Number(saved))){
-      state.memory = Number(saved);
-      state.hasMemory = true;
+const minimumWage = {21:14.71,20:11.77,19:8.83,18:7.36,17:5.81,16:5.07,15:4.41};
+
+const translations = {
+  en:{
+    language:"Language",
+    calculator:"Calculator",
+    closeCalculator:"Close calculator",
+    inputs:"Inputs",
+    candidateName:"Candidate name",
+    defaultCandidate:"Candidate",
+    optional:"Optional",
+    position:"Position",
+    caoScale:"CAO scale",
+    profileLevel:"Point selection",
+    starter:"Min point",
+    matching:"Mid point",
+    senior:"Max point",
+    age:"Age",
+    hourlyRate:"Hourly rate",
+    scaleSelection:"Scale selection",
+    copySummary:"Copy summary",
+    copied:"Copied",
+    printPdf:"Print / save PDF",
+    reset:"Reset",
+    recommendedScale:"Selected CAO scale",
+    enterRate:"Enter hourly rate",
+    payPositionMap:"Salary range",
+    rangeBoardDesc:"Minimum, mid point, maximum and entered hourly rate shown on one decision line.",
+    thresholdLabel:"Mid point threshold",
+    currentRate:"Current rate",
+    midToMaximum:"Mid to maximum",
+    outsideRange:"Outside range",
+    minShort:"Min",
+    midShort:"Mid",
+    maxShort:"Max",
+    rateShort:"Rate",
+    noRateYet:"Enter hourly rate",
+    minPoint:"Minimum point",
+    midPoint:"Mid point",
+    maxPoint:"Maximum point",
+    annual:"Annual",
+    proposedRate:"Proposed rate",
+    selectedScale:"Selected scale",
+    vsMidpointShort:"vs mid point",
+    caoRangeCheck:"CAO range check",
+    midpointPosition:"Mid point position",
+    minimumWage:"Minimum wage",
+    caoRange:"CAO range",
+    midpointVisual:"Mid point",
+    ok:"OK",
+    review:"Review",
+    stop:"Stop",
+    midpointOk:"At or below mid point",
+    midpointTooHigh:"Above mid point",
+    midpointTileDetail:(rate, mid)=>`${rate} vs mid point ${mid}`,
+    wageTileDetail:(rate, wage)=>rate === null ? `Minimum wage: ${wage}` : `${rate} vs minimum wage ${wage}`,
+    rangeTileDetail:(rate, min, max)=>rate === null ? `${min} - ${max}` : `${rate} against ${min} - ${max}`,
+    minimumWageForAge:"Minimum wage for age",
+    positionAgainstMidpoint:"Position against mid point",
+    midpointAlert:"Rate exceeds mid point",
+    rangeOkNotice:"Rate is within required range",
+    moreDetails:"Details",
+    checks:"Checks",
+    scenarioComparison:"Scenario comparison",
+    recommendationSummary:"Recommendation summary",
+    pointsByPosition:"Minimum / Mid / Maximum by selected position",
+    auditNote:"The CAO scale dropdown is generated only from the scales allowed for the selected position.",
+    allowedScales:"allowed scales",
+    scales:"scales",
+    availableScales:"Available scales for",
+    age21:"21 or older",
+    belowLegalMinimum:"Below legal minimum wage",
+    belowCaoMinimum:"Below CAO scale minimum",
+    aboveCaoMaximum:"Above CAO scale maximum",
+    withinRange:"Within range",
+    missingRateMessage:"Enter the hourly rate to calculate checks.",
+    belowLegalMinimumMessage:wage=>`Rate is below legal minimum wage of ${wage}.`,
+    belowCaoMinimumMessage:min=>`Rate is below the selected CAO scale minimum of ${min}.`,
+    aboveCaoMaximumMessage:max=>`Rate is above the selected CAO scale maximum of ${max}.`,
+    withinRangeMessage:"Rate is within the selected CAO scale and minimum wage checks.",
+    atOrBelowMidpoint:"At or below mid point",
+    aboveMidpoint:"Rate exceeds mid point",
+    profileLogic:{
+      starter:"Scale selected from the allowed list by Min point shortcut",
+      matching:"Scale selected from the allowed list by Mid point shortcut",
+      senior:"Scale selected from the allowed list by Max point shortcut"
+    },
+    category:{
+      "Business Support":"Business Support",
+      "Research / Data & Digital":"Research / Data & Digital",
+      "Production & Operations":"Production & Operations",
+      "Sales":"Sales",
+      "Professional":"Professional",
+      "Management":"Management"
+    },
+    table:{
+      scale:"Scale", minHour:"Min hour", midHour:"Mid hour", maxHour:"Max hour",
+      minYear:"Min year", midYear:"Mid year", maxYear:"Max year"
+    },
+    summary:{
+      title:"CAO salary matrix assessment",
+      position:"Position",
+      allowed:"Allowed CAO scales",
+      selected:"Selected CAO scale",
+      logic:"Selection logic",
+      min:"Minimum point",
+      mid:"Mid point",
+      max:"Maximum point",
+      current:"Current/proposed hourly rate",
+      vsMid:"Position vs mid point",
+      midCheck:"Mid point check",
+      legal:"Legal minimum wage check for age",
+      range:"CAO range check",
+      status:"Overall status",
+      ok:"OK",
+      belowWage:"Below minimum wage",
+      belowMin:"Below selected scale minimum",
+      aboveMax:"Above selected scale maximum",
+      within:"Within selected scale range",
+      note:"Note: the selected CAO scale controls the minimum, mid point and maximum shown in this module."
     }
-  }catch(_error){}
-}
-
-function saveMemory(){
-  try{
-    if(state.hasMemory) localStorage.setItem(MEMORY_KEY, String(state.memory));
-    else localStorage.removeItem(MEMORY_KEY);
-  }catch(_error){}
-}
-
-function grouped(raw){
-  if(/[eE]/.test(raw)) return raw.replace(".", ",");
-  const negative = raw.startsWith("-");
-  const unsigned = negative ? raw.slice(1) : raw;
-  const parts = unsigned.split(".");
-  const integer = (parts[0] || "0").replace(/\B(?=(\d{3})+(?!\d))/g, "\u00a0");
-  const fraction = parts.length > 1 ? "," + parts[1] : "";
-  return (negative ? "−" : "") + integer + fraction;
-}
-
-function render(){
-  const text = state.error || grouped(state.current);
-  display.textContent = text;
-  display.classList.toggle("medium", text.length > 13 && text.length <= 18);
-  display.classList.toggle("small", text.length > 18);
-  historyOut.textContent = state.history;
-  memoryIndicator.textContent = state.hasMemory ? "M" : "";
-  memoryClear.disabled = !state.hasMemory;
-  memoryRecall.disabled = !state.hasMemory;
-}
-
-function resetForFreshInput(){
-  if(state.error) clearAll();
-  if(state.overwrite){
-    if(state.pending === null){
-      state.history = "";
-      state.lastOperator = null;
-      state.lastOperand = null;
+  },
+  nl:{
+    language:"Taal",
+    calculator:"Rekenmachine",
+    closeCalculator:"Rekenmachine sluiten",
+    inputs:"Invoer",
+    candidateName:"Naam kandidaat",
+    defaultCandidate:"Kandidaat",
+    optional:"Optioneel",
+    position:"Functie",
+    caoScale:"CAO-schaal",
+    profileLevel:"Puntselectie",
+    starter:"Min point",
+    matching:"Mid point",
+    senior:"Max point",
+    age:"Leeftijd",
+    hourlyRate:"Uurtarief",
+    scaleSelection:"Schaalkeuze",
+    copySummary:"Samenvatting kopiëren",
+    copied:"Gekopieerd",
+    printPdf:"Printen / opslaan als PDF",
+    reset:"Reset",
+    recommendedScale:"Geselecteerde CAO-schaal",
+    enterRate:"Voer uurtarief in",
+    payPositionMap:"Salarisrange",
+    rangeBoardDesc:"Minimum, midpoint, maximum en ingevoerd uurtarief op een beslislijn.",
+    thresholdLabel:"Midpoint grens",
+    currentRate:"Huidig tarief",
+    midToMaximum:"Midpoint tot maximum",
+    outsideRange:"Buiten range",
+    minShort:"Min",
+    midShort:"Mid",
+    maxShort:"Max",
+    rateShort:"Tarief",
+    noRateYet:"Nog geen tarief ingevoerd",
+    minPoint:"Minimum point",
+    midPoint:"Midpoint",
+    maxPoint:"Maximum point",
+    annual:"Jaar",
+    proposedRate:"Voorgesteld tarief",
+    selectedScale:"Geselecteerde schaal",
+    vsMidpointShort:"t.o.v. midpoint",
+    caoRangeCheck:"CAO-range check",
+    midpointPosition:"Positie t.o.v. midpoint",
+    minimumWage:"Minimumloon",
+    caoRange:"CAO-range",
+    midpointVisual:"Midpoint",
+    ok:"OK",
+    review:"Review",
+    stop:"Stop",
+    midpointOk:"Op of onder midpoint",
+    midpointTooHigh:"Boven midpoint",
+    midpointTileDetail:(rate, mid)=>`${rate} t.o.v. midpoint ${mid}`,
+    wageTileDetail:(rate, wage)=>rate === null ? `Minimumloon: ${wage}` : `${rate} t.o.v. minimumloon ${wage}`,
+    rangeTileDetail:(rate, min, max)=>rate === null ? `${min} - ${max}` : `${rate} t.o.v. ${min} - ${max}`,
+    minimumWageForAge:"Minimumloon voor leeftijd",
+    positionAgainstMidpoint:"Positie ten opzichte van midpoint",
+    midpointAlert:"Uurtarief overschrijdt het midpoint",
+    rangeOkNotice:"Uurtarief valt binnen de vereiste range",
+    moreDetails:"Details",
+    checks:"Controles",
+    scenarioComparison:"Scenariovergelijking",
+    recommendationSummary:"Aanbevelingssamenvatting",
+    pointsByPosition:"Minimum / Mid / Maximum per geselecteerde functie",
+    auditNote:"De CAO-schaalkeuze wordt alleen opgebouwd uit de schalen die voor de geselecteerde functie zijn toegestaan.",
+    allowedScales:"toegestane schalen",
+    scales:"schalen",
+    availableScales:"Beschikbare schalen voor",
+    age21:"21 of ouder",
+    belowLegalMinimum:"Onder wettelijk minimumloon",
+    belowCaoMinimum:"Onder minimum CAO-schaal",
+    aboveCaoMaximum:"Boven maximum CAO-schaal",
+    withinRange:"Binnen range",
+    missingRateMessage:"Voer het uurtarief in om de controles te berekenen.",
+    belowLegalMinimumMessage:wage=>`Tarief ligt onder het wettelijk minimumloon van ${wage}.`,
+    belowCaoMinimumMessage:min=>`Tarief ligt onder het minimum van de geselecteerde CAO-schaal: ${min}.`,
+    aboveCaoMaximumMessage:max=>`Tarief ligt boven het maximum van de geselecteerde CAO-schaal: ${max}.`,
+    withinRangeMessage:"Tarief ligt binnen de geselecteerde CAO-schaal en minimumlooncontrole.",
+    atOrBelowMidpoint:"Op of onder midpoint",
+    aboveMidpoint:"Uurtarief overschrijdt het midpoint",
+    profileLogic:{
+      starter:"Schaal geselecteerd uit de toegestane lijst via Min point",
+      matching:"Schaal geselecteerd uit de toegestane lijst via Mid point",
+      senior:"Schaal geselecteerd uit de toegestane lijst via Max point"
+    },
+    category:{
+      "Business Support":"Business Support",
+      "Research / Data & Digital":"Research / Data & Digital",
+      "Production & Operations":"Productie & Operations",
+      "Sales":"Sales",
+      "Professional":"Professional",
+      "Management":"Management"
+    },
+    table:{
+      scale:"Schaal", minHour:"Min uur", midHour:"Mid uur", maxHour:"Max uur",
+      minYear:"Min jaar", midYear:"Mid jaar", maxYear:"Max jaar"
+    },
+    summary:{
+      title:"CAO salarischeck",
+      position:"Functie",
+      allowed:"Toegestane CAO-schalen",
+      selected:"Geselecteerde CAO-schaal",
+      logic:"Selectielogica",
+      min:"Minimum point",
+      mid:"Midpoint",
+      max:"Maximum point",
+      current:"Huidig/voorgesteld uurtarief",
+      vsMid:"Positie t.o.v. midpoint",
+      midCheck:"Midpoint check",
+      legal:"Minimumlooncheck voor leeftijd",
+      range:"CAO-range check",
+      status:"Algemene status",
+      ok:"OK",
+      belowWage:"Onder minimumloon",
+      belowMin:"Onder minimum geselecteerde schaal",
+      aboveMax:"Boven maximum geselecteerde schaal",
+      within:"Binnen geselecteerde schaalrange",
+      note:"Let op: de geselecteerde CAO-schaal bepaalt het minimum, midpoint en maximum in deze module."
     }
-    state.current = "0";
-    state.overwrite = false;
+  }
+};
+
+const LANG_KEY = "msd_cao_salary_check_language";
+let activeProfile = "matching";
+let currentLanguage = normalizeLanguage(localStorage.getItem(LANG_KEY) || localStorage.getItem("rw_lang") || "en");
+
+const el = id => document.getElementById(id);
+function normalizeLanguage(lang){
+  const normalized = String(lang || "").toLowerCase().slice(0,2);
+  return normalized === "nl" ? "nl" : "en";
+}
+function t(key){
+  return translations[currentLanguage][key] || translations.en[key] || key;
+}
+function locale(){
+  return currentLanguage === "nl" ? "nl-NL" : "en-IE";
+}
+const euro = value => new Intl.NumberFormat(locale(),{style:"currency",currency:"EUR",minimumFractionDigits:2}).format(value);
+const intfmt = value => new Intl.NumberFormat(locale(),{maximumFractionDigits:0}).format(value);
+
+function selectedPosition(){
+  const [category, pathway] = el("position").value.split("||");
+  return {
+    category,
+    pathway,
+    allowed:pathways[category][pathway],
+    label:`${category} - ${pathway}`
+  };
+}
+
+function scaleForProfile(allowed, profile){
+  if(profile === "starter") return allowed[0];
+  if(profile === "senior") return allowed[allowed.length - 1];
+  return allowed[Math.floor((allowed.length - 1) / 2)];
+}
+
+function selectedScale(allowed){
+  const selected = el("scaleSelect").value;
+  return allowed.includes(selected) ? selected : scaleForProfile(allowed, activeProfile);
+}
+
+function currentRate(){
+  const value = Number.parseFloat(el("rate").value);
+  return Number.isFinite(value) ? value : null;
+}
+
+function midpointFor(rate, midpoint){
+  if(rate === null) return null;
+  const pct = rate / midpoint * 100;
+  return {pct,above:rate > midpoint};
+}
+
+function clamp(value, min, max){
+  return Math.max(min, Math.min(max, value));
+}
+
+function markerPosition(value, min, max){
+  const span = max - min || 1;
+  return clamp((value - min) / span * 100, 0, 100);
+}
+
+function checkStatus(rate, row, minWage){
+  if(rate === null) return {kind:"", label:t("enterRate"), message:t("missingRateMessage")};
+  if(rate < minWage) return {kind:"stop", label:t("belowLegalMinimum"), message:t("belowLegalMinimumMessage")(euro(minWage))};
+  if(rate < row.hour[0]) return {kind:"warn", label:t("belowCaoMinimum"), message:t("belowCaoMinimumMessage")(euro(row.hour[0]))};
+  if(rate > row.hour[2]) return {kind:"stop", label:t("aboveCaoMaximum"), message:t("aboveCaoMaximumMessage")(euro(row.hour[2]))};
+  return {kind:"ok", label:t("withinRange"), message:t("withinRangeMessage")};
+}
+
+function fillInputs(){
+  const previousPosition = el("position").value;
+  const previousAge = el("age").value;
+  el("position").innerHTML = Object.entries(pathways).map(([category, group]) => {
+    const options = Object.entries(group).map(([pathway, allowed]) => {
+      return `<option value="${category}||${pathway}">${translations[currentLanguage].category[category]} - ${pathway}</option>`;
+    }).join("");
+    return `<optgroup label="${translations[currentLanguage].category[category]}">${options}</optgroup>`;
+  }).join("");
+  if(previousPosition) el("position").value = previousPosition;
+  el("age").innerHTML = `<option value="21">${t("age21")}</option>` + [20,19,18,17,16,15].map(age => `<option value="${age}">${age}</option>`).join("");
+  if(previousAge) el("age").value = previousAge;
+  updateScaleOptions();
+}
+
+function updateScaleOptions(preferredScale){
+  const selected = selectedPosition();
+  const current = preferredScale || el("scaleSelect").value;
+  const fallback = scaleForProfile(selected.allowed, activeProfile);
+  el("scaleSelect").innerHTML = selected.allowed.map(scale => {
+    const row = scales[scale];
+    return `<option value="${scale}">${scale} - ${t("midPoint")} ${euro(row.hour[1])} (${euro(row.hour[0])} - ${euro(row.hour[2])})</option>`;
+  }).join("");
+  el("scaleSelect").value = selected.allowed.includes(current) ? current : fallback;
+  el("scaleSelectNote").textContent = `${t("availableScales")} ${selected.label}: ${selected.allowed.join(", ")}`;
+}
+
+function scenarioStatus(rate, scale, age){
+  const row = scales[scale];
+  const wage = minimumWage[age] || minimumWage[21];
+  return checkStatus(rate, row, wage);
+}
+
+function buildScenarios(selected, rate, age){
+  const currentScale = selectedScale(selected.allowed);
+  return ["starter","matching","senior"].map(profile => {
+    const scale = scaleForProfile(selected.allowed, profile);
+    const row = scales[scale];
+    const status = scenarioStatus(rate, scale, age);
+    const active = scale === currentScale;
+    return `<div class="scenario ${active ? "active" : ""}">
+      <div class="scenario-name">${t(profile)}</div>
+      <div class="scenario-scale">${scale}</div>
+      <div class="scenario-sub">${euro(row.hour[0])} - ${euro(row.hour[2])}</div>
+      <div class="scenario-points">${t("minPoint")}: ${euro(row.hour[0])}<br>${t("midPoint")}: ${euro(row.hour[1])}<br>${t("maxPoint")}: ${euro(row.hour[2])}</div>
+      <span class="scenario-status ${status.kind}">${status.label}</span>
+    </div>`;
+  }).join("");
+}
+
+function buildAvailableTable(activeScale){
+  const selected = selectedPosition();
+  const th = translations[currentLanguage].table;
+  let html = `<tr><th>${th.scale}</th><th>${th.minHour}</th><th>${th.midHour}</th><th>${th.maxHour}</th><th>${th.minYear}</th><th>${th.midYear}</th><th>${th.maxYear}</th></tr>`;
+  selected.allowed.forEach(scale => {
+    const row = scales[scale];
+    html += `<tr class="${scale === activeScale ? "selected" : ""}"><td><b>${scale}</b></td><td>${euro(row.hour[0])}</td><td>${euro(row.hour[1])}</td><td>${euro(row.hour[2])}</td><td>EUR ${intfmt(row.annual[0])}</td><td>EUR ${intfmt(row.annual[1])}</td><td>EUR ${intfmt(row.annual[2])}</td></tr>`;
+  });
+  el("availableTable").innerHTML = html;
+}
+
+function setCheckCard(id, kind, status, detail){
+  const card = el(id);
+  card.className = `check-card ${kind || ""}`;
+  card.querySelector("strong").textContent = status;
+  card.querySelector("span").textContent = detail;
+}
+
+function updateVisuals(row, rate, wage, status, midpointResult){
+  const min = row.hour[0];
+  const mid = row.hour[1];
+  const max = row.hour[2];
+  const midExceeded = rate !== null && midpointResult.above;
+  const midPosition = markerPosition(mid, min, max);
+  const ratePosition = rate === null ? midPosition : markerPosition(rate, min, max);
+  const excessWidth = midExceeded ? Math.max(ratePosition - midPosition, 1.6) : 0;
+  const rangeOk = rate !== null && status.kind === "ok" && !midExceeded;
+  const pinShift = ratePosition < 9 ? "0%" : ratePosition > 91 ? "-100%" : "-50%";
+  el("rangeMap").style.setProperty("--mid-pos", `${midPosition}%`);
+  el("rangeMap").style.setProperty("--rate-pos", `${ratePosition}%`);
+  el("rangeMap").style.setProperty("--excess-start", `${midPosition}%`);
+  el("rangeMap").style.setProperty("--excess-width", `${excessWidth}%`);
+  el("rangeMap").style.setProperty("--pin-shift", pinShift);
+  el("rangeMap").classList.toggle("mid-exceeded", midExceeded);
+  el("rangeMap").classList.toggle("range-ok", rangeOk);
+  el("rangeOkNotice").hidden = !rangeOk;
+  el("rangeOkTitle").textContent = t("rangeOkNotice");
+  el("rangeAlert").hidden = !midExceeded;
+  el("rangeAlertTitle").textContent = t("midpointAlert");
+  el("rangeBoardTitle").textContent = t("payPositionMap");
+  el("rangeBoardDesc").textContent = t("rangeBoardDesc");
+  el("rangeThresholdLabel").textContent = t("thresholdLabel");
+  el("rangeThresholdValue").textContent = euro(mid);
+  el("rangeStatusLabel").textContent = t("currentRate");
+  el("midGateLabel").textContent = t("midShort");
+  el("axisMin").textContent = euro(min);
+  el("axisMid").textContent = euro(mid);
+  el("axisMax").textContent = euro(max);
+
+  const ratePin = el("ratePin");
+  const rateBeam = el("rateBeam");
+  if(rate === null){
+    ratePin.hidden = true;
+    rateBeam.hidden = true;
+    el("visualValue").textContent = t("noRateYet");
+    el("rangeBoardStatus").textContent = t("noRateYet");
+  } else {
+    const rateKind = midExceeded ? "stop" : status.kind || "ok";
+    ratePin.hidden = false;
+    rateBeam.hidden = false;
+    ratePin.className = `rate-pin ${rateKind}`;
+    el("ratePinLabel").textContent = t("rateShort");
+    el("ratePinValue").textContent = euro(rate);
+    el("ratePinMeta").textContent = midExceeded ? `+${euro(Math.max(0, rate - mid))}` : "";
+    el("rangeBoardStatus").textContent = euro(rate);
+    el("visualValue").textContent = `${t("rateShort")}: ${euro(rate)}`;
+  }
+
+  const wageOk = rate === null ? "" : rate >= wage ? "ok" : "stop";
+  setCheckCard(
+    "visualWageCheck",
+    wageOk,
+    rate === null ? "-" : rate >= wage ? t("ok") : t("stop"),
+    t("wageTileDetail")(rate === null ? null : euro(rate), euro(wage))
+  );
+
+  const rangeKind = rate === null ? "" : rate < min || rate > max ? "stop" : "ok";
+  setCheckCard(
+    "visualRangeCheck",
+    rangeKind,
+    rate === null ? "-" : status.label,
+    t("rangeTileDetail")(rate === null ? null : euro(rate), euro(min), euro(max))
+  );
+
+  const midKind = rate === null ? "" : midpointResult.above ? "stop" : "ok";
+  setCheckCard(
+    "visualMidpointCheck",
+    midKind,
+    rate === null ? "-" : midpointResult.above ? t("midpointTooHigh") : t("midpointOk"),
+    rate === null ? `${t("midPoint")}: ${euro(mid)}` : t("midpointTileDetail")(euro(rate), euro(mid))
+  );
+}
+
+function buildSummary(selected, scale, row, rate, age, wage, midpointResult, status){
+  const s = translations[currentLanguage].summary;
+  const candidate = el("candidate").value.trim() || t("defaultCandidate");
+  const logic = `${t("scaleSelection")}: ${scale}`;
+  let text = `${candidate} - ${s.title}\n\n`;
+  text += `${s.position}: ${selected.label}\n`;
+  text += `${s.allowed}: ${selected.allowed.join(", ")}\n`;
+  text += `${s.selected}: ${scale}\n`;
+  text += `${s.logic}: ${logic}\n\n`;
+  text += `${s.min}: ${euro(row.hour[0])} / EUR ${intfmt(row.annual[0])} ${t("annual").toLowerCase()}\n`;
+  text += `${s.mid}: ${euro(row.hour[1])} / EUR ${intfmt(row.annual[1])} ${t("annual").toLowerCase()}\n`;
+  text += `${s.max}: ${euro(row.hour[2])} / EUR ${intfmt(row.annual[2])} ${t("annual").toLowerCase()}\n`;
+  if(rate !== null){
+    const rangeCheck = rate < row.hour[0] ? s.belowMin : rate > row.hour[2] ? s.aboveMax : s.within;
+    text += `\n${s.current}: ${euro(rate)}\n`;
+    text += `${s.vsMid}: ${midpointResult.pct.toFixed(1)}%\n`;
+    text += `${s.midCheck}: ${midpointResult.above ? t("aboveMidpoint") : t("atOrBelowMidpoint")}\n`;
+    text += `${s.legal} ${age}: ${rate >= wage ? s.ok : s.belowWage}\n`;
+    text += `${s.range}: ${rangeCheck}\n`;
+    text += `${s.status}: ${status.label}\n`;
+  }
+  text += `\n${s.note}`;
+  return text;
+}
+
+function update(){
+  updateScaleOptions();
+  const selected = selectedPosition();
+  const scale = selectedScale(selected.allowed);
+  const row = scales[scale];
+  const rate = currentRate();
+  const age = Number(el("age").value || 21);
+  const wage = minimumWage[age] || minimumWage[21];
+  const midpointResult = midpointFor(rate, row.hour[1]);
+  const status = checkStatus(rate, row, wage);
+
+  el("scaleOut").textContent = scale;
+  el("pathOut").textContent = `${selected.label} - ${t("allowedScales")} ${selected.allowed.join(", ")}`;
+  const mainStatusKind = rate !== null && midpointResult.above ? "stop" : status.kind;
+  const mainStatusLabel = rate !== null && midpointResult.above ? t("aboveMidpoint") : status.label;
+  el("statusOut").textContent = mainStatusLabel;
+  el("statusOut").className = `status ${mainStatusKind}`;
+  el("statusOut").hidden = rate !== null && midpointResult.above && status.kind === "ok";
+  el("minPoint").textContent = euro(row.hour[0]);
+  el("midPoint").textContent = euro(row.hour[1]);
+  el("maxPoint").textContent = euro(row.hour[2]);
+  el("minPointAnnual").textContent = `${t("annual")} EUR ${intfmt(row.annual[0])}`;
+  el("midPointAnnual").textContent = `${t("annual")} EUR ${intfmt(row.annual[1])}`;
+  el("maxPointAnnual").textContent = `${t("annual")} EUR ${intfmt(row.annual[2])}`;
+  el("rateOut").textContent = rate === null ? "-" : euro(rate);
+  el("rateText").textContent = rate === null ? t("enterRate") : `${t("selectedScale")} ${scale}`;
+  el("rangeCheck").textContent = rate === null ? "-" : status.label;
+  el("rangeText").textContent = `${euro(row.hour[0])} - ${euro(row.hour[2])}`;
+  el("wageOut").textContent = euro(wage);
+  el("wageText").textContent = `${t("minimumWageForAge")} ${age}`;
+  updateVisuals(row, rate, wage, status, midpointResult);
+
+  if(rate === null){
+    el("midpointOut").textContent = "-";
+    el("midpointText").textContent = t("enterRate");
+    el("meterLabel").textContent = "-";
+    el("meterFill").style.width = "0%";
+  } else {
+    el("midpointOut").textContent = `${midpointResult.pct.toFixed(1)}%`;
+    el("midpointText").textContent = `${euro(rate)} ${t("vsMidpointShort")} ${euro(row.hour[1])}`;
+    el("meterLabel").textContent = `${midpointResult.pct.toFixed(1)}%`;
+    el("meterFill").style.width = `${Math.max(0, Math.min(100, midpointResult.pct / 130 * 100))}%`;
+  }
+
+  el("messageOut").textContent = status.message;
+  el("messageOut").className = `message ${status.kind}`;
+  el("messageOut").hidden = rate !== null && status.kind === "ok";
+  el("scenarioGrid").innerHTML = buildScenarios(selected, rate, age);
+  buildAvailableTable(scale);
+  el("summary").value = buildSummary(selected, scale, row, rate, age, wage, midpointResult, status);
+}
+
+function reset(){
+  el("candidate").value = "";
+  el("rate").value = "";
+  el("position").selectedIndex = 0;
+  el("age").value = "21";
+  activeProfile = "matching";
+  document.querySelectorAll(".segment").forEach(button => button.classList.toggle("active", button.dataset.profile === activeProfile));
+  updateScaleOptions(scaleForProfile(selectedPosition().allowed, activeProfile));
+  update();
+}
+
+function updateStaticLanguage(){
+  document.documentElement.lang = currentLanguage;
+  document.body.dataset.lang = currentLanguage;
+  el("languageSwitchLabel").textContent = t("language");
+  el("openStandardCalculator").textContent = t("calculator");
+  el("standardCalculatorTitle").textContent = t("calculator");
+  el("closeStandardCalculator").setAttribute("aria-label", t("closeCalculator"));
+  el("inputsHead").textContent = t("inputs");
+  el("candidateLabel").textContent = t("candidateName");
+  el("candidate").placeholder = t("optional");
+  el("positionLabel").textContent = t("position");
+  el("scaleSelectLabel").textContent = t("caoScale");
+  el("profileLabel").textContent = t("profileLevel");
+  document.querySelector(".segments").setAttribute("aria-label", t("profileLevel"));
+  document.querySelectorAll(".segment").forEach(button => {
+    button.textContent = t(button.dataset.profile);
+  });
+  el("ageLabel").textContent = t("age");
+  el("rateLabel").textContent = t("hourlyRate");
+  el("copyBtn").textContent = t("copySummary");
+  el("printBtn").textContent = t("printPdf");
+  el("resetBtn").textContent = t("reset");
+  el("recommendedScaleLabel").textContent = t("recommendedScale");
+  el("statusOut").textContent = t("enterRate");
+  el("visualTitle").textContent = t("payPositionMap");
+  el("visualValue").textContent = t("noRateYet");
+  el("axisMinLabel").textContent = t("minPoint");
+  el("axisMidLabel").textContent = t("midPoint");
+  el("axisMaxLabel").textContent = t("maxPoint");
+  el("visualWageTitle").textContent = t("minimumWage");
+  el("visualRangeTitle").textContent = t("caoRange");
+  el("visualMidpointTitle").textContent = t("midpointVisual");
+  el("moreDetailsSummary").textContent = t("moreDetails");
+  el("checksSummary").textContent = t("checks");
+  el("minPointLabel").textContent = t("minPoint");
+  el("midPointLabel").textContent = t("midPoint");
+  el("maxPointLabel").textContent = t("maxPoint");
+  el("proposedRateLabel").textContent = t("proposedRate");
+  el("caoRangeCheckLabel").textContent = t("caoRangeCheck");
+  el("midpointPositionLabel").textContent = t("midpointPosition");
+  el("minimumWageLabel").textContent = t("minimumWage");
+  el("meterTitle").textContent = t("positionAgainstMidpoint");
+  el("scenarioSummary").textContent = t("scenarioComparison");
+  el("recommendationSummary").textContent = t("recommendationSummary");
+  el("pointsSummary").textContent = t("pointsByPosition");
+  el("auditNote").textContent = t("auditNote");
+  el("langEn").classList.toggle("active", currentLanguage === "en");
+  el("langNl").classList.toggle("active", currentLanguage === "nl");
+}
+
+function setLanguage(language, notifyParent = false){
+  currentLanguage = normalizeLanguage(language);
+  localStorage.setItem(LANG_KEY, currentLanguage);
+  localStorage.setItem("rw_lang", currentLanguage);
+  localStorage.setItem("doc_lang", currentLanguage);
+  localStorage.setItem("supplier_lang", currentLanguage);
+  updateStaticLanguage();
+  fillInputs();
+  update();
+  if(notifyParent && window.parent && window.parent !== window){
+    try{ window.parent.postMessage({type:"rw:setLang", lang:currentLanguage}, "*"); }catch(error){}
   }
 }
 
-function inputDigit(digit){
-  resetForFreshInput();
-  if(state.current.replace(/\D/g, "").length >= MAX_DIGITS) return;
-  if(state.current === "0") state.current = digit;
-  else if(state.current === "-0") state.current = "-" + digit;
-  else state.current += digit;
-  state.awaitingOperand = false;
-  render();
-}
-
-function inputDecimal(){
-  resetForFreshInput();
-  if(!state.current.includes(".")) state.current += ".";
-  state.awaitingOperand = false;
-  render();
-}
-
-function setError(message){
-  state.error = message;
-  state.current = "0";
-  state.stored = null;
-  state.pending = null;
-  state.awaitingOperand = false;
-  state.overwrite = true;
-  state.lastOperator = null;
-  state.lastOperand = null;
-  state.history = "";
-  render();
-}
-
-function rounded(value){
-  if(!Number.isFinite(value)) return null;
-  if(Math.abs(value) < 1e-14) return 0;
-  return Number(value.toPrecision(15));
-}
-
-function compute(left, right, operator){
-  if(operator === "+") return rounded(left + right);
-  if(operator === "-") return rounded(left - right);
-  if(operator === "*") return rounded(left * right);
-  if(operator === "/"){
-    if(right === 0){
-      setError("Nie można dzielić przez zero");
-      return null;
-    }
-    return rounded(left / right);
-  }
-  return right;
-}
-
-function setCurrentNumber(value){
-  const clean = rounded(value);
-  if(clean === null){
-    setError("Wynik jest nieprawidłowy");
-    return false;
-  }
-  state.current = String(clean);
-  state.error = "";
-  return true;
-}
-
-function chooseOperator(operator){
-  if(state.error) return;
-  if(state.pending && state.awaitingOperand){
-    state.pending = operator;
-    state.history = grouped(String(state.stored)) + " " + symbols[operator];
-    render();
-    return;
-  }
-
-  const current = Number(state.current);
-  if(state.pending && state.stored !== null){
-    const result = compute(state.stored, current, state.pending);
-    if(result === null || !setCurrentNumber(result)) return;
-    state.stored = result;
-  }else{
-    state.stored = current;
-  }
-
-  state.pending = operator;
-  state.awaitingOperand = true;
-  state.lastOperator = null;
-  state.lastOperand = null;
-  state.history = grouped(String(state.stored)) + " " + symbols[operator];
-  state.overwrite = true;
-  render();
-}
-
-function equals(){
-  if(state.error) return;
-  let operator = state.pending;
-  let left;
-  let right;
-
-  if(operator){
-    left = state.stored;
-    right = state.awaitingOperand ? state.stored : Number(state.current);
-    state.lastOperator = operator;
-    state.lastOperand = right;
-  }else if(state.lastOperator !== null && state.lastOperand !== null){
-    operator = state.lastOperator;
-    left = Number(state.current);
-    right = state.lastOperand;
-  }else{
-    return;
-  }
-
-  const result = compute(left, right, operator);
-  if(result === null) return;
-  state.history = grouped(String(left)) + " " + symbols[operator] + " " + grouped(String(right)) + " =";
-  if(!setCurrentNumber(result)) return;
-  state.stored = null;
-  state.pending = null;
-  state.awaitingOperand = false;
-  state.overwrite = true;
-  render();
-}
-
-function clearEntry(){
-  if(state.error){
-    clearAll();
-    return;
-  }
-  state.current = "0";
-  state.awaitingOperand = false;
-  state.overwrite = false;
-  render();
-}
-
-function clearAll(){
-  state.current = "0";
-  state.stored = null;
-  state.pending = null;
-  state.awaitingOperand = false;
-  state.overwrite = false;
-  state.lastOperator = null;
-  state.lastOperand = null;
-  state.history = "";
-  state.error = "";
-  render();
-}
-
-function backspace(){
-  if(state.error){
-    clearAll();
-    return;
-  }
-  if(state.overwrite) return;
-  if(state.current.length <= 1 || (state.current.startsWith("-") && state.current.length === 2)){
-    state.current = "0";
-  }else{
-    state.current = state.current.slice(0, -1);
-  }
-  render();
-}
-
-function toggleSign(){
-  if(state.error) return;
-  resetForFreshInput();
-  state.current = state.current.startsWith("-") ? state.current.slice(1) : "-" + state.current;
-  state.awaitingOperand = false;
-  render();
-}
-
-function applyUnary(kind){
-  if(state.error) return;
-  const value = Number(state.current);
-  const shown = grouped(String(value));
-  let result;
-  let expression;
-
-  if(kind === "reciprocal"){
-    if(value === 0){
-      setError("Nie można dzielić przez zero");
-      return;
-    }
-    result = 1 / value;
-    expression = "1/(" + shown + ")";
-  }else if(kind === "square"){
-    result = value * value;
-    expression = "sqr(" + shown + ")";
-  }else{
-    if(value < 0){
-      setError("Nieprawidłowe dane wejściowe");
-      return;
-    }
-    result = Math.sqrt(value);
-    expression = "√(" + shown + ")";
-  }
-
-  if(!setCurrentNumber(result)) return;
-  state.awaitingOperand = false;
-  state.history = state.pending && state.stored !== null
-    ? grouped(String(state.stored)) + " " + symbols[state.pending] + " " + expression
-    : expression;
-  state.overwrite = true;
-  render();
-}
-
-function percent(){
-  if(state.error) return;
-  const value = Number(state.current);
-  let result = value / 100;
-  if(state.pending && state.stored !== null && (state.pending === "+" || state.pending === "-")){
-    result = state.stored * value / 100;
-  }
-  state.history = state.pending && state.stored !== null
-    ? grouped(String(state.stored)) + " " + symbols[state.pending] + " " + grouped(String(value)) + "%"
-    : grouped(String(value)) + "%";
-  if(!setCurrentNumber(result)) return;
-  state.awaitingOperand = false;
-  state.overwrite = true;
-  render();
-}
-
-function memoryAction(action){
-  if(state.error && action !== "memory-clear") return;
-  const current = Number(state.current);
-  if(action === "memory-clear"){
-    state.memory = 0;
-    state.hasMemory = false;
-  }else if(action === "memory-recall"){
-    if(!state.hasMemory) return;
-    setCurrentNumber(state.memory);
-    state.awaitingOperand = false;
-    state.overwrite = true;
-  }else if(action === "memory-store"){
-    state.memory = current;
-    state.hasMemory = true;
-  }else if(action === "memory-add"){
-    state.memory = (state.hasMemory ? state.memory : 0) + current;
-    state.hasMemory = true;
-  }else if(action === "memory-subtract"){
-    state.memory = (state.hasMemory ? state.memory : 0) - current;
-    state.hasMemory = true;
-  }
-  saveMemory();
-  render();
-}
-
-function runAction(action, value){
-  if(action === "digit") inputDigit(value);
-  else if(action === "decimal") inputDecimal();
-  else if(action === "operator") chooseOperator(value);
-  else if(action === "equals") equals();
-  else if(action === "clear-entry") clearEntry();
-  else if(action === "clear-all") clearAll();
-  else if(action === "backspace") backspace();
-  else if(action === "sign") toggleSign();
-  else if(action === "percent") percent();
-  else if(action === "reciprocal" || action === "square" || action === "sqrt") applyUnary(action);
-  else if(action.startsWith("memory-")) memoryAction(action);
-}
-
-document.querySelector(".calculator").addEventListener("click", event => {
-  const button = event.target.closest("button[data-action]");
-  if(!button || button.disabled) return;
-  runAction(button.dataset.action, button.dataset.value);
+document.querySelectorAll(".segment").forEach(button => {
+  button.addEventListener("click", () => {
+    activeProfile = button.dataset.profile;
+    document.querySelectorAll(".segment").forEach(item => item.classList.toggle("active", item === button));
+    const selected = selectedPosition();
+    updateScaleOptions(scaleForProfile(selected.allowed, activeProfile));
+    update();
+  });
 });
 
+el("position").addEventListener("change", () => {
+  const selected = selectedPosition();
+  updateScaleOptions(scaleForProfile(selected.allowed, activeProfile));
+  update();
+});
+el("scaleSelect").addEventListener("change", update);
+el("age").addEventListener("change", update);
+el("rate").addEventListener("input", update);
+el("candidate").addEventListener("input", update);
+el("resetBtn").addEventListener("click", reset);
+el("langEn").addEventListener("click", () => setLanguage("en", true));
+el("langNl").addEventListener("click", () => setLanguage("nl", true));
+
+const standardCalculatorOverlay = el("standardCalculatorOverlay");
+const standardCalculatorFrame = el("standardCalculatorFrame");
+const openStandardCalculator = el("openStandardCalculator");
+const closeStandardCalculator = el("closeStandardCalculator");
+
+function setStandardCalculatorOpen(isOpen){
+  if(isOpen && !standardCalculatorFrame.getAttribute("src")){
+    standardCalculatorFrame.setAttribute("src", standardCalculatorFrame.dataset.src);
+  }
+  standardCalculatorOverlay.hidden = !isOpen;
+  openStandardCalculator.setAttribute("aria-expanded", String(isOpen));
+  document.body.style.overflow = isOpen ? "hidden" : "";
+  if(isOpen) closeStandardCalculator.focus();
+  else openStandardCalculator.focus();
+}
+
+openStandardCalculator.addEventListener("click", () => setStandardCalculatorOpen(true));
+closeStandardCalculator.addEventListener("click", () => setStandardCalculatorOpen(false));
+standardCalculatorOverlay.addEventListener("click", event => {
+  if(event.target === standardCalculatorOverlay) setStandardCalculatorOpen(false);
+});
 document.addEventListener("keydown", event => {
-  const key = event.key;
-  let handled = true;
-  if(/^\d$/.test(key)) inputDigit(key);
-  else if(key === "." || key === ",") inputDecimal();
-  else if(key === "+" || key === "-" || key === "*" || key === "/") chooseOperator(key);
-  else if(key === "Enter" || key === "=") equals();
-  else if(key === "Escape") clearAll();
-  else if(key === "Delete") clearEntry();
-  else if(key === "Backspace") backspace();
-  else if(key === "%") percent();
-  else handled = false;
-  if(handled) event.preventDefault();
+  if(event.key === "Escape" && !standardCalculatorOverlay.hidden) setStandardCalculatorOpen(false);
+});
+el("copyBtn").addEventListener("click", async () => {
+  try{
+    await navigator.clipboard.writeText(el("summary").value);
+    el("copyBtn").textContent = t("copied");
+    setTimeout(() => { el("copyBtn").textContent = t("copySummary"); }, 1200);
+  }catch(error){
+    el("summary").focus();
+    el("summary").select();
+  }
 });
 
-loadMemory();
-render();
+window.__rwApplyModuleLang = language => setLanguage(language);
+window.addEventListener("message", event => {
+  if(event.data && event.data.type === "rw:setLang") setLanguage(event.data.lang);
+});
+
+setLanguage(currentLanguage);
 </script>
 </body>
 </html>

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kalkulator</title>
+<style>
+:root{
+  color-scheme:light;
+  --page:#f3f3f3;
+  --surface:#f9f9f9;
+  --display:#f3f3f3;
+  --key:#ffffff;
+  --key-hover:#f4f4f4;
+  --operator:#fafafa;
+  --accent:#0067c0;
+  --accent-hover:#005a9e;
+  --text:#1f1f1f;
+  --muted:#5f5f5f;
+  --line:#dedede;
+  --shadow:0 18px 45px rgba(0,0,0,.16);
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  margin:0;
+  display:grid;
+  place-items:center;
+  padding:22px;
+  background:
+    radial-gradient(circle at 50% 0%,#ffffff 0,#f3f3f3 44%,#e9e9e9 100%);
+  color:var(--text);
+  font-family:"Segoe UI Variable","Segoe UI",Arial,sans-serif;
+}
+button{font:inherit}
+.calculator{
+  width:min(100%,390px);
+  overflow:hidden;
+  border:1px solid #d5d5d5;
+  border-radius:12px;
+  background:var(--surface);
+  box-shadow:var(--shadow);
+}
+.titlebar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  min-height:50px;
+  padding:0 18px;
+}
+.titlebar h1{
+  margin:0;
+  font-size:16px;
+  font-weight:650;
+}
+.memory-indicator{
+  min-width:24px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:700;
+  text-align:right;
+}
+.display{
+  min-height:116px;
+  padding:15px 18px 14px;
+  background:var(--display);
+  text-align:right;
+}
+.history{
+  display:block;
+  min-height:24px;
+  overflow:hidden;
+  color:var(--muted);
+  font-size:14px;
+  line-height:24px;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.current{
+  display:block;
+  min-height:58px;
+  overflow:hidden;
+  font-size:46px;
+  font-weight:650;
+  line-height:58px;
+  letter-spacing:-1.5px;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.current.medium{font-size:36px}
+.current.small{font-size:27px;letter-spacing:-.5px}
+.memory-row{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:2px;
+  padding:0 4px 4px;
+}
+.memory-row button{
+  min-height:36px;
+  border:0;
+  border-radius:5px;
+  background:transparent;
+  color:#242424;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:650;
+}
+.memory-row button:hover{background:#e9e9e9}
+.memory-row button:active{background:#dedede}
+.memory-row button:disabled{
+  color:#a5a5a5;
+  cursor:default;
+  background:transparent;
+}
+.keys{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:2px;
+  padding:0 4px 4px;
+}
+.key{
+  min-height:60px;
+  border:1px solid rgba(0,0,0,.035);
+  border-radius:5px;
+  background:var(--key);
+  color:var(--text);
+  cursor:pointer;
+  font-size:19px;
+  font-weight:500;
+  transition:background .08s ease,transform .04s ease;
+}
+.key:hover{background:var(--key-hover)}
+.key:active{
+  background:#e7e7e7;
+  transform:scale(.985);
+}
+.key.function,
+.key.operator{
+  background:var(--operator);
+  font-size:17px;
+}
+.key.function:hover,
+.key.operator:hover{background:#ededed}
+.key.digit{font-weight:650}
+.key.equals{
+  border-color:transparent;
+  background:var(--accent);
+  color:#fff;
+}
+.key.equals:hover{background:var(--accent-hover)}
+.key.equals:active{background:#004f8b}
+.key svg{
+  width:21px;
+  height:21px;
+  vertical-align:middle;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+@media(max-width:460px){
+  body{display:block;padding:0;background:var(--surface)}
+  .calculator{
+    width:100%;
+    min-height:100vh;
+    border:0;
+    border-radius:0;
+    box-shadow:none;
+  }
+  .display{min-height:128px;padding-top:25px}
+  .key{min-height:64px}
+}
+@media(max-height:700px){
+  body{padding:8px}
+  .titlebar{min-height:42px}
+  .display{min-height:94px;padding-top:7px;padding-bottom:8px}
+  .history{min-height:20px;line-height:20px}
+  .current{min-height:54px;line-height:54px}
+  .memory-row button{min-height:30px}
+  .key{min-height:48px}
+}
+@media(prefers-reduced-motion:reduce){
+  .key{transition:none}
+}
+</style>
+</head>
+<body>
+<main class="calculator" aria-label="Kalkulator standardowy">
+  <header class="titlebar">
+    <h1>Kalkulator</h1>
+    <span class="memory-indicator" id="memoryIndicator" aria-label="Pamięć kalkulatora"></span>
+  </header>
+
+  <section class="display" aria-live="polite" aria-atomic="true">
+    <output class="history" id="history"></output>
+    <output class="current" id="display">0</output>
+  </section>
+
+  <div class="memory-row" aria-label="Pamięć">
+    <button type="button" data-action="memory-clear" id="memoryClear" disabled>MC</button>
+    <button type="button" data-action="memory-recall" id="memoryRecall" disabled>MR</button>
+    <button type="button" data-action="memory-add">M+</button>
+    <button type="button" data-action="memory-subtract">M−</button>
+    <button type="button" data-action="memory-store">MS</button>
+  </div>
+
+  <div class="keys">
+    <button class="key function" type="button" data-action="percent" aria-label="Procent">%</button>
+    <button class="key function" type="button" data-action="clear-entry">CE</button>
+    <button class="key function" type="button" data-action="clear-all">C</button>
+    <button class="key function" type="button" data-action="backspace" aria-label="Usuń ostatnią cyfrę">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5h10v14H9l-6-7 6-7Z"></path><path d="m12 9 4 6m0-6-4 6"></path></svg>
+    </button>
+
+    <button class="key function" type="button" data-action="reciprocal">¹⁄ₓ</button>
+    <button class="key function" type="button" data-action="square">x²</button>
+    <button class="key function" type="button" data-action="sqrt">√x</button>
+    <button class="key operator" type="button" data-action="operator" data-value="/" aria-label="Dzielenie">÷</button>
+
+    <button class="key digit" type="button" data-action="digit" data-value="7">7</button>
+    <button class="key digit" type="button" data-action="digit" data-value="8">8</button>
+    <button class="key digit" type="button" data-action="digit" data-value="9">9</button>
+    <button class="key operator" type="button" data-action="operator" data-value="*" aria-label="Mnożenie">×</button>
+
+    <button class="key digit" type="button" data-action="digit" data-value="4">4</button>
+    <button class="key digit" type="button" data-action="digit" data-value="5">5</button>
+    <button class="key digit" type="button" data-action="digit" data-value="6">6</button>
+    <button class="key operator" type="button" data-action="operator" data-value="-" aria-label="Odejmowanie">−</button>
+
+    <button class="key digit" type="button" data-action="digit" data-value="1">1</button>
+    <button class="key digit" type="button" data-action="digit" data-value="2">2</button>
+    <button class="key digit" type="button" data-action="digit" data-value="3">3</button>
+    <button class="key operator" type="button" data-action="operator" data-value="+" aria-label="Dodawanie">+</button>
+
+    <button class="key function" type="button" data-action="sign" aria-label="Zmień znak">⁺⁄₋</button>
+    <button class="key digit" type="button" data-action="digit" data-value="0">0</button>
+    <button class="key" type="button" data-action="decimal" aria-label="Przecinek dziesiętny">,</button>
+    <button class="key equals" type="button" data-action="equals" aria-label="Równa się">=</button>
+  </div>
+</main>
+
+<script>
+const MAX_DIGITS = 16;
+const MEMORY_KEY = "msd_standard_calculator_memory";
+const symbols = {"+":"+","-":"−","*":"×","/":"÷"};
+
+const state = {
+  current:"0",
+  stored:null,
+  pending:null,
+  awaitingOperand:false,
+  overwrite:false,
+  lastOperator:null,
+  lastOperand:null,
+  history:"",
+  error:"",
+  memory:0,
+  hasMemory:false
+};
+
+const display = document.getElementById("display");
+const historyOut = document.getElementById("history");
+const memoryIndicator = document.getElementById("memoryIndicator");
+const memoryClear = document.getElementById("memoryClear");
+const memoryRecall = document.getElementById("memoryRecall");
+
+function loadMemory(){
+  try{
+    const saved = localStorage.getItem(MEMORY_KEY);
+    if(saved !== null && Number.isFinite(Number(saved))){
+      state.memory = Number(saved);
+      state.hasMemory = true;
+    }
+  }catch(_error){}
+}
+
+function saveMemory(){
+  try{
+    if(state.hasMemory) localStorage.setItem(MEMORY_KEY, String(state.memory));
+    else localStorage.removeItem(MEMORY_KEY);
+  }catch(_error){}
+}
+
+function grouped(raw){
+  if(/[eE]/.test(raw)) return raw.replace(".", ",");
+  const negative = raw.startsWith("-");
+  const unsigned = negative ? raw.slice(1) : raw;
+  const parts = unsigned.split(".");
+  const integer = (parts[0] || "0").replace(/\B(?=(\d{3})+(?!\d))/g, "\u00a0");
+  const fraction = parts.length > 1 ? "," + parts[1] : "";
+  return (negative ? "−" : "") + integer + fraction;
+}
+
+function render(){
+  const text = state.error || grouped(state.current);
+  display.textContent = text;
+  display.classList.toggle("medium", text.length > 13 && text.length <= 18);
+  display.classList.toggle("small", text.length > 18);
+  historyOut.textContent = state.history;
+  memoryIndicator.textContent = state.hasMemory ? "M" : "";
+  memoryClear.disabled = !state.hasMemory;
+  memoryRecall.disabled = !state.hasMemory;
+}
+
+function resetForFreshInput(){
+  if(state.error) clearAll();
+  if(state.overwrite){
+    if(state.pending === null){
+      state.history = "";
+      state.lastOperator = null;
+      state.lastOperand = null;
+    }
+    state.current = "0";
+    state.overwrite = false;
+  }
+}
+
+function inputDigit(digit){
+  resetForFreshInput();
+  if(state.current.replace(/\D/g, "").length >= MAX_DIGITS) return;
+  if(state.current === "0") state.current = digit;
+  else if(state.current === "-0") state.current = "-" + digit;
+  else state.current += digit;
+  state.awaitingOperand = false;
+  render();
+}
+
+function inputDecimal(){
+  resetForFreshInput();
+  if(!state.current.includes(".")) state.current += ".";
+  state.awaitingOperand = false;
+  render();
+}
+
+function setError(message){
+  state.error = message;
+  state.current = "0";
+  state.stored = null;
+  state.pending = null;
+  state.awaitingOperand = false;
+  state.overwrite = true;
+  state.lastOperator = null;
+  state.lastOperand = null;
+  state.history = "";
+  render();
+}
+
+function rounded(value){
+  if(!Number.isFinite(value)) return null;
+  if(Math.abs(value) < 1e-14) return 0;
+  return Number(value.toPrecision(15));
+}
+
+function compute(left, right, operator){
+  if(operator === "+") return rounded(left + right);
+  if(operator === "-") return rounded(left - right);
+  if(operator === "*") return rounded(left * right);
+  if(operator === "/"){
+    if(right === 0){
+      setError("Nie można dzielić przez zero");
+      return null;
+    }
+    return rounded(left / right);
+  }
+  return right;
+}
+
+function setCurrentNumber(value){
+  const clean = rounded(value);
+  if(clean === null){
+    setError("Wynik jest nieprawidłowy");
+    return false;
+  }
+  state.current = String(clean);
+  state.error = "";
+  return true;
+}
+
+function chooseOperator(operator){
+  if(state.error) return;
+  if(state.pending && state.awaitingOperand){
+    state.pending = operator;
+    state.history = grouped(String(state.stored)) + " " + symbols[operator];
+    render();
+    return;
+  }
+
+  const current = Number(state.current);
+  if(state.pending && state.stored !== null){
+    const result = compute(state.stored, current, state.pending);
+    if(result === null || !setCurrentNumber(result)) return;
+    state.stored = result;
+  }else{
+    state.stored = current;
+  }
+
+  state.pending = operator;
+  state.awaitingOperand = true;
+  state.lastOperator = null;
+  state.lastOperand = null;
+  state.history = grouped(String(state.stored)) + " " + symbols[operator];
+  state.overwrite = true;
+  render();
+}
+
+function equals(){
+  if(state.error) return;
+  let operator = state.pending;
+  let left;
+  let right;
+
+  if(operator){
+    left = state.stored;
+    right = state.awaitingOperand ? state.stored : Number(state.current);
+    state.lastOperator = operator;
+    state.lastOperand = right;
+  }else if(state.lastOperator !== null && state.lastOperand !== null){
+    operator = state.lastOperator;
+    left = Number(state.current);
+    right = state.lastOperand;
+  }else{
+    return;
+  }
+
+  const result = compute(left, right, operator);
+  if(result === null) return;
+  state.history = grouped(String(left)) + " " + symbols[operator] + " " + grouped(String(right)) + " =";
+  if(!setCurrentNumber(result)) return;
+  state.stored = null;
+  state.pending = null;
+  state.awaitingOperand = false;
+  state.overwrite = true;
+  render();
+}
+
+function clearEntry(){
+  if(state.error){
+    clearAll();
+    return;
+  }
+  state.current = "0";
+  state.awaitingOperand = false;
+  state.overwrite = false;
+  render();
+}
+
+function clearAll(){
+  state.current = "0";
+  state.stored = null;
+  state.pending = null;
+  state.awaitingOperand = false;
+  state.overwrite = false;
+  state.lastOperator = null;
+  state.lastOperand = null;
+  state.history = "";
+  state.error = "";
+  render();
+}
+
+function backspace(){
+  if(state.error){
+    clearAll();
+    return;
+  }
+  if(state.overwrite) return;
+  if(state.current.length <= 1 || (state.current.startsWith("-") && state.current.length === 2)){
+    state.current = "0";
+  }else{
+    state.current = state.current.slice(0, -1);
+  }
+  render();
+}
+
+function toggleSign(){
+  if(state.error) return;
+  resetForFreshInput();
+  state.current = state.current.startsWith("-") ? state.current.slice(1) : "-" + state.current;
+  state.awaitingOperand = false;
+  render();
+}
+
+function applyUnary(kind){
+  if(state.error) return;
+  const value = Number(state.current);
+  const shown = grouped(String(value));
+  let result;
+  let expression;
+
+  if(kind === "reciprocal"){
+    if(value === 0){
+      setError("Nie można dzielić przez zero");
+      return;
+    }
+    result = 1 / value;
+    expression = "1/(" + shown + ")";
+  }else if(kind === "square"){
+    result = value * value;
+    expression = "sqr(" + shown + ")";
+  }else{
+    if(value < 0){
+      setError("Nieprawidłowe dane wejściowe");
+      return;
+    }
+    result = Math.sqrt(value);
+    expression = "√(" + shown + ")";
+  }
+
+  if(!setCurrentNumber(result)) return;
+  state.awaitingOperand = false;
+  state.history = state.pending && state.stored !== null
+    ? grouped(String(state.stored)) + " " + symbols[state.pending] + " " + expression
+    : expression;
+  state.overwrite = true;
+  render();
+}
+
+function percent(){
+  if(state.error) return;
+  const value = Number(state.current);
+  let result = value / 100;
+  if(state.pending && state.stored !== null && (state.pending === "+" || state.pending === "-")){
+    result = state.stored * value / 100;
+  }
+  state.history = state.pending && state.stored !== null
+    ? grouped(String(state.stored)) + " " + symbols[state.pending] + " " + grouped(String(value)) + "%"
+    : grouped(String(value)) + "%";
+  if(!setCurrentNumber(result)) return;
+  state.awaitingOperand = false;
+  state.overwrite = true;
+  render();
+}
+
+function memoryAction(action){
+  if(state.error && action !== "memory-clear") return;
+  const current = Number(state.current);
+  if(action === "memory-clear"){
+    state.memory = 0;
+    state.hasMemory = false;
+  }else if(action === "memory-recall"){
+    if(!state.hasMemory) return;
+    setCurrentNumber(state.memory);
+    state.awaitingOperand = false;
+    state.overwrite = true;
+  }else if(action === "memory-store"){
+    state.memory = current;
+    state.hasMemory = true;
+  }else if(action === "memory-add"){
+    state.memory = (state.hasMemory ? state.memory : 0) + current;
+    state.hasMemory = true;
+  }else if(action === "memory-subtract"){
+    state.memory = (state.hasMemory ? state.memory : 0) - current;
+    state.hasMemory = true;
+  }
+  saveMemory();
+  render();
+}
+
+function runAction(action, value){
+  if(action === "digit") inputDigit(value);
+  else if(action === "decimal") inputDecimal();
+  else if(action === "operator") chooseOperator(value);
+  else if(action === "equals") equals();
+  else if(action === "clear-entry") clearEntry();
+  else if(action === "clear-all") clearAll();
+  else if(action === "backspace") backspace();
+  else if(action === "sign") toggleSign();
+  else if(action === "percent") percent();
+  else if(action === "reciprocal" || action === "square" || action === "sqrt") applyUnary(action);
+  else if(action.startsWith("memory-")) memoryAction(action);
+}
+
+document.querySelector(".calculator").addEventListener("click", event => {
+  const button = event.target.closest("button[data-action]");
+  if(!button || button.disabled) return;
+  runAction(button.dataset.action, button.dataset.value);
+});
+
+document.addEventListener("keydown", event => {
+  const key = event.key;
+  let handled = true;
+  if(/^\d$/.test(key)) inputDigit(key);
+  else if(key === "." || key === ",") inputDecimal();
+  else if(key === "+" || key === "-" || key === "*" || key === "/") chooseOperator(key);
+  else if(key === "Enter" || key === "=") equals();
+  else if(key === "Escape") clearAll();
+  else if(key === "Delete") clearEntry();
+  else if(key === "Backspace") backspace();
+  else if(key === "%") percent();
+  else handled = false;
+  if(handled) event.preventDefault();
+});
+
+loadMemory();
+render();
+</script>
+</body>
+</html>
