@@ -98,18 +98,60 @@ h1{
   color:#fff;
 }
 .calculator-launch{
+  position:relative;
+  isolation:isolate;
   min-height:38px;
-  padding:0 14px;
-  border:1px solid var(--teal);
-  border-radius:8px;
-  background:var(--teal);
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:0 8px 0 14px;
+  overflow:hidden;
+  border:1px solid #00776f;
+  border-radius:9px;
+  background:linear-gradient(145deg,#00988e,#007970);
   color:#fff;
   cursor:pointer;
   font:inherit;
   font-size:13px;
   font-weight:850;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),0 5px 0 #005c56,0 8px 16px rgba(0,94,87,.18);
+  transform:translateY(-2px);
+  transition:transform .14s ease,box-shadow .14s ease,filter .14s ease;
 }
-.calculator-launch:hover{background:#006f68}
+.calculator-launch::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:-2px;
+  background:linear-gradient(115deg,transparent 20%,rgba(255,255,255,.28) 45%,transparent 70%);
+  transform:translateX(-120%);
+  transition:transform .5s ease;
+}
+.calculator-launch:hover{
+  filter:saturate(1.12) brightness(1.04);
+  transform:translateY(-3px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 6px 0 #005c56,0 10px 20px rgba(0,94,87,.22);
+}
+.calculator-launch:hover::before{transform:translateX(120%)}
+.calculator-launch:active{
+  transform:translateY(2px);
+  box-shadow:inset 0 1px 6px rgba(0,45,42,.22),0 1px 0 #005c56,0 4px 8px rgba(0,94,87,.16);
+}
+.calculator-launch-kbd{
+  min-width:27px;
+  height:25px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.34);
+  border-radius:6px;
+  background:rgba(1,52,49,.28);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16);
+  color:#e8fffd;
+  font-size:11px;
+  line-height:1;
+  letter-spacing:.3px;
+}
+.calculator-launch.launching{animation:calculatorLaunchRecoil .55s cubic-bezier(.2,.9,.22,1)}
 .calculator-launch:focus-visible,
 .calculator-panel-close:focus-visible{
   outline:3px solid rgba(0,133,124,.25);
@@ -135,7 +177,12 @@ h1{
   transform:translateX(calc(100% + 30px));
   transition:opacity .16s ease,transform .2s ease,visibility 0s .2s;
 }
+.calculator-overlay.impact-animating{
+  will-change:transform,opacity,filter;
+}
 .calculator-panel{
+  position:relative;
+  z-index:2;
   width:100%;
   height:100%;
   display:flex;
@@ -178,6 +225,158 @@ h1{
   border:0;
   background:#06101c;
 }
+.calculator-impact-fx{
+  position:absolute;
+  z-index:4;
+  left:50%;
+  bottom:-10px;
+  width:520px;
+  height:180px;
+  overflow:visible;
+  pointer-events:none;
+  transform:translateX(-50%);
+}
+.impact-flash{
+  position:absolute;
+  left:50%;
+  bottom:-14px;
+  width:270px;
+  height:100px;
+  border-radius:50%;
+  opacity:0;
+  background:radial-gradient(ellipse,rgba(187,255,250,.74) 0,rgba(36,224,208,.28) 30%,transparent 70%);
+  filter:blur(3px);
+  transform:translateX(-50%) scale(.25);
+}
+.impact-wave{
+  position:absolute;
+  left:50%;
+  bottom:7px;
+  width:110px;
+  height:30px;
+  border:2px solid rgba(70,238,226,.82);
+  border-radius:50%;
+  opacity:0;
+  box-shadow:0 0 18px rgba(36,224,208,.28);
+  transform:translateX(-50%) scale(.15);
+}
+.impact-wave.wave-two{
+  border-color:rgba(76,169,255,.55);
+  filter:blur(.4px);
+}
+.impact-ground{
+  position:absolute;
+  left:50%;
+  bottom:12px;
+  width:390px;
+  height:2px;
+  opacity:0;
+  background:linear-gradient(90deg,transparent,rgba(68,238,225,.88),rgba(255,255,255,.82),rgba(73,169,255,.72),transparent);
+  box-shadow:0 0 16px rgba(36,224,208,.55);
+  transform:translateX(-50%) scaleX(.05);
+}
+.impact-particle{
+  position:absolute;
+  left:50%;
+  bottom:14px;
+  width:8px;
+  height:8px;
+  border-radius:2px;
+  opacity:0;
+  background:#8ff9ef;
+  box-shadow:0 0 12px rgba(67,236,222,.78);
+}
+.impact-particle:nth-of-type(3n){
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:#77bfff;
+  box-shadow:0 0 10px rgba(80,171,255,.72);
+}
+.impact-fracture{
+  position:absolute;
+  left:50%;
+  bottom:12px;
+  width:var(--length,100px);
+  height:2px;
+  opacity:0;
+  background:linear-gradient(90deg,rgba(114,240,231,.76),transparent);
+  transform:rotate(var(--angle,0deg)) scaleX(0);
+  transform-origin:left center;
+}
+.calculator-overlay.impact-run-a .impact-flash{animation:calculatorImpactFlashA .62s .54s both ease-out}
+.calculator-overlay.impact-run-b .impact-flash{animation:calculatorImpactFlashB .62s .54s both ease-out}
+.calculator-overlay.impact-run-a .impact-wave.wave-one{animation:calculatorShockwaveA .72s .55s both cubic-bezier(.12,.72,.2,1)}
+.calculator-overlay.impact-run-b .impact-wave.wave-one{animation:calculatorShockwaveB .72s .55s both cubic-bezier(.12,.72,.2,1)}
+.calculator-overlay.impact-run-a .impact-wave.wave-two{animation:calculatorShockwaveA .86s .59s both cubic-bezier(.12,.72,.2,1)}
+.calculator-overlay.impact-run-b .impact-wave.wave-two{animation:calculatorShockwaveB .86s .59s both cubic-bezier(.12,.72,.2,1)}
+.calculator-overlay.impact-run-a .impact-ground{animation:calculatorGroundPulseA .72s .54s both ease-out}
+.calculator-overlay.impact-run-b .impact-ground{animation:calculatorGroundPulseB .72s .54s both ease-out}
+.calculator-overlay.impact-run-a .impact-particle{animation:calculatorParticleBurstA .78s calc(.55s + var(--delay,0ms)) both cubic-bezier(.14,.64,.28,1)}
+.calculator-overlay.impact-run-b .impact-particle{animation:calculatorParticleBurstB .78s calc(.55s + var(--delay,0ms)) both cubic-bezier(.14,.64,.28,1)}
+.calculator-overlay.impact-run-a .impact-fracture{animation:calculatorFractureA .72s calc(.56s + var(--delay,0ms)) both ease-out}
+.calculator-overlay.impact-run-b .impact-fracture{animation:calculatorFractureB .72s calc(.56s + var(--delay,0ms)) both ease-out}
+@keyframes calculatorImpactFlashA{
+  0%{opacity:0;transform:translateX(-50%) scale(.15)}
+  18%{opacity:1}
+  100%{opacity:0;transform:translateX(-50%) scale(1.8)}
+}
+@keyframes calculatorImpactFlashB{
+  0%{opacity:0;transform:translateX(-50%) scale(.15)}
+  18%{opacity:1}
+  100%{opacity:0;transform:translateX(-50%) scale(1.8)}
+}
+@keyframes calculatorShockwaveA{
+  0%{opacity:0;transform:translateX(-50%) scale(.12)}
+  16%{opacity:.9}
+  100%{opacity:0;transform:translateX(-50%) scale(4.7)}
+}
+@keyframes calculatorShockwaveB{
+  0%{opacity:0;transform:translateX(-50%) scale(.12)}
+  16%{opacity:.9}
+  100%{opacity:0;transform:translateX(-50%) scale(4.7)}
+}
+@keyframes calculatorGroundPulseA{
+  0%{opacity:0;transform:translateX(-50%) scaleX(.05)}
+  22%{opacity:1}
+  100%{opacity:0;transform:translateX(-50%) scaleX(1.25)}
+}
+@keyframes calculatorGroundPulseB{
+  0%{opacity:0;transform:translateX(-50%) scaleX(.05)}
+  22%{opacity:1}
+  100%{opacity:0;transform:translateX(-50%) scaleX(1.25)}
+}
+@keyframes calculatorParticleBurstA{
+  0%{opacity:0;transform:translate3d(0,0,0) rotate(0) scale(.3)}
+  18%{opacity:1}
+  100%{opacity:0;transform:translate3d(var(--x),var(--y),0) rotate(var(--rotation,120deg)) scale(.08)}
+}
+@keyframes calculatorParticleBurstB{
+  0%{opacity:0;transform:translate3d(0,0,0) rotate(0) scale(.3)}
+  18%{opacity:1}
+  100%{opacity:0;transform:translate3d(var(--x),var(--y),0) rotate(var(--rotation,120deg)) scale(.08)}
+}
+@keyframes calculatorFractureA{
+  0%{opacity:0;transform:rotate(var(--angle,0deg)) scaleX(0)}
+  24%{opacity:.86}
+  100%{opacity:0;transform:rotate(var(--angle,0deg)) scaleX(1)}
+}
+@keyframes calculatorFractureB{
+  0%{opacity:0;transform:rotate(var(--angle,0deg)) scaleX(0)}
+  24%{opacity:.86}
+  100%{opacity:0;transform:rotate(var(--angle,0deg)) scaleX(1)}
+}
+@keyframes calculatorLaunchRecoil{
+  0%,100%{transform:translateY(-2px) scale(1)}
+  24%{transform:translateY(2px) scale(.96)}
+  48%{transform:translateY(-5px) scale(1.035)}
+  72%{transform:translateY(-1px) scale(.995)}
+}
+body.calculator-impact-manual .topbar-inner,
+body.calculator-impact-manual main{
+  transform:translate3d(var(--calculator-impact-x,0),var(--calculator-impact-y,0),0);
+  will-change:transform;
+}
 @media(max-width:640px){
   .calculator-overlay{
     right:8px;
@@ -185,6 +384,12 @@ h1{
     width:calc(100vw - 16px);
     height:min(68vh,620px);
   }
+}
+@media(prefers-reduced-motion:reduce){
+  .calculator-overlay,.calculator-launch{transition:none}
+  .calculator-overlay.impact-animating,
+  .calculator-overlay.impact-animating .calculator-panel,
+  .calculator-overlay.impact-animating .calculator-impact-fx *{animation:none!important}
 }
 main{
   max-width:1180px;
@@ -1087,7 +1292,10 @@ tr.selected td{
   <div class="topbar-inner">
     <h1>MSD CAO Salary Check</h1>
       <div class="topbar-actions">
-      <button class="calculator-launch" id="openStandardCalculator" type="button" aria-controls="standardCalculatorOverlay" aria-expanded="false">Calculator</button>
+      <button class="calculator-launch" id="openStandardCalculator" type="button" aria-controls="standardCalculatorOverlay" aria-expanded="false" aria-keyshortcuts="K">
+        <span id="calculatorLaunchLabel">Calculator</span>
+        <kbd class="calculator-launch-kbd" aria-hidden="true">K</kbd>
+      </button>
       <div class="language-switch">
         <span class="language-switch-label" id="languageSwitchLabel">Language</span>
         <div class="language-switch-buttons">
@@ -1106,8 +1314,28 @@ tr.selected td{
       <strong id="standardCalculatorTitle">Calculator</strong>
       <button class="calculator-panel-close" id="closeStandardCalculator" type="button" aria-label="Close calculator">×</button>
     </header>
-    <iframe class="calculator-frame" id="standardCalculatorFrame" src="standard-calculator.html?v=20260817-futuristic-v2" title="Standard calculator" loading="eager"></iframe>
+    <iframe class="calculator-frame" id="standardCalculatorFrame" src="standard-calculator.html?v=20260817-futuristic-v3" title="Standard calculator" loading="eager"></iframe>
   </section>
+  <div class="calculator-impact-fx" aria-hidden="true">
+    <span class="impact-flash"></span>
+    <span class="impact-wave wave-one"></span>
+    <span class="impact-wave wave-two"></span>
+    <span class="impact-ground"></span>
+    <span class="impact-particle" style="--x:-205px;--y:-78px;--rotation:-165deg;--delay:0ms"></span>
+    <span class="impact-particle" style="--x:-156px;--y:-118px;--rotation:-125deg;--delay:20ms"></span>
+    <span class="impact-particle" style="--x:-108px;--y:-66px;--rotation:-85deg;--delay:44ms"></span>
+    <span class="impact-particle" style="--x:-58px;--y:-136px;--rotation:-45deg;--delay:12ms"></span>
+    <span class="impact-particle" style="--x:-18px;--y:-92px;--rotation:-20deg;--delay:56ms"></span>
+    <span class="impact-particle" style="--x:38px;--y:-132px;--rotation:38deg;--delay:22ms"></span>
+    <span class="impact-particle" style="--x:84px;--y:-76px;--rotation:72deg;--delay:48ms"></span>
+    <span class="impact-particle" style="--x:132px;--y:-120px;--rotation:110deg;--delay:8ms"></span>
+    <span class="impact-particle" style="--x:178px;--y:-70px;--rotation:148deg;--delay:38ms"></span>
+    <span class="impact-particle" style="--x:218px;--y:-104px;--rotation:175deg;--delay:64ms"></span>
+    <span class="impact-fracture" style="--length:126px;--angle:194deg;--delay:0ms"></span>
+    <span class="impact-fracture" style="--length:102px;--angle:215deg;--delay:26ms"></span>
+    <span class="impact-fracture" style="--length:118px;--angle:326deg;--delay:12ms"></span>
+    <span class="impact-fracture" style="--length:92px;--angle:346deg;--delay:38ms"></span>
+  </div>
 </div>
 
 <main>
@@ -1887,7 +2115,7 @@ function updateStaticLanguage(){
   document.documentElement.lang = currentLanguage;
   document.body.dataset.lang = currentLanguage;
   el("languageSwitchLabel").textContent = t("language");
-  el("openStandardCalculator").textContent = t("calculator");
+  el("calculatorLaunchLabel").textContent = t("calculator");
   el("standardCalculatorTitle").textContent = t("calculator");
   el("closeStandardCalculator").setAttribute("aria-label", t("closeCalculator"));
   el("inputsHead").textContent = t("inputs");
@@ -1986,22 +2214,161 @@ function flushCalculatorKeys(){
 
 standardCalculatorFrame.addEventListener("load", flushCalculatorKeys);
 
+const calculatorImpactTimers = [];
+let calculatorImpactVariant = false;
+let calculatorImpactFrame = 0;
+
+function clearCalculatorImpactTimers(){
+  while(calculatorImpactTimers.length) window.clearTimeout(calculatorImpactTimers.pop());
+}
+
+function clearCalculatorImpactMotion(){
+  if(calculatorImpactFrame) window.cancelAnimationFrame(calculatorImpactFrame);
+  calculatorImpactFrame = 0;
+  document.body.classList.remove("calculator-impact-manual");
+  document.body.style.removeProperty("--calculator-impact-x");
+  document.body.style.removeProperty("--calculator-impact-y");
+  standardCalculatorOverlay.style.removeProperty("animation");
+  standardCalculatorOverlay.style.removeProperty("filter");
+  standardCalculatorOverlay.style.removeProperty("opacity");
+  standardCalculatorOverlay.style.removeProperty("transform");
+  standardCalculatorOverlay.style.removeProperty("transition");
+  standardCalculatorOverlay.querySelector(".calculator-panel")?.style.removeProperty("animation");
+  standardCalculatorOverlay.querySelector(".calculator-panel")?.style.removeProperty("box-shadow");
+}
+
+function playCalculatorImpact(){
+  clearCalculatorImpactTimers();
+  clearCalculatorImpactMotion();
+  standardCalculatorOverlay.classList.remove("impact-animating", "impact-run-a", "impact-run-b");
+  openStandardCalculator.classList.remove("launching");
+  if(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+
+  calculatorImpactVariant = !calculatorImpactVariant;
+  const impactRunClass = calculatorImpactVariant ? "impact-run-a" : "impact-run-b";
+  const oldImpactFx = standardCalculatorOverlay.querySelector(".calculator-impact-fx");
+  oldImpactFx?.replaceWith(oldImpactFx.cloneNode(true));
+  const calculatorPanel = standardCalculatorOverlay.querySelector(".calculator-panel");
+
+  standardCalculatorOverlay.classList.add("impact-animating", impactRunClass);
+  openStandardCalculator.classList.add("launching");
+  standardCalculatorOverlay.style.animation = "none";
+  standardCalculatorOverlay.style.transition = "none";
+  if(calculatorPanel) calculatorPanel.style.animation = "none";
+
+  const dropFrames = [
+    {time:0,y:-(window.innerHeight + 220),rotation:-2.8,scaleX:.94,scaleY:.94},
+    {time:.56,y:0,rotation:.7,scaleX:1.045,scaleY:.955},
+    {time:.66,y:-34,rotation:-.5,scaleX:.992,scaleY:1.008},
+    {time:.76,y:0,rotation:.22,scaleX:1.02,scaleY:.98},
+    {time:.85,y:-10,rotation:-.12,scaleX:.998,scaleY:.998},
+    {time:.93,y:0,rotation:.05,scaleX:1.006,scaleY:.994},
+    {time:1,y:0,rotation:0,scaleX:1,scaleY:1}
+  ];
+
+  function drawCalculatorImpact(progress){
+    let startFrame = dropFrames[0];
+    let endFrame = dropFrames[dropFrames.length - 1];
+    let segmentIndex = 1;
+    for(let index = 1; index < dropFrames.length; index += 1){
+      if(progress <= dropFrames[index].time){
+        startFrame = dropFrames[index - 1];
+        endFrame = dropFrames[index];
+        segmentIndex = index;
+        break;
+      }
+    }
+    const segmentLength = Math.max(.001,endFrame.time - startFrame.time);
+    const segmentProgress = Math.max(0,Math.min(1,(progress - startFrame.time) / segmentLength));
+    const easedProgress = segmentIndex === 1
+      ? segmentProgress * segmentProgress
+      : 1 - Math.pow(1 - segmentProgress,2);
+    const mix = property => startFrame[property] + (endFrame[property] - startFrame[property]) * easedProgress;
+    const fadeProgress = Math.max(0,Math.min(1,progress / .4));
+    const opacity = fadeProgress * fadeProgress * (3 - 2 * fadeProgress);
+    const blur = Math.max(0,2 * (1 - fadeProgress));
+
+    standardCalculatorOverlay.style.opacity = String(opacity);
+    standardCalculatorOverlay.style.filter = blur > .02 ? `blur(${blur.toFixed(2)}px)` : "none";
+    standardCalculatorOverlay.style.transform = `translate3d(0,${mix("y").toFixed(2)}px,0) rotate(${mix("rotation").toFixed(3)}deg) scaleX(${mix("scaleX").toFixed(4)}) scaleY(${mix("scaleY").toFixed(4)})`;
+
+    const glow = progress < .48 ? 0 : progress < .58
+      ? (progress - .48) / .1
+      : progress < .8 ? 1 - (progress - .58) / .22 : 0;
+    if(calculatorPanel){
+      const glowLevel = Math.max(0,Math.min(1,glow));
+      calculatorPanel.style.boxShadow = `0 ${Math.round(24 - 16 * glowLevel)}px ${Math.round(72 - 34 * glowLevel)}px rgba(15,23,42,${(.34 + .14 * glowLevel).toFixed(3)}),0 0 0 ${(2 * glowLevel).toFixed(2)}px rgba(126,255,245,${(.48 * glowLevel).toFixed(3)}),0 0 ${Math.round(22 + 34 * glowLevel)}px rgba(36,224,208,${(.08 + .28 * glowLevel).toFixed(3)})`;
+    }
+
+    if(progress >= .54 && progress <= .9){
+      const shakeProgress = (progress - .54) / .36;
+      const shakeStrength = (1 - shakeProgress) * 8;
+      const shakeX = Math.sin(shakeProgress * Math.PI * 10) * shakeStrength;
+      const shakeY = Math.sin(shakeProgress * Math.PI * 16) * shakeStrength * .28;
+      document.body.classList.add("calculator-impact-manual");
+      document.body.style.setProperty("--calculator-impact-x",`${shakeX.toFixed(2)}px`);
+      document.body.style.setProperty("--calculator-impact-y",`${shakeY.toFixed(2)}px`);
+    }else{
+      document.body.classList.remove("calculator-impact-manual");
+      document.body.style.removeProperty("--calculator-impact-x");
+      document.body.style.removeProperty("--calculator-impact-y");
+    }
+  }
+
+  drawCalculatorImpact(0);
+  const impactStart = performance.now();
+  const impactDuration = 1120;
+  function advanceCalculatorImpact(now){
+    const progress = Math.min(1,(now - impactStart) / impactDuration);
+    drawCalculatorImpact(progress);
+    if(progress < 1){
+      calculatorImpactFrame = window.requestAnimationFrame(advanceCalculatorImpact);
+    }else{
+      calculatorImpactFrame = 0;
+    }
+  }
+  calculatorImpactFrame = window.requestAnimationFrame(advanceCalculatorImpact);
+
+  calculatorImpactTimers.push(window.setTimeout(() => {
+    standardCalculatorOverlay.classList.remove("impact-animating", "impact-run-a", "impact-run-b");
+    openStandardCalculator.classList.remove("launching");
+    clearCalculatorImpactMotion();
+  }, 1550));
+}
+
 function setStandardCalculatorOpen(isOpen){
+  const wasClosed = standardCalculatorOverlay.classList.contains("is-closed");
   standardCalculatorOverlay.classList.toggle("is-closed", !isOpen);
   standardCalculatorOverlay.setAttribute("aria-hidden", String(!isOpen));
   openStandardCalculator.setAttribute("aria-expanded", String(isOpen));
   document.body.classList.toggle("calculator-open", isOpen);
-  if(!isOpen) openStandardCalculator.focus();
+  if(isOpen && wasClosed){
+    playCalculatorImpact();
+  }else if(!isOpen){
+    clearCalculatorImpactTimers();
+    clearCalculatorImpactMotion();
+    standardCalculatorOverlay.classList.remove("impact-animating", "impact-run-a", "impact-run-b");
+    openStandardCalculator.classList.remove("launching");
+    openStandardCalculator.focus();
+  }
 }
 
-openStandardCalculator.addEventListener("click", () => setStandardCalculatorOpen(true));
+openStandardCalculator.addEventListener("click", () => {
+  setStandardCalculatorOpen(standardCalculatorOverlay.classList.contains("is-closed"));
+});
 closeStandardCalculator.addEventListener("click", () => setStandardCalculatorOpen(false));
 
 const calculatorKeyboardKeys = new Set([".",",","+","-","*","/","Enter","=","Escape","Delete","Backspace","%"]);
 document.addEventListener("keydown", event => {
-  if(standardCalculatorOverlay.classList.contains("is-closed")) return;
   const target = event.target;
   const isEditing = target && (target.matches?.("input, textarea, select") || target.isContentEditable);
+  const isCalculatorToggle = event.key.toLowerCase() === "k" && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey && !event.repeat;
+  if(isCalculatorToggle && !isEditing){
+    setStandardCalculatorOpen(standardCalculatorOverlay.classList.contains("is-closed"));
+    event.preventDefault();
+    return;
+  }
+  if(standardCalculatorOverlay.classList.contains("is-closed")) return;
   if(isEditing) return;
   if(!/^\d$/.test(event.key) && !calculatorKeyboardKeys.has(event.key)) return;
   if(standardCalculatorReady){
@@ -2025,6 +2392,9 @@ el("copyBtn").addEventListener("click", async () => {
 window.__rwApplyModuleLang = language => setLanguage(language);
 window.addEventListener("message", event => {
   if(event.data && event.data.type === "rw:setLang") setLanguage(event.data.lang);
+  if(event.data && event.data.type === "msd:toggleCalculator"){
+    setStandardCalculatorOpen(standardCalculatorOverlay.classList.contains("is-closed"));
+  }
 });
 
 setLanguage(currentLanguage);

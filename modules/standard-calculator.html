@@ -765,6 +765,12 @@ function handleKeyboardKey(key){
 }
 
 document.addEventListener("keydown", event => {
+  const isToggleShortcut = event.key.toLowerCase() === "k" && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey && !event.repeat;
+  if(isToggleShortcut && window.parent !== window){
+    window.parent.postMessage({type:"msd:toggleCalculator"}, "*");
+    event.preventDefault();
+    return;
+  }
   if(handleKeyboardKey(event.key)) event.preventDefault();
 });
 
