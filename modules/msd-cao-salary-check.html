@@ -128,7 +128,7 @@ h1{
   height:100%;
   display:flex;
   flex-direction:column;
-  background:#f3f3f3;
+  background:#06101c;
   box-shadow:-18px 0 48px rgba(15,23,42,.24);
 }
 .calculator-panel-head{
@@ -138,8 +138,9 @@ h1{
   align-items:center;
   justify-content:space-between;
   gap:12px;
-  border-bottom:1px solid #d2d6dc;
-  background:#fff;
+  border-bottom:1px solid rgba(125,211,238,.2);
+  background:linear-gradient(135deg,#0b1726,#0a2033);
+  color:#edf8ff;
 }
 .calculator-panel-head strong{font-size:16px}
 .calculator-panel-close{
@@ -148,19 +149,19 @@ h1{
   border:0;
   border-radius:6px;
   background:transparent;
-  color:#344054;
+  color:#9cb5c8;
   cursor:pointer;
   font:inherit;
   font-size:27px;
   line-height:1;
 }
-.calculator-panel-close:hover{background:#edf0f3}
+.calculator-panel-close:hover{background:rgba(95,197,224,.12);color:#fff}
 .calculator-frame{
   width:100%;
   min-height:0;
   flex:1;
   border:0;
-  background:#f3f3f3;
+  background:#06101c;
 }
 main{
   max-width:1180px;
@@ -1075,7 +1076,7 @@ tr.selected td{
       <strong id="standardCalculatorTitle">Calculator</strong>
       <button class="calculator-panel-close" id="closeStandardCalculator" type="button" aria-label="Close calculator">×</button>
     </header>
-    <iframe class="calculator-frame" id="standardCalculatorFrame" data-src="standard-calculator.html" title="Standard calculator"></iframe>
+    <iframe class="calculator-frame" id="standardCalculatorFrame" data-src="standard-calculator.html?v=20260817-futuristic-v1" title="Standard calculator"></iframe>
   </section>
 </div>
 
