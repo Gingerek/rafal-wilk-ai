@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MSD CAO Salary Check v19</title>
+<title>MSD CAO Salary Check v20</title>
 <style>
 :root{
   --page:#f7f8fa;
@@ -337,6 +337,50 @@ input:focus,select:focus,textarea:focus{
   margin-top:4px;
   color:var(--muted);
   font-size:12px;
+}
+.salary-calculator{
+  margin:0 0 14px;
+  border:1px solid #b8d9d6;
+  border-radius:8px;
+  padding:14px;
+  background:linear-gradient(180deg,#f8fffe 0%,#f3fbfa 100%);
+}
+.salary-calculator-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:11px;
+}
+.salary-calculator-head strong{
+  color:#1f2933;
+  font-size:15px;
+}
+.salary-calculator-head span{
+  color:var(--muted);
+  font-size:12px;
+  text-align:right;
+}
+.salary-calculator .summary-grid{
+  grid-template-columns:repeat(4,1fr);
+}
+.salary-calculator .metric{
+  min-height:92px;
+  border-color:#cae5e2;
+}
+.salary-calculator-note{
+  margin:10px 0 0;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.45;
+}
+@media(max-width:960px){
+  .salary-calculator .summary-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:560px){
+  .salary-calculator-head{display:block}
+  .salary-calculator-head span{display:block;margin-top:4px;text-align:left}
+  .salary-calculator .summary-grid{grid-template-columns:1fr}
 }
 .range-line{
   margin-top:14px;
@@ -994,11 +1038,12 @@ tr.selected td{
       <div class="language-switch">
         <span class="language-switch-label" id="languageSwitchLabel">Language</span>
         <div class="language-switch-buttons">
+          <button id="langPl" type="button">PL</button>
           <button id="langEn" type="button" class="active">EN</button>
           <button id="langNl" type="button">NL</button>
         </div>
       </div>
-      <div class="version">v19</div>
+      <div class="version">v20</div>
     </div>
   </div>
 </header>
@@ -1040,8 +1085,14 @@ tr.selected td{
           </div>
           <div class="field">
             <label for="rate" id="rateLabel">Hourly rate</label>
-            <input id="rate" type="number" step="0.01" min="0" placeholder="e.g. 29.27" />
+            <input id="rate" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 29.27" />
           </div>
+        </div>
+
+        <div class="field">
+          <label for="hours" id="hoursLabel">Contract hours per week</label>
+          <input id="hours" type="text" inputmode="decimal" autocomplete="off" value="40" aria-describedby="hoursNote" />
+          <p class="note" id="hoursNote">Used only for gross weekly, monthly and annual estimates.</p>
         </div>
 
       </div>
@@ -1131,6 +1182,36 @@ tr.selected td{
             <span id="maxPointAnnual">-</span>
           </div>
         </div>
+
+        <section class="salary-calculator" aria-labelledby="salaryCalculatorTitle">
+          <div class="salary-calculator-head">
+            <strong id="salaryCalculatorTitle">Gross salary calculator</strong>
+            <span id="salaryCalculatorHours">40 hours per week</span>
+          </div>
+          <div class="summary-grid">
+            <div class="metric">
+              <small id="grossWeekLabel">Gross per week</small>
+              <strong id="grossWeek">-</strong>
+              <span id="grossWeekMeta">Enter hourly rate</span>
+            </div>
+            <div class="metric">
+              <small id="grossMonthLabel">Gross per month</small>
+              <strong id="grossMonth">-</strong>
+              <span id="grossMonthMeta">52 paid weeks / 12</span>
+            </div>
+            <div class="metric">
+              <small id="grossYearLabel">Gross per year</small>
+              <strong id="grossYear">-</strong>
+              <span id="grossYearMeta">52 paid weeks</span>
+            </div>
+            <div class="metric">
+              <small id="grossHolidayLabel">Year + 8% holiday</small>
+              <strong id="grossHoliday">-</strong>
+              <span id="grossHolidayMeta">Estimate including holiday allowance</span>
+            </div>
+          </div>
+          <p class="salary-calculator-note" id="salaryCalculatorNote">Gross estimates before tax, pension and other deductions. The 8% holiday allowance may already be included in an employer's annual salary figure.</p>
+        </section>
 
         <div class="message" id="messageOut">Enter the hourly rate to calculate checks.</div>
 
@@ -1235,7 +1316,7 @@ const pathways = {
   "Management":{M1:["I","J"],M2:["K","L","M"]}
 };
 
-const minimumWage = {21:14.71,20:11.77,19:8.83,18:7.36,17:5.81,16:5.07,15:4.41};
+const minimumWage = {21:14.99,20:11.99,19:8.99,18:7.50,17:5.92,16:5.17,15:4.50};
 
 const translations = {
   en:{
@@ -1474,6 +1555,170 @@ const translations = {
   }
 };
 
+Object.assign(translations.en, {
+  contractHours:"Contract hours per week",
+  hoursNote:"Used only for gross weekly, monthly and annual estimates.",
+  salaryCalculator:"Gross salary calculator",
+  hoursPerWeek:hours=>`${hours} hours per week`,
+  grossWeek:"Gross per week",
+  grossMonth:"Gross per month",
+  grossYear:"Gross per year",
+  grossHoliday:"Year + 8% holiday",
+  paidWeeks52:"52 paid weeks",
+  paidWeeksMonthly:"52 paid weeks / 12",
+  holidayEstimate:"Estimate including holiday allowance",
+  calculatorNote:"Gross estimates before tax, pension and other deductions. The 8% holiday allowance may already be included in an employer's annual salary figure.",
+  minimumWageEffective:"effective from 1 July 2026"
+});
+
+Object.assign(translations.nl, {
+  contractHours:"Contracturen per week",
+  hoursNote:"Alleen gebruikt voor de bruto week-, maand- en jaarschatting.",
+  salaryCalculator:"Bruto salariscalculator",
+  hoursPerWeek:hours=>`${hours} uur per week`,
+  grossWeek:"Bruto per week",
+  grossMonth:"Bruto per maand",
+  grossYear:"Bruto per jaar",
+  grossHoliday:"Jaar + 8% vakantiegeld",
+  paidWeeks52:"52 betaalde weken",
+  paidWeeksMonthly:"52 betaalde weken / 12",
+  holidayEstimate:"Schatting inclusief vakantiegeld",
+  calculatorNote:"Bruto schattingen vóór belasting, pensioen en andere inhoudingen. De 8% vakantietoeslag kan al in het jaarsalaris van de werkgever zijn opgenomen.",
+  minimumWageEffective:"geldig vanaf 1 juli 2026"
+});
+
+translations.pl = {
+  ...translations.en,
+  language:"Język",
+  inputs:"Dane wejściowe",
+  candidateName:"Imię i nazwisko kandydata",
+  defaultCandidate:"Kandydat",
+  optional:"Opcjonalnie",
+  position:"Stanowisko",
+  caoScale:"Skala CAO",
+  profileLevel:"Wybór punktu",
+  starter:"Punkt minimalny",
+  matching:"Punkt środkowy",
+  senior:"Punkt maksymalny",
+  age:"Wiek",
+  hourlyRate:"Stawka godzinowa",
+  scaleSelection:"Wybrana skala",
+  copySummary:"Kopiuj podsumowanie",
+  copied:"Skopiowano",
+  printPdf:"Drukuj / zapisz PDF",
+  reset:"Wyczyść",
+  recommendedScale:"Wybrana skala CAO",
+  enterRate:"Wpisz stawkę godzinową",
+  payPositionMap:"Zakres wynagrodzenia",
+  rangeBoardDesc:"Minimalna, środkowa i maksymalna stawka oraz wpisana stawka na jednej osi decyzyjnej.",
+  thresholdLabel:"Próg punktu środkowego",
+  currentRate:"Aktualna stawka",
+  midToMaximum:"Od punktu środkowego do maksimum",
+  outsideRange:"Poza zakresem",
+  minShort:"Min.",
+  midShort:"Środek",
+  maxShort:"Maks.",
+  rateShort:"Stawka",
+  noRateYet:"Nie wpisano stawki",
+  minPoint:"Punkt minimalny",
+  midPoint:"Punkt środkowy",
+  maxPoint:"Punkt maksymalny",
+  annual:"Rocznie",
+  proposedRate:"Proponowana stawka",
+  selectedScale:"Wybrana skala",
+  vsMidpointShort:"względem punktu środkowego",
+  caoRangeCheck:"Kontrola zakresu CAO",
+  midpointPosition:"Pozycja względem środka",
+  minimumWage:"Płaca minimalna",
+  caoRange:"Zakres CAO",
+  midpointVisual:"Punkt środkowy",
+  ok:"OK",
+  review:"Sprawdź",
+  stop:"Stop",
+  midpointOk:"Na poziomie lub poniżej punktu środkowego",
+  midpointTooHigh:"Powyżej punktu środkowego",
+  midpointTileDetail:(rate, mid)=>`${rate} wobec punktu środkowego ${mid}`,
+  wageTileDetail:(rate, wage)=>rate === null ? `Płaca minimalna: ${wage}` : `${rate} wobec płacy minimalnej ${wage}`,
+  rangeTileDetail:(rate, min, max)=>rate === null ? `${min} - ${max}` : `${rate} wobec zakresu ${min} - ${max}`,
+  minimumWageForAge:"Płaca minimalna dla wieku",
+  positionAgainstMidpoint:"Pozycja względem punktu środkowego",
+  midpointAlert:"Stawka przekracza punkt środkowy",
+  rangeOkNotice:"Stawka mieści się w wymaganym zakresie",
+  moreDetails:"Szczegóły",
+  checks:"Kontrole",
+  scenarioComparison:"Porównanie scenariuszy",
+  recommendationSummary:"Podsumowanie rekomendacji",
+  pointsByPosition:"Minimum / środek / maksimum dla wybranego stanowiska",
+  auditNote:"Lista skal CAO zawiera wyłącznie skale dozwolone dla wybranego stanowiska.",
+  allowedScales:"dozwolone skale",
+  scales:"skale",
+  availableScales:"Dostępne skale dla",
+  age21:"21 lat lub więcej",
+  belowLegalMinimum:"Poniżej ustawowej płacy minimalnej",
+  belowCaoMinimum:"Poniżej minimum skali CAO",
+  aboveCaoMaximum:"Powyżej maksimum skali CAO",
+  withinRange:"W wymaganym zakresie",
+  missingRateMessage:"Wpisz stawkę godzinową, aby wykonać obliczenia.",
+  belowLegalMinimumMessage:wage=>`Stawka jest niższa od ustawowej płacy minimalnej ${wage}.`,
+  belowCaoMinimumMessage:min=>`Stawka jest niższa od minimum wybranej skali CAO ${min}.`,
+  aboveCaoMaximumMessage:max=>`Stawka jest wyższa od maksimum wybranej skali CAO ${max}.`,
+  withinRangeMessage:"Stawka spełnia wymagania wybranej skali CAO i płacy minimalnej.",
+  atOrBelowMidpoint:"Na poziomie lub poniżej punktu środkowego",
+  aboveMidpoint:"Stawka przekracza punkt środkowy",
+  contractHours:"Liczba godzin w umowie tygodniowo",
+  hoursNote:"Wykorzystywana tylko do oszacowania kwot brutto tygodniowo, miesięcznie i rocznie.",
+  salaryCalculator:"Kalkulator wynagrodzenia brutto",
+  hoursPerWeek:hours=>`${hours} godz. tygodniowo`,
+  grossWeek:"Brutto tygodniowo",
+  grossMonth:"Brutto miesięcznie",
+  grossYear:"Brutto rocznie",
+  grossHoliday:"Rocznie + 8% wakacyjnego",
+  paidWeeks52:"52 płatne tygodnie",
+  paidWeeksMonthly:"52 płatne tygodnie / 12",
+  holidayEstimate:"Szacunek z dodatkiem wakacyjnym",
+  calculatorNote:"Kwoty brutto przed podatkiem, składką emerytalną i innymi potrąceniami. Dodatek wakacyjny 8% może być już uwzględniony w rocznej kwocie podawanej przez pracodawcę.",
+  minimumWageEffective:"obowiązuje od 1 lipca 2026",
+  profileLogic:{
+    starter:"Skala wybrana z dozwolonej listy według punktu minimalnego",
+    matching:"Skala wybrana z dozwolonej listy według punktu środkowego",
+    senior:"Skala wybrana z dozwolonej listy według punktu maksymalnego"
+  },
+  category:{
+    "Business Support":"Wsparcie biznesowe",
+    "Research / Data & Digital":"Badania / dane i digital",
+    "Production & Operations":"Produkcja i operacje",
+    "Sales":"Sprzedaż",
+    "Professional":"Stanowiska specjalistyczne",
+    "Management":"Zarządzanie"
+  },
+  table:{
+    scale:"Skala", minHour:"Min. godz.", midHour:"Środek godz.", maxHour:"Maks. godz.",
+    minYear:"Min. rok", midYear:"Środek rok", maxYear:"Maks. rok"
+  },
+  summary:{
+    title:"ocena wynagrodzenia według macierzy CAO",
+    position:"Stanowisko",
+    allowed:"Dozwolone skale CAO",
+    selected:"Wybrana skala CAO",
+    logic:"Logika wyboru",
+    min:"Punkt minimalny",
+    mid:"Punkt środkowy",
+    max:"Punkt maksymalny",
+    current:"Aktualna/proponowana stawka godzinowa",
+    vsMid:"Pozycja względem punktu środkowego",
+    midCheck:"Kontrola punktu środkowego",
+    legal:"Kontrola płacy minimalnej dla wieku",
+    range:"Kontrola zakresu CAO",
+    status:"Status ogólny",
+    ok:"OK",
+    belowWage:"Poniżej płacy minimalnej",
+    belowMin:"Poniżej minimum wybranej skali",
+    aboveMax:"Powyżej maksimum wybranej skali",
+    within:"W zakresie wybranej skali",
+    note:"Uwaga: wybrana skala CAO określa minimum, punkt środkowy i maksimum pokazywane w tym module."
+  }
+};
+
 const LANG_KEY = "msd_cao_salary_check_language";
 let activeProfile = "matching";
 let currentLanguage = normalizeLanguage(localStorage.getItem(LANG_KEY) || localStorage.getItem("rw_lang") || "en");
@@ -1481,16 +1726,18 @@ let currentLanguage = normalizeLanguage(localStorage.getItem(LANG_KEY) || localS
 const el = id => document.getElementById(id);
 function normalizeLanguage(lang){
   const normalized = String(lang || "").toLowerCase().slice(0,2);
-  return normalized === "nl" ? "nl" : "en";
+  return ["pl","en","nl"].includes(normalized) ? normalized : "en";
 }
 function t(key){
   return translations[currentLanguage][key] || translations.en[key] || key;
 }
 function locale(){
+  if(currentLanguage === "pl") return "pl-PL";
   return currentLanguage === "nl" ? "nl-NL" : "en-IE";
 }
 const euro = value => new Intl.NumberFormat(locale(),{style:"currency",currency:"EUR",minimumFractionDigits:2}).format(value);
 const intfmt = value => new Intl.NumberFormat(locale(),{maximumFractionDigits:0}).format(value);
+const decimalfmt = value => new Intl.NumberFormat(locale(),{maximumFractionDigits:1}).format(value);
 
 function selectedPosition(){
   const [category, pathway] = el("position").value.split("||");
@@ -1513,9 +1760,33 @@ function selectedScale(allowed){
   return allowed.includes(selected) ? selected : scaleForProfile(allowed, activeProfile);
 }
 
+function parseDecimal(value){
+  const normalized = String(value ?? "").trim().replace(/\s/g, "").replace(",", ".");
+  if(!normalized) return null;
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
 function currentRate(){
-  const value = Number.parseFloat(el("rate").value);
-  return Number.isFinite(value) ? value : null;
+  const value = parseDecimal(el("rate").value);
+  return value !== null && value >= 0 ? value : null;
+}
+
+function currentHours(){
+  const value = parseDecimal(el("hours").value);
+  return value !== null && value > 0 && value <= 60 ? value : 40;
+}
+
+function salaryProjection(rate, hours){
+  if(rate === null) return null;
+  const weekly = rate * hours;
+  const annual = weekly * 52;
+  return {
+    weekly,
+    monthly:annual / 12,
+    annual,
+    annualWithHoliday:annual * 1.08
+  };
 }
 
 function midpointFor(rate, midpoint){
@@ -1609,6 +1880,20 @@ function setCheckCard(id, kind, status, detail){
   card.querySelector("span").textContent = detail;
 }
 
+function updateSalaryCalculator(rate, hours){
+  const projection = salaryProjection(rate, hours);
+  el("salaryCalculatorHours").textContent = t("hoursPerWeek")(decimalfmt(hours));
+  el("grossWeek").textContent = projection ? euro(projection.weekly) : "-";
+  el("grossMonth").textContent = projection ? euro(projection.monthly) : "-";
+  el("grossYear").textContent = projection ? euro(projection.annual) : "-";
+  el("grossHoliday").textContent = projection ? euro(projection.annualWithHoliday) : "-";
+  el("grossWeekMeta").textContent = projection ? `${euro(rate)} × ${decimalfmt(hours)}` : t("enterRate");
+  el("grossMonthMeta").textContent = t("paidWeeksMonthly");
+  el("grossYearMeta").textContent = t("paidWeeks52");
+  el("grossHolidayMeta").textContent = t("holidayEstimate");
+  return projection;
+}
+
 function updateVisuals(row, rate, wage, status, midpointResult){
   const min = row.hour[0];
   const mid = row.hour[1];
@@ -1684,7 +1969,7 @@ function updateVisuals(row, rate, wage, status, midpointResult){
   );
 }
 
-function buildSummary(selected, scale, row, rate, age, wage, midpointResult, status){
+function buildSummary(selected, scale, row, rate, age, wage, midpointResult, status, hours, projection){
   const s = translations[currentLanguage].summary;
   const candidate = el("candidate").value.trim() || t("defaultCandidate");
   const logic = `${t("scaleSelection")}: ${scale}`;
@@ -1699,9 +1984,14 @@ function buildSummary(selected, scale, row, rate, age, wage, midpointResult, sta
   if(rate !== null){
     const rangeCheck = rate < row.hour[0] ? s.belowMin : rate > row.hour[2] ? s.aboveMax : s.within;
     text += `\n${s.current}: ${euro(rate)}\n`;
+    text += `${t("contractHours")}: ${decimalfmt(hours)}\n`;
+    text += `${t("grossWeek")}: ${euro(projection.weekly)}\n`;
+    text += `${t("grossMonth")}: ${euro(projection.monthly)}\n`;
+    text += `${t("grossYear")}: ${euro(projection.annual)}\n`;
+    text += `${t("grossHoliday")}: ${euro(projection.annualWithHoliday)}\n`;
     text += `${s.vsMid}: ${midpointResult.pct.toFixed(1)}%\n`;
     text += `${s.midCheck}: ${midpointResult.above ? t("aboveMidpoint") : t("atOrBelowMidpoint")}\n`;
-    text += `${s.legal} ${age}: ${rate >= wage ? s.ok : s.belowWage}\n`;
+    text += `${s.legal} ${age} (${t("minimumWageEffective")}): ${rate >= wage ? s.ok : s.belowWage}\n`;
     text += `${s.range}: ${rangeCheck}\n`;
     text += `${s.status}: ${status.label}\n`;
   }
@@ -1715,10 +2005,12 @@ function update(){
   const scale = selectedScale(selected.allowed);
   const row = scales[scale];
   const rate = currentRate();
+  const hours = currentHours();
   const age = Number(el("age").value || 21);
   const wage = minimumWage[age] || minimumWage[21];
   const midpointResult = midpointFor(rate, row.hour[1]);
   const status = checkStatus(rate, row, wage);
+  const projection = updateSalaryCalculator(rate, hours);
 
   el("scaleOut").textContent = scale;
   el("pathOut").textContent = `${selected.label} - ${t("allowedScales")} ${selected.allowed.join(", ")}`;
@@ -1738,7 +2030,7 @@ function update(){
   el("rangeCheck").textContent = rate === null ? "-" : status.label;
   el("rangeText").textContent = `${euro(row.hour[0])} - ${euro(row.hour[2])}`;
   el("wageOut").textContent = euro(wage);
-  el("wageText").textContent = `${t("minimumWageForAge")} ${age}`;
+  el("wageText").textContent = `${t("minimumWageForAge")} ${age} · ${t("minimumWageEffective")}`;
   updateVisuals(row, rate, wage, status, midpointResult);
 
   if(rate === null){
@@ -1758,12 +2050,13 @@ function update(){
   el("messageOut").hidden = rate !== null && status.kind === "ok";
   el("scenarioGrid").innerHTML = buildScenarios(selected, rate, age);
   buildAvailableTable(scale);
-  el("summary").value = buildSummary(selected, scale, row, rate, age, wage, midpointResult, status);
+  el("summary").value = buildSummary(selected, scale, row, rate, age, wage, midpointResult, status, hours, projection);
 }
 
 function reset(){
   el("candidate").value = "";
   el("rate").value = "";
+  el("hours").value = "40";
   el("position").selectedIndex = 0;
   el("age").value = "21";
   activeProfile = "matching";
@@ -1788,6 +2081,8 @@ function updateStaticLanguage(){
   });
   el("ageLabel").textContent = t("age");
   el("rateLabel").textContent = t("hourlyRate");
+  el("hoursLabel").textContent = t("contractHours");
+  el("hoursNote").textContent = t("hoursNote");
   el("copyBtn").textContent = t("copySummary");
   el("printBtn").textContent = t("printPdf");
   el("resetBtn").textContent = t("reset");
@@ -1806,6 +2101,12 @@ function updateStaticLanguage(){
   el("minPointLabel").textContent = t("minPoint");
   el("midPointLabel").textContent = t("midPoint");
   el("maxPointLabel").textContent = t("maxPoint");
+  el("salaryCalculatorTitle").textContent = t("salaryCalculator");
+  el("grossWeekLabel").textContent = t("grossWeek");
+  el("grossMonthLabel").textContent = t("grossMonth");
+  el("grossYearLabel").textContent = t("grossYear");
+  el("grossHolidayLabel").textContent = t("grossHoliday");
+  el("salaryCalculatorNote").textContent = t("calculatorNote");
   el("proposedRateLabel").textContent = t("proposedRate");
   el("caoRangeCheckLabel").textContent = t("caoRangeCheck");
   el("midpointPositionLabel").textContent = t("midpointPosition");
@@ -1815,6 +2116,7 @@ function updateStaticLanguage(){
   el("recommendationSummary").textContent = t("recommendationSummary");
   el("pointsSummary").textContent = t("pointsByPosition");
   el("auditNote").textContent = t("auditNote");
+  el("langPl").classList.toggle("active", currentLanguage === "pl");
   el("langEn").classList.toggle("active", currentLanguage === "en");
   el("langNl").classList.toggle("active", currentLanguage === "nl");
 }
@@ -1851,8 +2153,10 @@ el("position").addEventListener("change", () => {
 el("scaleSelect").addEventListener("change", update);
 el("age").addEventListener("change", update);
 el("rate").addEventListener("input", update);
+el("hours").addEventListener("input", update);
 el("candidate").addEventListener("input", update);
 el("resetBtn").addEventListener("click", reset);
+el("langPl").addEventListener("click", () => setLanguage("pl", true));
 el("langEn").addEventListener("click", () => setLanguage("en", true));
 el("langNl").addEventListener("click", () => setLanguage("nl", true));
 el("copyBtn").addEventListener("click", async () => {
