@@ -750,8 +750,7 @@ document.querySelector(".calculator").addEventListener("click", event => {
   runAction(button.dataset.action, button.dataset.value);
 });
 
-document.addEventListener("keydown", event => {
-  const key = event.key;
+function handleKeyboardKey(key){
   let handled = true;
   if(/^\d$/.test(key)) inputDigit(key);
   else if(key === "." || key === ",") inputDecimal();
@@ -762,7 +761,17 @@ document.addEventListener("keydown", event => {
   else if(key === "Backspace") backspace();
   else if(key === "%") percent();
   else handled = false;
-  if(handled) event.preventDefault();
+  return handled;
+}
+
+document.addEventListener("keydown", event => {
+  if(handleKeyboardKey(event.key)) event.preventDefault();
+});
+
+window.addEventListener("message", event => {
+  if(window.parent === window || event.source !== window.parent) return;
+  if(!event.data || event.data.type !== "msd-calculator-key") return;
+  handleKeyboardKey(String(event.data.key || ""));
 });
 
 loadMemory();

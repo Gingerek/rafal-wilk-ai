@@ -117,23 +117,38 @@ h1{
 }
 .calculator-overlay{
   position:fixed;
-  inset:0;
+  right:14px;
+  bottom:14px;
   z-index:9999;
-  display:flex;
-  justify-content:flex-end;
-  background:rgba(15,23,42,.46);
+  width:min(410px,calc(100vw - 28px));
+  height:min(760px,calc(100vh - 28px));
+  background:transparent;
+  opacity:1;
+  visibility:visible;
+  transform:translateX(0);
+  transition:opacity .18s ease,transform .22s ease,visibility 0s;
+}
+.calculator-overlay.is-closed{
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateX(calc(100% + 30px));
+  transition:opacity .16s ease,transform .2s ease,visibility 0s .2s;
 }
 .calculator-panel{
-  width:min(430px,100%);
+  width:100%;
   height:100%;
   display:flex;
   flex-direction:column;
+  overflow:hidden;
+  border:1px solid rgba(125,211,238,.24);
+  border-radius:18px;
   background:#06101c;
-  box-shadow:-18px 0 48px rgba(15,23,42,.24);
+  box-shadow:0 24px 72px rgba(15,23,42,.34),0 0 22px rgba(36,224,208,.08);
 }
 .calculator-panel-head{
-  min-height:54px;
-  padding:10px 12px 10px 16px;
+  min-height:50px;
+  padding:7px 9px 7px 15px;
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -163,10 +178,25 @@ h1{
   border:0;
   background:#06101c;
 }
+@media(max-width:640px){
+  .calculator-overlay{
+    right:8px;
+    bottom:8px;
+    width:calc(100vw - 16px);
+    height:min(68vh,620px);
+  }
+}
 main{
   max-width:1180px;
   margin:22px auto 36px;
   padding:0 16px;
+  transition:max-width .22s ease,margin .22s ease;
+}
+@media(min-width:1200px){
+  body.calculator-open main{
+    max-width:min(1180px,calc(100vw - 438px));
+    margin-right:438px;
+  }
 }
 .layout{
   display:grid;
@@ -1070,13 +1100,13 @@ tr.selected td{
   </div>
 </header>
 
-<div class="calculator-overlay" id="standardCalculatorOverlay" hidden>
-  <section class="calculator-panel" role="dialog" aria-modal="true" aria-labelledby="standardCalculatorTitle">
+<div class="calculator-overlay is-closed" id="standardCalculatorOverlay" aria-hidden="true">
+  <section class="calculator-panel" role="region" aria-labelledby="standardCalculatorTitle">
     <header class="calculator-panel-head">
       <strong id="standardCalculatorTitle">Calculator</strong>
       <button class="calculator-panel-close" id="closeStandardCalculator" type="button" aria-label="Close calculator">×</button>
     </header>
-    <iframe class="calculator-frame" id="standardCalculatorFrame" data-src="standard-calculator.html?v=20260817-futuristic-v1" title="Standard calculator"></iframe>
+    <iframe class="calculator-frame" id="standardCalculatorFrame" src="standard-calculator.html?v=20260817-futuristic-v2" title="Standard calculator" loading="eager"></iframe>
   </section>
 </div>
 
@@ -1944,25 +1974,42 @@ const standardCalculatorOverlay = el("standardCalculatorOverlay");
 const standardCalculatorFrame = el("standardCalculatorFrame");
 const openStandardCalculator = el("openStandardCalculator");
 const closeStandardCalculator = el("closeStandardCalculator");
+let standardCalculatorReady = standardCalculatorFrame.contentDocument?.readyState === "complete";
+const pendingCalculatorKeys = [];
+
+function flushCalculatorKeys(){
+  standardCalculatorReady = true;
+  while(pendingCalculatorKeys.length){
+    standardCalculatorFrame.contentWindow?.postMessage({type:"msd-calculator-key",key:pendingCalculatorKeys.shift()}, "*");
+  }
+}
+
+standardCalculatorFrame.addEventListener("load", flushCalculatorKeys);
 
 function setStandardCalculatorOpen(isOpen){
-  if(isOpen && !standardCalculatorFrame.getAttribute("src")){
-    standardCalculatorFrame.setAttribute("src", standardCalculatorFrame.dataset.src);
-  }
-  standardCalculatorOverlay.hidden = !isOpen;
+  standardCalculatorOverlay.classList.toggle("is-closed", !isOpen);
+  standardCalculatorOverlay.setAttribute("aria-hidden", String(!isOpen));
   openStandardCalculator.setAttribute("aria-expanded", String(isOpen));
-  document.body.style.overflow = isOpen ? "hidden" : "";
-  if(isOpen) closeStandardCalculator.focus();
-  else openStandardCalculator.focus();
+  document.body.classList.toggle("calculator-open", isOpen);
+  if(!isOpen) openStandardCalculator.focus();
 }
 
 openStandardCalculator.addEventListener("click", () => setStandardCalculatorOpen(true));
 closeStandardCalculator.addEventListener("click", () => setStandardCalculatorOpen(false));
-standardCalculatorOverlay.addEventListener("click", event => {
-  if(event.target === standardCalculatorOverlay) setStandardCalculatorOpen(false);
-});
+
+const calculatorKeyboardKeys = new Set([".",",","+","-","*","/","Enter","=","Escape","Delete","Backspace","%"]);
 document.addEventListener("keydown", event => {
-  if(event.key === "Escape" && !standardCalculatorOverlay.hidden) setStandardCalculatorOpen(false);
+  if(standardCalculatorOverlay.classList.contains("is-closed")) return;
+  const target = event.target;
+  const isEditing = target && (target.matches?.("input, textarea, select") || target.isContentEditable);
+  if(isEditing) return;
+  if(!/^\d$/.test(event.key) && !calculatorKeyboardKeys.has(event.key)) return;
+  if(standardCalculatorReady){
+    standardCalculatorFrame.contentWindow?.postMessage({type:"msd-calculator-key",key:event.key}, "*");
+  }else{
+    pendingCalculatorKeys.push(event.key);
+  }
+  event.preventDefault();
 });
 el("copyBtn").addEventListener("click", async () => {
   try{
