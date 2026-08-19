@@ -1,9 +1,0 @@
-formula_count=5600
-let_count=0
-xlookup_count=0
-xlfn_count=0
-rounddown_count=0
-roundup_count=1050
-D5_length=3552
-F5_length=3879
-sheet_protection=true
