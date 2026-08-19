@@ -1,0 +1,27 @@
+name: Export current Merit workbook temp
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/export-merit-current-temp-20260819.yml'
+permissions:
+  contents: write
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: merit-current-latest
+          path: downloads/Merit_2026_Employee_Bulk_Calculator_350_exact.xlsx
+          if-no-files-found: error
+          retention-days: 1
+      - name: Record run id
+        run: |
+          echo "$GITHUB_RUN_ID" > merit_current_run_id.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add merit_current_run_id.txt
+          git commit -m 'Record temporary Merit export run id'
+          git push
