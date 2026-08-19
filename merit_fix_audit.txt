@@ -1,0 +1,12 @@
+titles_exact_match=true
+title_count=118
+formula_count=5600
+rounddown_occurrences=0
+roundup_occurrences=1050
+sheet_protection=true
+hidden_formula_styles=30
+data_validation_rules=2
+cq_multiline_one_cell='CQ engineer\xa0 Site Engineering P1-G midpoint\xa0\xa0 (CQ=Commissioning&Qualification)\n1 stap boven mid'
+spoc_multiline_one_cell='SPOC=Programma-manager Site Engineering\xa0 P3-J\xa0\xa0Tussen midpoint en max.\n2 stappen boven mid 1 stap\xa0 onder max'
+projectmanager_multiline_one_cell='Projectmanager Site Engineering P2-H Tussen midpoint en max.\n2 stappen boven mid 1 stap onder max'
+sha256=5493f60d994fb769e8c456a7cc97291757fcac21cba510a8f6c2f25760fb5184
