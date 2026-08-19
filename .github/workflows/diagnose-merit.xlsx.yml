@@ -1,0 +1,71 @@
+name: Diagnose Merit workbook once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/diagnose-merit.xlsx.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect workbook
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import zipfile, xml.etree.ElementTree as ET
+          FILE='downloads/Merit_2026_Employee_Bulk_Calculator_350_exact.xlsx'
+          NS='http://schemas.openxmlformats.org/spreadsheetml/2006/main'
+          ns={'m':NS}
+          with zipfile.ZipFile(FILE,'r') as z:
+            shared=[]
+            if 'xl/sharedStrings.xml' in z.namelist():
+              ss=ET.fromstring(z.read('xl/sharedStrings.xml'))
+              for si in ss.findall('m:si',ns):
+                shared.append(''.join(t.text or '' for t in si.findall('.//m:t',ns)))
+            def txt(c):
+              if c is None:return ''
+              if c.get('t')=='s':
+                v=c.find('m:v',ns); return shared[int(v.text)] if v is not None and v.text else ''
+              if c.get('t')=='inlineStr': return ''.join(t.text or '' for t in c.findall('.//m:t',ns))
+              v=c.find('m:v',ns); return v.text or '' if v is not None else ''
+            s1=ET.fromstring(z.read('xl/worksheets/sheet1.xml'))
+            s2=ET.fromstring(z.read('xl/worksheets/sheet2.xml'))
+            lines=[]
+            lines.append('FORMULAS')
+            fs=s1.findall('.//m:f',ns)
+            lines.append('count='+str(len(fs)))
+            seen=[]
+            for f in fs:
+              t=f.text or ''
+              if 'LOOKUP' in t.upper() or 'Data' in t or 'DATA' in t:
+                if t not in seen:
+                  seen.append(t)
+                if len(seen)>=30: break
+            lines += seen
+            lines.append('MAIN TITLES')
+            for c in s1.findall('.//m:c',ns):
+              r=c.get('r','')
+              if r.startswith('B'):
+                t=txt(c)
+                if any(k in t for k in ['CQ engineer','SPOC=Programma-manager','Projectmanager Site Engineering','Civil engineer Site Engineering']):
+                  lines.append(r+'='+repr(t))
+            lines.append('DATA 110-122')
+            cells={c.get('r'):c for c in s2.findall('.//m:c',ns)}
+            for row in range(110,123):
+              vals=[txt(cells.get(f'{col}{row}')) for col in 'ABC']
+              lines.append(str(row)+'='+repr(vals))
+            open('merit_diag.txt','w',encoding='utf-8').write('\n'.join(lines))
+          PY
+      - name: Commit diagnostics
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add merit_diag.txt
+          git commit -m 'Add temporary Merit diagnostics'
+          git push
