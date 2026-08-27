@@ -1,0 +1,8 @@
+name = "rafal-wilk-ai-agent"
+main = "src/worker.js"
+compatibility_date = "2026-08-27"
+
+[vars]
+OPENAI_MODEL = "gpt-5.6"
+OPENAI_REASONING_EFFORT = "low"
+ALLOWED_ORIGINS = "https://www.rafalwilkai.com,https://rafalwilkai.com,https://raw.githack.com"
