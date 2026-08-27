@@ -1,54 +1,290 @@
 (function(){
 'use strict';
-const ENDPOINT_KEY='rw_ai_endpoint',HISTORY_KEY='rw_ai_chat_history_v2',VOICE_KEY='rw_ai_voice_enabled';
-const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>Array.from(r.querySelectorAll(s));
-const TEXT={
-pl:{title:'Rafal Wilk AI Assistant',sub:'Strona, moduły i pytania ogólne',ready:'Gotowy',online:'AI online',local:'Tryb lokalny',offline:'Backend AI offline',placeholder:'Zapytaj o stronę, moduł albo dowolny temat…',send:'Wyślij',listen:'Mów',stop:'Stop',settings:'Ustawienia AI',endpoint:'Bezpieczny endpoint AI',save:'Zapisz',hint:'Wklej adres wdrożonego AI Worker, np. https://twoj-worker.workers.dev',voice:'Czytaj odpowiedzi głosem',clear:'Wyczyść rozmowę',site:'Rafal Wilk AI to platforma narzędzi biznesowych: kalkulatory, staffing, HR, workforce, prywatne projekty i asystent AI.',tools:'Na platformie dostępne są:',opened:'Otwieram moduł:',missing:'Nie znalazłem takiego modułu.',noModule:'Nie ma teraz otwartego modułu.',module:'Aktualnie otwarty moduł to:',need:'Lokalnie mogę odpowiadać o stronie i otwierać jej moduły. Do dowolnych pytań, aktualnych informacji i internetu potrzebny jest bezpieczny backend AI. Ustaw jego adres w Ustawieniach AI.',error:'Nie udało się połączyć z backendem AI.'},
-en:{title:'Rafal Wilk AI Assistant',sub:'Website, modules and general questions',ready:'Ready',online:'AI online',local:'Local mode',offline:'AI backend offline',placeholder:'Ask about the website, a module, or anything else…',send:'Send',listen:'Speak',stop:'Stop',settings:'AI settings',endpoint:'Secure AI endpoint',save:'Save',hint:'Paste the deployed AI Worker URL, e.g. https://your-worker.workers.dev',voice:'Read answers aloud',clear:'Clear conversation',site:'Rafal Wilk AI is a business-tool platform for calculators, staffing, HR, workforce, private projects and an AI assistant.',tools:'Available tools on the platform:',opened:'Opening module:',missing:'I could not find that module.',noModule:'No module is currently open.',module:'The currently open module is:',need:'Locally I can answer questions about this website and open its modules. For arbitrary questions, fresh information and web access, configure the secure AI backend in AI settings.',error:'I could not connect to the AI backend.'},
-nl:{title:'Rafal Wilk AI Assistant',sub:'Website, modules en algemene vragen',ready:'Klaar',online:'AI online',local:'Lokale modus',offline:'AI-backend offline',placeholder:'Vraag iets over de website, een module of een ander onderwerp…',send:'Verstuur',listen:'Spreek',stop:'Stop',settings:'AI-instellingen',endpoint:'Veilige AI-endpoint',save:'Opslaan',hint:'Plak de URL van de AI Worker, bv. https://jouw-worker.workers.dev',voice:'Antwoorden voorlezen',clear:'Gesprek wissen',site:'Rafal Wilk AI is een business-toolplatform voor calculators, staffing, HR, workforce, privéprojecten en een AI-assistent.',tools:'Beschikbare tools op het platform:',opened:'Ik open module:',missing:'Ik kon die module niet vinden.',noModule:'Er is nu geen module geopend.',module:'De momenteel geopende module is:',need:'Lokaal kan ik vragen over deze website beantwoorden en modules openen. Voor algemene vragen, actuele informatie en webtoegang moet de veilige AI-backend zijn ingesteld.',error:'Ik kon geen verbinding maken met de AI-backend.'}
+
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const HISTORY_KEY='rw_local_ai_history_v3';
+const VOICE_KEY='rw_local_ai_voice_v3';
+const LEGACY_SOURCE='../assets/js/legacy-apps-bundle.js?v=20260727-cv-match-engine-4';
+const WEBLLM_CDN='https://esm.run/@mlc-ai/web-llm';
+
+const I18N={
+  pl:{title:'Rafal Wilk AI Assistant',sub:'Lokalny AI • bez klucza API',ready:'Gotowy',local:'AI działa lokalnie',loading:'Ładowanie lokalnego AI',model:'Model AI',download:'Pierwsze uruchomienie pobiera model do przeglądarki.',ask:'Zapytaj o stronę, aktywny moduł albo dowolny temat…',send:'Wyślij',listen:'Mów',stop:'Stop',voice:'Głos',site:'Rafal Wilk AI to platforma narzędzi biznesowych, kalkulatorów, HR, staffing, workforce i prywatnych projektów.',tools:'Dostępne moduły:',opened:'Otwieram moduł:',missing:'Nie znalazłem takiego modułu.',active:'Aktualnie otwarty moduł:',noActive:'Nie ma teraz otwartego modułu.',noGpu:'Ta przeglądarka nie udostępnia WebGPU. Funkcje strony i komendy modułów działają, ale pełny lokalny model AI wymaga aktualnego Chrome lub Edge z WebGPU.',modelError:'Nie udało się uruchomić lokalnego modelu AI.',thinking:'Analizuję…',legacyLoading:'Ładowanie modułu…',legacyError:'Nie udało się uruchomić modułu. Odśwież stronę i spróbuj ponownie.'},
+  en:{title:'Rafal Wilk AI Assistant',sub:'Local AI • no API key',ready:'Ready',local:'AI runs locally',loading:'Loading local AI',model:'AI model',download:'The first run downloads the model into the browser cache.',ask:'Ask about the website, active module, or anything else…',send:'Send',listen:'Speak',stop:'Stop',voice:'Voice',site:'Rafal Wilk AI is a business platform for calculators, HR, staffing, workforce and private projects.',tools:'Available modules:',opened:'Opening module:',missing:'I could not find that module.',active:'Currently open module:',noActive:'No module is open right now.',noGpu:'This browser does not expose WebGPU. Website and module commands still work, but the full local AI model requires a current Chrome or Edge with WebGPU.',modelError:'The local AI model could not be started.',thinking:'Thinking…',legacyLoading:'Loading module…',legacyError:'The module could not be started. Refresh the page and try again.'},
+  nl:{title:'Rafal Wilk AI Assistant',sub:'Lokale AI • geen API-sleutel',ready:'Klaar',local:'AI draait lokaal',loading:'Lokale AI laden',model:'AI-model',download:'Bij het eerste gebruik wordt het model in de browsercache gedownload.',ask:'Vraag iets over de website, actieve module of een ander onderwerp…',send:'Verstuur',listen:'Spreek',stop:'Stop',voice:'Stem',site:'Rafal Wilk AI is een businessplatform voor calculators, HR, staffing, workforce en privéprojecten.',tools:'Beschikbare modules:',opened:'Ik open module:',missing:'Ik kon die module niet vinden.',active:'Momenteel geopend module:',noActive:'Er is nu geen module geopend.',noGpu:'Deze browser biedt geen WebGPU. De website en modulecommando’s werken wel, maar het volledige lokale AI-model vereist een actuele Chrome of Edge met WebGPU.',modelError:'Het lokale AI-model kon niet worden gestart.',thinking:'Ik analyseer…',legacyLoading:'Module laden…',legacyError:'De module kon niet worden gestart. Vernieuw de pagina en probeer opnieuw.'}
 };
-let history=readHistory(),recognition=null,listening=false,online=false;
-function lang(){const v=String(localStorage.getItem('rw_lang')||document.documentElement.lang||'pl').toLowerCase().slice(0,2);return ['pl','en','nl'].includes(v)?v:'pl'}
-function tr(k){return TEXT[lang()][k]||TEXT.pl[k]||k}
-function norm(v){return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim()}
-function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
-function endpoint(){return String(localStorage.getItem(ENDPOINT_KEY)||document.querySelector('meta[name="rw-ai-endpoint"]')?.content||window.RW_AI_ENDPOINT||'').trim().replace(/\/$/,'')}
-function readHistory(){try{const x=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');return Array.isArray(x)?x.slice(-30):[]}catch{return[]}}
-function saveHistory(){try{localStorage.setItem(HISTORY_KEY,JSON.stringify(history.slice(-30)))}catch{}}
-function catalog(){if(window.RWPlatform?.getCatalog)return window.RWPlatform.getCatalog();return $$('[data-tool-name]').map(c=>({name:c.dataset.toolName||c.querySelector('.title,h4')?.textContent?.trim()||'',description:c.querySelector('[data-tool-description],.desc')?.textContent?.trim()||''})).filter(x=>x.name)}
-function activeFrame(){return document.querySelector('.workspace-stage iframe.show')||$$('iframe.show').pop()||null}
-function moduleContext(){const f=activeFrame();if(!f)return null;const out={title:document.querySelector('#workspaceTitle')?.textContent?.trim()||f.title||f.id,id:f.id,text:'',fields:[],actions:[]};try{const d=f.contentDocument;if(d){out.text=String(d.body?.innerText||'').replace(/\s+/g,' ').trim().slice(0,10000);out.fields=$$('input,textarea,select',d).filter(e=>e.type!=='password').slice(0,80).map(e=>({label:String(e.getAttribute('aria-label')||e.name||e.id||e.placeholder||'field').slice(0,100),value:String(e.tagName==='SELECT'?(e.selectedOptions?.[0]?.textContent||e.value):(e.value||'')).slice(0,500)})).filter(x=>x.value);out.actions=$$('button,a,[role="button"]',d).slice(0,60).map(e=>(e.textContent||e.getAttribute('aria-label')||'').trim()).filter(Boolean)}}catch{}return out}
-function siteContext(){return{site:{name:'Rafal Wilk AI',description:tr('site'),tools:catalog()},module:moduleContext(),page:{language:lang(),url:location.href}}}
-function installUI(){const panel=document.querySelector('#rwAgentPanel'),body=panel?.querySelector('.rw-body'),log=document.querySelector('#rwLog');if(!panel||!body||!log)return;
-  panel.classList.add('rw-ai-v2');
-  const visual=document.querySelector('#rwVisual');if(visual)visual.innerHTML='<div class="rw-ai-v2-status"><span id="rwAiDot"></span><strong id="rwState"></strong><small id="rwHint"></small></div>';
-  const controls=panel.querySelector('.rw-controls');if(controls)controls.innerHTML='<button class="rw-btn" id="rwListenBtn" type="button"></button><button class="rw-btn secondary" id="rwAiSettingsBtn" type="button">AI</button><label class="rw-ai-v2-voice"><input type="checkbox" id="rwAiVoice"> <span id="rwVoiceLabel"></span></label>';
-  panel.querySelector('#rwRefreshBtn')?.parentElement?.remove();
-  log.classList.add('rw-ai-v2-chat');
-  if(!document.querySelector('#rwAiSettings')){const d=document.createElement('div');d.id='rwAiSettings';d.hidden=true;d.innerHTML='<div class="rw-ai-v2-setting-head"><strong id="rwSettingsTitle"></strong><button type="button" id="rwAiClear" class="rw-btn ghost"></button></div><label id="rwEndpointLabel"></label><div class="rw-ai-v2-endpoint"><input id="rwAiEndpoint" type="url" autocomplete="off" placeholder="https://...workers.dev"><button id="rwAiSaveEndpoint" class="rw-btn secondary" type="button"></button></div><small id="rwEndpointHint"></small>';log.before(d)}
-  if(!document.querySelector('#rw-ai-v2-style')){const st=document.createElement('style');st.id='rw-ai-v2-style';st.textContent=`#rwAgentPanel.rw-ai-v2{width:min(620px,calc(100vw - 28px));max-height:min(780px,calc(100vh - 28px))}.rw-ai-v2 .rw-holo{min-height:auto!important;padding:12px!important}.rw-ai-v2-status{display:grid;grid-template-columns:auto 1fr;gap:2px 9px;align-items:center}.rw-ai-v2-status span{grid-row:1/3;width:9px;height:9px;border-radius:50%;background:#70839a}.rw-ai-v2-status span.online{background:#4ed3a1;box-shadow:0 0 14px rgba(78,211,161,.7)}.rw-ai-v2-status strong{font-size:12px;color:#edf6ff}.rw-ai-v2-status small{font-size:10px;color:#8398b1}.rw-ai-v2 .rw-log.rw-ai-v2-chat{height:300px;max-height:38vh;display:flex;flex-direction:column;gap:9px;padding:12px;overflow:auto}.rw-ai-v2-msg{max-width:88%;padding:10px 12px;border:1px solid rgba(123,174,246,.14);border-radius:12px;font-size:12px;line-height:1.55;color:#dce9f7;background:rgba(255,255,255,.03)}.rw-ai-v2-msg.user{align-self:flex-end;background:rgba(74,148,239,.16);border-color:rgba(91,166,255,.28)}.rw-ai-v2-msg.assistant{align-self:flex-start}.rw-ai-v2-sources{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}.rw-ai-v2-sources a{font-size:9px;color:#9dccff;text-decoration:none;border:1px solid rgba(123,174,246,.18);border-radius:7px;padding:4px 6px}.rw-ai-v2-voice{display:flex;align-items:center;gap:5px;font-size:10px;color:#91a6bd}.rw-ai-v2 #rwAiSettings{padding:12px;border:1px solid rgba(123,174,246,.14);border-radius:11px;background:rgba(3,10,18,.45);margin-bottom:9px}.rw-ai-v2-setting-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.rw-ai-v2 #rwAiSettings label,.rw-ai-v2 #rwAiSettings small{font-size:10px;color:#899db6}.rw-ai-v2-endpoint{display:flex;gap:6px;margin:6px 0}.rw-ai-v2-endpoint input{min-width:0;flex:1;background:#071522;color:#eef6ff;border:1px solid rgba(123,174,246,.2);border-radius:8px;padding:9px}.rw-ai-v2 .rw-row{align-items:stretch}.rw-ai-v2 .rw-input{min-height:44px}@media(max-width:620px){#rwAgentPanel.rw-ai-v2{width:100%;max-height:92vh}.rw-ai-v2 .rw-log.rw-ai-v2-chat{height:36vh}.rw-ai-v2 .rw-controls{flex-wrap:wrap}}`;document.head.appendChild(st)}
+
+let history=readHistory();
+let engine=null;
+let enginePromise=null;
+let webllmModule=null;
+let recognition=null;
+let listening=false;
+let legacyAppsPromise=null;
+
+function lang(){
+  const v=String(localStorage.getItem('rw_lang')||document.documentElement.lang||'pl').toLowerCase().slice(0,2);
+  return ['pl','en','nl'].includes(v)?v:'pl';
 }
-function setStatus(msg){const s=document.querySelector('#rwState'),h=document.querySelector('#rwHint'),d=document.querySelector('#rwAiDot');if(s)s.textContent=online?tr('online'):(endpoint()?tr('offline'):tr('local'));if(h)h.textContent=msg||tr('ready');if(d)d.classList.toggle('online',online);window.dispatchEvent(new CustomEvent('rwAiStatus',{detail:{configured:!!endpoint(),online,label:s?.textContent||''}}))}
-function applyTexts(){const title=document.querySelector('.rw-agent-title'),sub=document.querySelector('.rw-agent-subtitle');if(title)title.textContent=tr('title');if(sub)sub.textContent=tr('sub');const input=document.querySelector('#rwCommandInput');if(input)input.placeholder=tr('placeholder');if(document.querySelector('#rwSendBtn'))document.querySelector('#rwSendBtn').textContent=tr('send');if(document.querySelector('#rwListenBtn'))document.querySelector('#rwListenBtn').textContent=listening?tr('stop'):tr('listen');if(document.querySelector('#rwSettingsTitle'))document.querySelector('#rwSettingsTitle').textContent=tr('settings');if(document.querySelector('#rwEndpointLabel'))document.querySelector('#rwEndpointLabel').textContent=tr('endpoint');if(document.querySelector('#rwAiSaveEndpoint'))document.querySelector('#rwAiSaveEndpoint').textContent=tr('save');if(document.querySelector('#rwEndpointHint'))document.querySelector('#rwEndpointHint').textContent=tr('hint');if(document.querySelector('#rwVoiceLabel'))document.querySelector('#rwVoiceLabel').textContent=tr('voice');if(document.querySelector('#rwAiClear'))document.querySelector('#rwAiClear').textContent=tr('clear');setStatus()}
-function render(){const box=document.querySelector('#rwLog');if(!box)return;box.innerHTML='';if(!history.length)addBubble('assistant',tr('site'),false);else history.forEach(x=>addBubble(x.role,x.text,false,x.sources))}
-function addBubble(role,text,persist=true,sources=[]){const box=document.querySelector('#rwLog');if(!box)return;const row=document.createElement('div');row.className='rw-ai-v2-msg '+(role==='user'?'user':'assistant');row.innerHTML='<div>'+esc(text).replace(/\n/g,'<br>')+'</div>';if(role!=='user'&&Array.isArray(sources)&&sources.length){const src=document.createElement('div');src.className='rw-ai-v2-sources';sources.slice(0,6).forEach(x=>{if(!x?.url)return;const a=document.createElement('a');a.href=x.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=x.title||x.url;src.appendChild(a)});row.appendChild(src)}box.appendChild(row);box.scrollTop=box.scrollHeight;if(persist){history.push({role,text,sources:Array.isArray(sources)?sources.slice(0,6):[]});saveHistory()}}
-function localAnswer(raw){const n=norm(raw),tools=catalog();if(!n)return null;if(/^\d+(?:\.\d+)?\s*[+*\/-]\s*\d+(?:\.\d+)?$/.test(raw.trim())){try{const safe=raw.trim().replace(/[^0-9+*\/().\-\s]/g,'');return String(Function('return ('+safe+')')())}catch{}}
+function tr(k){return I18N[lang()]?.[k]||I18N.pl[k]||k;}
+function norm(v){return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+function readHistory(){try{const x=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');return Array.isArray(x)?x.slice(-24):[]}catch{return[];}}
+function saveHistory(){try{localStorage.setItem(HISTORY_KEY,JSON.stringify(history.slice(-24)));}catch{}}
+function catalog(){return window.RWPlatform?.getCatalog?.()||$$('[data-tool-name]').map(c=>({name:c.dataset.toolName||'',description:c.querySelector('[data-tool-description]')?.textContent?.trim()||''})).filter(x=>x.name);}
+function activeFrame(){return $('.workspace-stage iframe.show')||null;}
+function activeModule(){
+  const f=activeFrame();
+  if(!f)return null;
+  const out={title:$('#workspaceTitle')?.textContent?.trim()||f.title||f.id,id:f.id,text:'',fields:[],actions:[]};
+  try{
+    const d=f.contentDocument;
+    if(d){
+      out.text=String(d.body?.innerText||'').replace(/\s+/g,' ').trim().slice(0,12000);
+      out.fields=$$('input,textarea,select',d).filter(e=>e.type!=='password').slice(0,60).map(e=>({label:String(e.getAttribute('aria-label')||e.name||e.id||e.placeholder||'field').slice(0,90),value:String(e.tagName==='SELECT'?(e.selectedOptions?.[0]?.textContent||e.value):(e.value||'')).slice(0,400)})).filter(x=>x.value);
+      out.actions=$$('button,a,[role="button"]',d).slice(0,50).map(e=>(e.textContent||e.getAttribute('aria-label')||'').trim()).filter(Boolean);
+    }
+  }catch{}
+  return out;
+}
+
+/* ---------- Safe legacy module loader ---------- */
+function decodeBase64Utf8(b64){
+  const bin=atob(b64); const bytes=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+  return new TextDecoder('utf-8').decode(bytes);
+}
+async function getLegacyApps(){
+  if(legacyAppsPromise)return legacyAppsPromise;
+  legacyAppsPromise=(async()=>{
+    const r=await fetch(LEGACY_SOURCE,{cache:'force-cache'});
+    if(!r.ok)throw new Error('Legacy source HTTP '+r.status);
+    const text=await r.text();
+    const marker=text.search(/const\s+APPS\s*=\s*/);
+    if(marker<0)throw new Error('APPS data not found');
+    const start=text.indexOf('[',marker);
+    const end=text.indexOf('];',start);
+    if(start<0||end<0)throw new Error('APPS data malformed');
+    const apps=JSON.parse(text.slice(start,end+1));
+    if(!Array.isArray(apps)||!apps.length)throw new Error('APPS data empty');
+    return apps;
+  })();
+  return legacyAppsPromise;
+}
+function showWorkspaceForLegacy(title){
+  $$('.workspace-stage iframe').forEach(f=>f.classList.remove('show'));
+  $('.viewport')?.classList.add('active');
+  document.body.classList.add('app-open');
+  const wt=$('#workspaceTitle'); if(wt)wt.textContent=title||'Rafal Wilk AI';
+  const l=$('#workspaceLoading'); if(l){l.hidden=false;l.textContent=tr('legacyLoading');}
+  document.title='Rafal Wilk AI — '+(title||'Module');
+}
+async function openLegacyModule(idx,title){
+  const frame=$('#appframe'); if(!frame)throw new Error('appframe missing');
+  showWorkspaceForLegacy(title);
+  const apps=await getLegacyApps();
+  const app=apps[Number(idx)]; if(!app?.b64)throw new Error('Legacy module '+idx+' missing');
+  const html=decodeBase64Utf8(app.b64);
+  frame.classList.remove('show');
+  frame.removeAttribute('src');
+  frame.onload=()=>{
+    const loading=$('#workspaceLoading'); if(loading)loading.hidden=true;
+    try{window.__rwPlatformSetLang?.(lang());}catch{}
+  };
+  frame.srcdoc=html;
+  frame.classList.add('show');
+  try{localStorage.setItem('rw_active_module_idx',String(idx));}catch{}
+  window.__rwActiveAppId='appframe';
+  window.__rwActiveAppLang=lang();
+  try{window.__rwSetActiveApp?.(title||app.title);}catch{}
+  setTimeout(()=>{const loading=$('#workspaceLoading');if(loading)loading.hidden=true;},1200);
+}
+function requestLegacyModule(idx,title){
+  const run=async()=>{
+    try{
+      if(window.__rwModulePinConsume && !window.__rwModulePinConsume())return;
+      await openLegacyModule(idx,title);
+    }catch(err){
+      console.error('[RW legacy loader]',err);
+      const l=$('#workspaceLoading');
+      if(l){l.hidden=false;l.textContent=tr('legacyError');}
+    }
+  };
+  if(typeof window.__rwRequestModulePin==='function')window.__rwRequestModulePin(run,title||'Module');
+  else run();
+}
+// Capture-phase interception prevents the old site.js legacy loader from executing.
+document.addEventListener('click',e=>{
+  const btn=e.target?.closest?.('[data-legacy-idx]');
+  if(!btn)return;
+  e.preventDefault();
+  e.stopImmediatePropagation();
+  requestLegacyModule(Number(btn.dataset.legacyIdx),btn.dataset.title||btn.closest('[data-tool-name]')?.dataset.toolName||'Module');
+},true);
+
+/* ---------- Agent UI ---------- */
+function installUI(){
+  const panel=$('#rwAgentPanel'),log=$('#rwLog'); if(!panel||!log)return;
+  panel.classList.add('rw-local-ai');
+  const title=panel.querySelector('.rw-agent-title'); if(title)title.textContent=tr('title');
+  const sub=panel.querySelector('.rw-agent-subtitle'); if(sub)sub.textContent=tr('sub');
+  const visual=$('#rwVisual');
+  if(visual)visual.innerHTML='<div class="rw-local-status"><span class="rw-local-dot"></span><div><strong id="rwState"></strong><small id="rwHint"></small><div class="rw-model-progress"><i id="rwModelBar"></i></div></div></div>';
+  const controls=panel.querySelector('.rw-controls');
+  if(controls)controls.innerHTML='<button class="rw-btn" id="rwListenBtn" type="button"></button><label class="rw-local-voice"><input id="rwVoiceEnabled" type="checkbox"> <span></span></label>';
+  $('#rwRefreshBtn')?.parentElement?.remove();
+  log.classList.add('rw-local-chat');
+  if(!$('#rw-local-ai-style')){
+    const st=document.createElement('style'); st.id='rw-local-ai-style';
+    st.textContent=`#rwAgentPanel.rw-local-ai{width:min(650px,calc(100vw - 28px));max-height:min(820px,calc(100vh - 28px))}.rw-local-ai .rw-holo{min-height:auto!important;padding:13px!important}.rw-local-status{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}.rw-local-dot{width:10px;height:10px;border-radius:50%;background:#52d7a8;box-shadow:0 0 16px rgba(82,215,168,.65)}.rw-local-status strong{display:block;font-size:12px;color:#eef7ff}.rw-local-status small{display:block;margin-top:2px;font-size:10px;color:#879bb3}.rw-model-progress{height:3px;margin-top:7px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}.rw-model-progress i{display:block;width:0;height:100%;background:currentColor;transition:width .2s}.rw-local-ai .rw-log.rw-local-chat{height:330px;max-height:40vh;display:flex;flex-direction:column;gap:9px;padding:12px;overflow:auto}.rw-local-msg{max-width:88%;padding:10px 12px;border-radius:12px;border:1px solid rgba(123,174,246,.15);font-size:12px;line-height:1.55;color:#dce9f7;background:rgba(255,255,255,.035)}.rw-local-msg.user{align-self:flex-end;background:rgba(74,148,239,.16);border-color:rgba(91,166,255,.28)}.rw-local-msg.assistant{align-self:flex-start}.rw-local-voice{display:flex;align-items:center;gap:5px;color:#91a6bd;font-size:10px}.rw-local-ai .rw-input{min-height:44px}.rw-local-ai .rw-row{align-items:stretch}@media(max-width:620px){#rwAgentPanel.rw-local-ai{width:100%;max-height:92vh}.rw-local-ai .rw-log.rw-local-chat{height:36vh}}`;
+    document.head.appendChild(st);
+  }
+  applyTexts(); renderHistory();
+}
+function applyTexts(){
+  const title=$('.rw-agent-title');if(title)title.textContent=tr('title');
+  const sub=$('.rw-agent-subtitle');if(sub)sub.textContent=tr('sub');
+  const input=$('#rwCommandInput');if(input)input.placeholder=tr('ask');
+  const send=$('#rwSendBtn');if(send)send.textContent=tr('send');
+  const listen=$('#rwListenBtn');if(listen)listen.textContent=listening?tr('stop'):tr('listen');
+  const voiceLabel=$('.rw-local-voice span');if(voiceLabel)voiceLabel.textContent=tr('voice');
+  const voice=$('#rwVoiceEnabled');if(voice)voice.checked=localStorage.getItem(VOICE_KEY)!=='0';
+  setStatus(tr('ready'),tr('local'));
+}
+function setStatus(main,hint,progress){
+  const s=$('#rwState'),h=$('#rwHint'),b=$('#rwModelBar');
+  if(s)s.textContent=main||tr('ready'); if(h)h.textContent=hint||tr('local');
+  if(b&&typeof progress==='number')b.style.width=Math.max(0,Math.min(100,progress))+'%';
+  window.dispatchEvent(new CustomEvent('rwAiStatus',{detail:{configured:false,online:false,label:tr('local')}}));
+}
+function renderHistory(){
+  const box=$('#rwLog');if(!box)return; box.innerHTML='';
+  if(!history.length)addBubble('assistant',tr('site'),false);
+  else history.forEach(x=>addBubble(x.role,x.text,false));
+}
+function addBubble(role,text,persist=true){
+  const box=$('#rwLog');if(!box)return;
+  const d=document.createElement('div');d.className='rw-local-msg '+(role==='user'?'user':'assistant');d.innerHTML=esc(text).replace(/\n/g,'<br>');box.appendChild(d);box.scrollTop=box.scrollHeight;
+  if(persist){history.push({role,text:String(text)});saveHistory();}
+}
+
+/* ---------- Local deterministic knowledge / commands ---------- */
+function localCommand(raw){
+  const n=norm(raw),tools=catalog(); if(!n)return null;
   if(['co to za strona','czym jest ta strona','what is this site','what is this website','wat is deze site'].some(x=>n.includes(norm(x))))return tr('site');
   if(['jakie narzedzia','jakie moduly','lista narzedzi','list tools','what tools','which tools','welke tools','welke modules'].some(x=>n.includes(norm(x))))return tr('tools')+' '+tools.map(x=>x.name).join(', ')+'.';
-  if(['gdzie jestem','jaki modul','active module','what module','welke module','waar ben ik'].some(x=>n.includes(norm(x)))){const m=moduleContext();return m?tr('module')+' '+m.title+'.':tr('noModule')}
-  const verbs=['otworz','open','uruchom','start','openen'];if(verbs.some(v=>n.startsWith(v+' ')||n.includes(' '+v+' '))){const target=tools.find(x=>n.includes(norm(x.name)))||tools.find(x=>norm(x.name).split(' ').filter(w=>w.length>3).every(w=>n.includes(w)));if(target&&window.RWPlatform?.openToolByName){window.RWPlatform.openToolByName(target.name);return tr('opened')+' '+target.name+'.'}return tr('missing')}
-  const tool=tools.find(x=>n.includes(norm(x.name)));if(tool&&['co robi','do czego','what does','what is','wat doet','waarvoor'].some(x=>n.includes(norm(x))))return tool.name+': '+(tool.description||'');
-  return null
+  if(['gdzie jestem','jaki modul','jaki moduł','active module','what module','welke module','waar ben ik'].some(x=>n.includes(norm(x)))){const m=activeModule();return m?tr('active')+' '+m.title+'.':tr('noActive');}
+  const verbs=['otworz','otwórz','open','uruchom','start','openen'];
+  if(verbs.some(v=>n.startsWith(norm(v)+' ')||n.includes(' '+norm(v)+' '))){
+    const score=tools.map(x=>({x,s:norm(x.name).split(' ').filter(w=>w.length>2).filter(w=>n.includes(w)).length})).sort((a,b)=>b.s-a.s)[0];
+    if(score?.s>0&&window.RWPlatform?.openToolByName){window.RWPlatform.openToolByName(score.x.name);return tr('opened')+' '+score.x.name+'.';}
+    return tr('missing');
+  }
+  const tool=tools.find(x=>n.includes(norm(x.name)));
+  if(tool&&['co robi','do czego','what does','what is','wat doet','waarvoor'].some(x=>n.includes(norm(x))))return tool.name+': '+(tool.description||'');
+  const dateWords=['jaka data','jaki dzisiaj dzien','jaki dziś dzień','what date','what day is it','welke datum','welke dag'];
+  if(dateWords.some(x=>n.includes(norm(x))))return new Intl.DateTimeFormat(lang()==='nl'?'nl-NL':lang()==='en'?'en-GB':'pl-PL',{dateStyle:'full'}).format(new Date());
+  return null;
 }
-async function askBackend(message){const ctx=siteContext(),base=endpoint();const r=await fetch(base+'/chat',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({message,lang:lang(),history:history.slice(-12).map(x=>({role:x.role,content:x.text})),catalog:JSON.stringify(ctx.site.tools||[]),context:JSON.stringify(ctx),activeModule:ctx.module?.title||''})});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||('HTTP '+r.status));online=true;setStatus();return{answer:String(data.answer||'').trim(),sources:Array.isArray(data.sources)?data.sources:[]}}
-async function send(raw){const text=String(raw||'').trim();if(!text)return;addBubble('user',text);setStatus('…');const local=localAnswer(text);if(local){addBubble('assistant',local);speak(local);setStatus();return}if(!endpoint()){addBubble('assistant',tr('need'));setStatus();return}try{const x=await askBackend(text);const answer=x.answer||tr('error');addBubble('assistant',answer,true,x.sources);speak(answer)}catch(e){online=false;setStatus();addBubble('assistant',tr('error')+' '+String(e.message||e))}}
-function speak(text){if(localStorage.getItem(VOICE_KEY)==='0')return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(text).replace(/https?:\/\/\S+/g,''));u.lang=lang()==='nl'?'nl-NL':lang()==='en'?'en-US':'pl-PL';u.rate=.97;speechSynthesis.speak(u)}catch{}}
-function setupVoice(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;recognition=new SR();recognition.continuous=false;recognition.interimResults=false;recognition.onresult=e=>send(e.results?.[0]?.[0]?.transcript||'');recognition.onend=()=>{listening=false;applyTexts()};recognition.onerror=()=>{listening=false;applyTexts()}}
-function toggleVoice(){if(!recognition)setupVoice();if(!recognition)return;if(listening){try{recognition.stop()}catch{}listening=false}else{try{recognition.lang=lang()==='nl'?'nl-NL':lang()==='en'?'en-US':'pl-PL';recognition.start();listening=true}catch{}}applyTexts()}
-async function health(){if(!endpoint()){online=false;setStatus();return false}try{const r=await fetch(endpoint()+'/health',{headers:{Accept:'application/json'}});online=r.ok;setStatus();return online}catch{online=false;setStatus();return false}}
-function open(){const p=document.querySelector('#rwAgentOverlay');if(p){p.classList.add('open');p.setAttribute('aria-hidden','false');applyTexts();render();health();setTimeout(()=>document.querySelector('#rwCommandInput')?.focus(),70)}}
-function close(){try{speechSynthesis.cancel()}catch{}const p=document.querySelector('#rwAgentOverlay');p?.classList.remove('open');p?.setAttribute('aria-hidden','true')}
-function bind(){installUI();const ep=document.querySelector('#rwAiEndpoint');if(ep)ep.value=endpoint();const voice=document.querySelector('#rwAiVoice');if(voice)voice.checked=localStorage.getItem(VOICE_KEY)!=='0';document.querySelector('#rwVoiceLauncher')?.addEventListener('click',open);document.querySelector('#rwAgentClose')?.addEventListener('click',close);document.querySelector('#rwSendBtn')?.addEventListener('click',()=>{const i=document.querySelector('#rwCommandInput'),v=i?.value||'';if(i)i.value='';send(v)});document.querySelector('#rwCommandInput')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const v=e.currentTarget.value;e.currentTarget.value='';send(v)}});document.querySelector('#rwListenBtn')?.addEventListener('click',toggleVoice);document.querySelector('#rwStopSpeakBtn')?.addEventListener('click',()=>{try{speechSynthesis.cancel()}catch{}});document.querySelector('#rwTestVoiceBtn')?.addEventListener('click',()=>speak(tr('site')));document.querySelector('#rwRefreshBtn')?.addEventListener('click',health);document.querySelector('#rwAiSettingsBtn')?.addEventListener('click',()=>{const s=document.querySelector('#rwAiSettings');if(s)s.hidden=!s.hidden});document.querySelector('#rwAiSaveEndpoint')?.addEventListener('click',()=>{const v=document.querySelector('#rwAiEndpoint')?.value.trim().replace(/\/$/,'')||'';if(v)localStorage.setItem(ENDPOINT_KEY,v);else localStorage.removeItem(ENDPOINT_KEY);health()});document.querySelector('#rwAiVoice')?.addEventListener('change',e=>localStorage.setItem(VOICE_KEY,e.target.checked?'1':'0'));document.querySelector('#rwAiClear')?.addEventListener('click',()=>{history=[];saveHistory();render()});window.addEventListener('rwLanguageChanged',applyTexts);document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.querySelector('#rwAgentOverlay')?.classList.contains('open'))close()});applyTexts();render();setupVoice();health()}
-window.RWAI={open,close,send,health,isConfigured:()=>!!endpoint(),isOnline:()=>online,getContext:siteContext};
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});else bind();
+
+/* ---------- WebLLM: full AI in browser, no API key ---------- */
+async function loadWebLLM(){
+  if(webllmModule)return webllmModule;
+  webllmModule=await import(WEBLLM_CDN);
+  return webllmModule;
+}
+function chooseModel(mod){
+  const list=mod?.prebuiltAppConfig?.model_list||[];
+  const ids=list.map(x=>x.model_id).filter(Boolean);
+  const preferred=[
+    'Qwen2.5-1.5B-Instruct-q4f16_1-MLC',
+    'Qwen2.5-3B-Instruct-q4f16_1-MLC',
+    'Llama-3.2-1B-Instruct-q4f16_1-MLC',
+    'Llama-3.2-3B-Instruct-q4f16_1-MLC',
+    'Phi-3.5-mini-instruct-q4f16_1-MLC'
+  ];
+  for(const id of preferred)if(ids.includes(id))return id;
+  return ids.find(id=>/Qwen.*(?:1\.5B|3B).*Instruct/i.test(id))||ids.find(id=>/(?:1B|1\.5B|3B).*Instruct/i.test(id))||ids[0];
+}
+async function ensureEngine(){
+  if(engine)return engine; if(enginePromise)return enginePromise;
+  enginePromise=(async()=>{
+    if(!navigator.gpu)throw new Error('WEBGPU_UNAVAILABLE');
+    setStatus(tr('loading'),tr('download'),2);
+    const mod=await loadWebLLM();
+    const model=chooseModel(mod); if(!model)throw new Error('No compatible WebLLM model');
+    engine=await mod.CreateMLCEngine(model,{initProgressCallback:p=>{
+      const value=Math.round((Number(p.progress)||0)*100);
+      setStatus(tr('loading'),p.text||model,value);
+    }});
+    setStatus(tr('ready'),tr('local'),100);
+    return engine;
+  })();
+  try{return await enginePromise;}catch(e){enginePromise=null;throw e;}
+}
+function systemPrompt(){
+  const m=activeModule();
+  const tools=catalog().map(x=>x.name+(x.description?' — '+x.description:'')).join('\n');
+  const language=lang()==='nl'?'Dutch':lang()==='en'?'English':'Polish';
+  return `You are Rafal Wilk AI Assistant, running locally in the user's browser. Answer in ${language} unless the user explicitly asks for another language. Be concise, useful and factual. You know the Rafal Wilk AI website and its business tools. Never invent values that are not present in the supplied active-module context. If the question depends on live internet data, explain briefly that this local browser model cannot verify live web information. Do not ask for or mention API keys.\n\nWEBSITE TOOLS:\n${tools}\n\nACTIVE MODULE:\n${m?JSON.stringify(m):'none'}`;
+}
+async function askLocalAI(message){
+  const e=await ensureEngine();
+  const msgs=[{role:'system',content:systemPrompt()}];
+  history.slice(-10).forEach(x=>msgs.push({role:x.role==='assistant'?'assistant':'user',content:x.text}));
+  msgs.push({role:'user',content:message});
+  const out=await e.chat.completions.create({messages:msgs,temperature:0.25,max_tokens:800});
+  return String(out?.choices?.[0]?.message?.content||'').trim();
+}
+
+function speak(text){
+  if(localStorage.getItem(VOICE_KEY)==='0'||!window.speechSynthesis)return;
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(String(text).slice(0,1200));
+    u.lang=lang()==='nl'?'nl-NL':lang()==='en'?'en-GB':'pl-PL';u.rate=.96;u.pitch=.95;
+    const voices=speechSynthesis.getVoices();const short=u.lang.slice(0,2).toLowerCase();const v=voices.find(x=>(x.lang||'').toLowerCase().startsWith(short)&&/natural|online|microsoft|google/i.test(x.name))||voices.find(x=>(x.lang||'').toLowerCase().startsWith(short));if(v)u.voice=v;
+    speechSynthesis.speak(u);
+  }catch{}
+}
+async function sendMessage(raw){
+  const message=String(raw||'').trim();if(!message)return;
+  addBubble('user',message,true);setStatus(tr('thinking'),tr('local'));
+  let answer=localCommand(message);
+  if(!answer){
+    try{answer=await askLocalAI(message);}catch(e){
+      console.error('[RW local AI]',e);
+      answer=e?.message==='WEBGPU_UNAVAILABLE'?tr('noGpu'):tr('modelError')+' '+String(e?.message||'');
+    }
+  }
+  answer=answer||tr('modelError');addBubble('assistant',answer,true);speak(answer);setStatus(tr('ready'),tr('local'));
+}
+function setupRecognition(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;
+  recognition=new SR();recognition.continuous=false;recognition.interimResults=false;
+  recognition.onresult=e=>{const text=e.results?.[0]?.[0]?.transcript||'';listening=false;applyTexts();sendMessage(text);};
+  recognition.onend=()=>{listening=false;applyTexts();};recognition.onerror=()=>{listening=false;applyTexts();};
+}
+function toggleListen(){
+  if(!recognition)setupRecognition();if(!recognition)return;
+  if(listening){try{recognition.abort();}catch{}listening=false;applyTexts();return;}
+  recognition.lang=lang()==='nl'?'nl-NL':lang()==='en'?'en-GB':'pl-PL';
+  try{recognition.start();listening=true;applyTexts();setStatus(tr('listen'),tr('ready'));}catch{}
+}
+function openAgent(){const o=$('#rwAgentOverlay');if(o){o.classList.add('open');o.setAttribute('aria-hidden','false');}applyTexts();}
+function closeAgent(){try{speechSynthesis.cancel();}catch{}const o=$('#rwAgentOverlay');if(o){o.classList.remove('open');o.setAttribute('aria-hidden','true');}}
+function bindUI(){
+  $('#rwVoiceLauncher')?.addEventListener('click',openAgent);
+  $('#rwAgentClose')?.addEventListener('click',closeAgent);
+  $('#rwSendBtn')?.addEventListener('click',()=>{const i=$('#rwCommandInput');const v=i?.value||'';if(i)i.value='';sendMessage(v);});
+  $('#rwCommandInput')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const v=e.currentTarget.value;e.currentTarget.value='';sendMessage(v);}});
+  $('#rwListenBtn')?.addEventListener('click',toggleListen);
+  $('#rwVoiceEnabled')?.addEventListener('change',e=>{localStorage.setItem(VOICE_KEY,e.target.checked?'1':'0');if(!e.target.checked)try{speechSynthesis.cancel();}catch{}});
+  window.addEventListener('rwLanguageChanged',()=>{applyTexts();});
+}
+
+window.RWAI={open:openAgent,close:closeAgent,isConfigured:()=>false,isOnline:()=>false,isLocal:()=>true,loadModel:ensureEngine,ask:sendMessage};
+
+function init(){installUI();bindUI();setupRecognition();setStatus(tr('ready'),tr('local'));}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
