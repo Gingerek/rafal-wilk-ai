@@ -1,0 +1,1 @@
+site-core.js must reference the original full site.js runtime blob.
