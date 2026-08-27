@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#040812">
+  <meta name="description" content="Rafal Wilk AI — business tools, automation, HR and staffing calculators in one professional AI platform.">
+  <title>Rafal Wilk AI</title>
+  <link rel="preload" as="image" href="../assets/images/corporate-tech-hero.webp" type="image/webp">
+  <link rel="stylesheet" href="site.css?v=20260827-full-1">
+</head>
+<body>
+<div class="site-shell">
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="#home" aria-label="Rafal Wilk AI">
+        <span class="brand-mark"><span>RW</span></span>
+        <span>Rafal Wilk <span class="brand-ai">AI</span></span>
+      </a>
+      <button class="mobile-menu" id="mobileMenu" type="button" aria-label="Menu">☰</button>
+      <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+        <a href="#home" data-i18n="navHome">Start</a>
+        <a href="#tools" data-i18n="navTools">Narzędzia</a>
+        <a href="#projects" data-i18n="navProjects">My Projects</a>
+        <button type="button" data-open-agent data-i18n="navAi">AI Agent</button>
+      </nav>
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" data-lang="pl">PL</button><button type="button" data-lang="en">EN</button><button type="button" data-lang="nl">NL</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-glow"></div>
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <div class="eyebrow" data-i18n="eyebrow">Business AI Platform</div>
+          <h1>Rafal Wilk <span class="ai">AI</span></h1>
+          <p class="hero-tagline" data-i18n="tagline">AI, automatyzacja i praktyczne narzędzia biznesowe w jednym ekosystemie.</p>
+          <p class="hero-lead" data-i18n="lead">Platforma łączy kalkulatory, rozwiązania HR i staffing, analitykę oraz narzędzia operacyjne bez zmiany istniejącej logiki biznesowej.</p>
+          <div class="hero-actions">
+            <button class="btn-primary" type="button" data-scroll-target="#tools" data-i18n="ctaTools">Zobacz narzędzia</button>
+            <button class="btn-secondary" type="button" data-my-projects data-i18n="ctaProjects">Otwórz My Projects</button>
+          </div>
+          <div class="hero-status"><span class="status-dot"></span><span data-i18n="status">Platforma gotowa</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="capabilities" aria-label="Platform capabilities">
+      <article class="capability"><div class="capability-index">01</div><div class="capability-title" data-i18n="cap1">Kalkulatory i modele</div><div class="capability-copy" data-i18n="cap1c">Bill rate, budżety, merit, CAO i narzędzia staffingowe.</div></article>
+      <article class="capability"><div class="capability-index">02</div><div class="capability-title" data-i18n="cap2">HR i workforce</div><div class="capability-copy" data-i18n="cap2c">Intake, CV Match, spotkania, home office i workflow operacyjne.</div></article>
+      <article class="capability"><div class="capability-index">03</div><div class="capability-title" data-i18n="cap3">AI Assistant</div><div class="capability-copy" data-i18n="cap3c">Agent głosowy jako integralna część platformy.</div></article>
+    </section>
+
+    <section class="section" id="tools">
+      <div class="kicker" data-i18n="toolsK">Narzędzia</div>
+      <h2 data-i18n="toolsH">Rozwiązania gotowe do pracy</h2>
+      <p class="section-intro" data-i18n="toolsI">Każdy moduł otwiera się wewnątrz platformy. Zachowana została obecna logika, PIN oraz mechanizmy językowe.</p>
+      <div class="tools-layout">
+        <aside class="category-nav" aria-label="Tool categories">
+          <button class="active" type="button" data-category-target="#calculators" data-i18n="catCalc">Calculators</button>
+          <button type="button" data-category-target="#recruitment" data-i18n="catRecruit">Recruitment & Staffing</button>
+          <button type="button" data-category-target="#hr" data-i18n="catHr">HR & Workforce</button>
+          <button type="button" data-category-target="#project-tools" data-i18n="catProjects">My Projects</button>
+        </aside>
+        <div class="tool-groups">
+          <section class="tool-group" id="calculators">
+            <div class="group-head"><h3 data-i18n="catCalc">Calculators</h3><span>10 modules</span></div>
+            <div class="cards">
+              <article class="tool-card" data-tool-name="Contract Budget Calculator"><div class="tool-meta"><span class="tool-icon">CB</span><span class="tool-tag">Budget</span></div><h4>Contract Budget Calculator</h4><p data-tool-description></p><button class="tool-action" type="button" data-legacy-idx="0" data-title="Contract Budget Calculator" data-action-label>Otwórz</button></article>
+              <article class="tool-card" data-tool-name="New Bill Rate"><div class="tool-meta"><span class="tool-icon">BR</span><span class="tool-tag">Rate</span></div><h4>New Bill Rate</h4><p data-tool-description></p><button class="tool-action" type="button" data-legacy-idx="1" data-title="New Bill Rate" data-action-label>Otwórz</button></article>
+              <article class="tool-card" data-tool-name="RekenTool Master"><div class="tool-meta"><span class="tool-icon">RM</span><span class="tool-tag">Master</span></div><h4>RekenTool Master</h4><p data-tool-description></p><button class="tool-action" type="button" data-legacy-idx="2" data-title="RekenTool Master" data-action-label>Otwórz</button></article>
+              <article class="tool-card" data-tool-name="RekenTool Professional & General Staffing"><div class="tool-meta"><span class="tool-icon">PG</span><span class="tool-tag">Staffing</span></div><h4>RekenTool Professional & General Staffing</h4><p data-tool-description></p><button class="tool-action" type="button" data-direct-frame="rekentoolcombined" data-title="RekenTool Professional & General Staffing" data-action-label>Otwórz</button></article>
+              <article class="tool-card" data-tool-name="RekenTool General Staffing"><div class="tool-meta"><span class="tool-icon">GS</span><span class="tool-tag">Staffing</span></div><h4>RekenTool General Staffing</h4><p data-tool-description></p><button class="tool-action" type="button" data-direct-frame="rekentoolgeneralstaffing" data-title="RekenTool General Staffing" data-action-label>Otwórz</button></article>
+              <article class="tool-card" data-tool-name="RekenTool Professional Staffing"><div class="tool-meta"><span class="tool-icon">PS</span><span class="tool-tag">Staffing</span></div><h4>RekenTool Professional Staffing</h4><p data-tool-description></p><button class="tool-action" type="button" data-direct-frame="rekentoolprofessionalstaffing" data-title="RekenTool Professional Staffing" data-action-label>Otwórz</button></article>
+              <article class="tool-card" data-tool-name="RekenTool Payroll"><div class="tool-meta"><span class="tool-icon">PR</span><span class="tool-tag">Payroll</span></div><h4>RekenTool Payroll</h4><p data-tool-description></p><button class="tool-action" type="button" data-direct-frame="rekentoolpayroll" data-title="RekenTool Payroll" data-action-label>Otwórz</button></article>
+              <article class="tool-card" data-tool-name="Merit Increase"><div class="tool-meta"><span class="tool-icon">MI</span><span class="tool-tag">Merit</span></div><h4>Merit Increase 2026</h4><p data-tool-description></p><button class="tool-action" type="button" data-legacy-idx="6" data-title="Merit increase 2026" data-action-label>Otwórz</button></article>
+              <article class="tool-card" data-tool-name="MSD CAO Salary Check"><div class="tool-meta"><span class="tool-icon">CAO</span><span class="tool-tag">Salary</span></div><h4>MSD CAO Salary Check</h4><p data-tool-description></p><button class="tool-action" type="button" data-direct-frame="msdcaosalarycheck" data-title="MSD CAO Salary Check" data-action-label>Otwórz</button></article>
+              <article class="tool-card" data-tool-name="Merit Excel" data-download="true"><div class="tool-meta"><span class="tool-icon">XL</span><span class="tool-tag">Excel</span></div><h4>Merit Excel 350</h4><p data-tool-description></p><button class="tool-action" type="button" data-download-merit data-action-label>Pobierz Excel</button></article>
+            </div>
+          </section>
+
+          <section class="tool-group" id="recruitment">
+            <div class="group-head"><h3 data-i18n="catRecruit">Recruitment & Staffing</h3><span>3 modules</span></div>
+            <div class="cards">
+              <article class="tool-card" data-tool-name="Intake Call"><div class="tool-meta"><span class="tool-icon">IC</span><span class="tool-tag">Intake</span></div><h4>Intake Call</h4><p data-tool-description></p><button class="tool-action" type="button" data-legacy-idx="3" data-title="Intake Call" data-action-label>Otwórz</button></article>
+              <article class="tool-card" data-tool-name="CV Match"><div class="tool-meta"><span class="tool-icon">CV</span><span class="tool-tag">Match</span></div><h4>CV Match</h4><p data-tool-description></p><button class="tool-action" type="button" data-legacy-idx="4" data-title="Ocena dopasowania CV" data-action-label>Otwórz</button></article>
+              <article class="tool-card" data-tool-name="Agency Overview"><div class="tool-meta"><span class="tool-icon">AO</span><span class="tool-tag">Agency</span></div><h4>Agency Overview</h4><p data-tool-description></p><button class="tool-action" type="button" data-legacy-idx="7" data-title="Przegląd agencji" data-action-label>Otwórz</button></article>
+            </div>
+          </section>
+
+          <section class="tool-group" id="hr">
+            <div class="group-head"><h3 data-i18n="catHr">HR & Workforce</h3><span>3 modules</span></div>
+            <div class="cards">
+              <article class="tool-card" data-tool-name="Manager Meeting Register"><div class="tool-meta"><span class="tool-icon">MM</span><span class="tool-tag">Meetings</span></div><h4>Manager Meeting Register</h4><p data-tool-description></p><button class="tool-action" type="button" data-direct-frame="managermeetingtracker" data-title="Manager Meeting Register" data-action-label>Otwórz</button></article>
+              <article class="tool-card" data-tool-name="Home Office Tracker"><div class="tool-meta"><span class="tool-icon">HO</span><span class="tool-tag">Workforce</span></div><h4>Home Office Tracker</h4><p data-tool-description></p><button class="tool-action" type="button" data-direct-frame="homeofficetracker" data-title="Home Office Tracker" data-action-label>Otwórz</button></article>
+              <article class="tool-card" data-tool-name="Redukcja"><div class="tool-meta"><span class="tool-icon">R</span><span class="tool-tag">Operations</span></div><h4>Redukcja</h4><p data-tool-description></p><button class="tool-action" type="button" data-direct-frame="redukcja" data-title="Redukcja" data-action-label>Otwórz</button></article>
+            </div>
+          </section>
+
+          <section class="tool-group" id="project-tools">
+            <div class="group-head"><h3 data-i18n="catProjects">My Projects</h3><span>Protected</span></div>
+            <div class="cards">
+              <article class="tool-card" data-tool-name="My Projects"><div class="tool-meta"><span class="tool-icon">MP</span><span class="tool-tag">Private</span></div><h4>My Projects</h4><p data-tool-description></p><button class="tool-action" type="button" data-my-projects data-action-label>Otwórz</button></article>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <section class="projects-panel" id="projects">
+        <div><div class="kicker" data-i18n="projectsK">Chroniony obszar</div><h3 data-i18n="projectsH">My Projects</h3><p data-i18n="projectsP">Prywatny obszar projektowy zachowuje mechanizm dostępu PIN i otwiera się w tym samym interfejsie co pozostałe moduły.</p><button class="btn-primary" type="button" data-my-projects data-i18n="projectsBtn">Otwórz My Projects</button><div class="security-note" data-i18n="security">Dostęp chroniony istniejącym mechanizmem PIN.</div></div>
+        <div class="project-summary"><div class="project-row"><span>Access</span><span>PIN protected</span></div><div class="project-row"><span>Interface</span><span>Integrated</span></div><div class="project-row"><span>Language</span><span>PL / EN / NL</span></div><div class="project-row"><span>Storage</span><span>Existing logic</span></div></div>
+      </section>
+
+      <section class="ai-section" id="ai">
+        <div class="ai-box"><div><h3 data-i18n="aiH">AI Voice Agent</h3><p data-i18n="aiP">Agent głosowy korzysta z istniejącego skryptu platformy i zachowuje obecny sposób obsługi klucza API oraz poleceń.</p></div><button class="btn-secondary" type="button" data-open-agent data-i18n="aiBtn">Otwórz AI Agent</button></div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer"><div class="footer-inner"><div><strong>Rafal Wilk AI</strong> — <span data-i18n="footer">Narzędzia biznesowe, AI i automatyzacja.</span></div><div data-i18n="legal">Legal & Privacy: zawartość platformy pozostaje własnością Rafała Wilka.</div></div></footer>
+</div>
+
+<section class="viewport" aria-label="Application workspace">
+  <div class="workspace-bar"><button class="workspace-back" id="workspaceBack" type="button" data-i18n="back">Powrót do platformy</button><div class="workspace-title" id="workspaceTitle">Rafal Wilk AI</div><div class="workspace-lang" id="workspaceLang">PL</div></div>
+  <div class="workspace-stage">
+    <div class="workspace-loading" id="workspaceLoading">Loading module…</div>
+    <iframe id="appframe" title="Application" loading="eager"></iframe>
+    <iframe id="managermeetingtracker" title="Manager Meeting Register" data-src="../modules/manager-meeting-tracker.html" loading="lazy"></iframe>
+    <iframe id="homeofficetracker" title="Home Office Tracker" data-src="../modules/home-office-tracker.html" loading="lazy"></iframe>
+    <iframe id="redukcja" title="Redukcja" data-src="../modules/redukcja.html?v=20260812-redukcja-add-week-button-1" loading="lazy"></iframe>
+    <iframe id="rekentoolcombined" title="RekenTool Professional & General Staffing" data-src="../modules/rekentool-combined.html" loading="lazy"></iframe>
+    <iframe id="rekentoolgeneralstaffing" title="RekenTool General Staffing" data-src="../modules/rekentool-general-staffing.html" loading="lazy"></iframe>
+    <iframe id="rekentoolprofessionalstaffing" title="RekenTool Professional Staffing" data-src="../modules/rekentool-professional-staffing.html" loading="lazy"></iframe>
+    <iframe id="rekentoolpayroll" title="RekenTool Payroll" data-src="../modules/rekentool-pay-roll.html" loading="lazy"></iframe>
+    <iframe id="msdcaosalarycheck" title="MSD CAO Salary Check" data-src="../modules/msd-cao-salary-check.html?v=20260817-v19-calculator-impact-v1" loading="lazy"></iframe>
+    <iframe id="mycompany" title="My Projects" data-src="../modules/my-company.html" loading="lazy"></iframe>
+  </div>
+</section>
+
+<div id="mc_gate" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="mc_title">
+  <div class="panel"><h2 id="mc_title">Dostęp do modułu</h2><p id="mc_text">Wpisz PIN, aby otworzyć moduł.</p><input id="mc_pin" autocomplete="one-time-code" inputmode="numeric" type="password" maxlength="3"><div id="mc_err"></div><div class="row"><button class="modal-btn secondary" id="mc_cancel" type="button" data-i18n="cancel">Anuluj</button><button class="modal-btn primary" id="mc_ok" type="button" data-i18n="unlock">Odblokuj</button></div></div>
+</div>
+
+<div id="rwLauncherDock">
+  <div id="rwPlatformApiStatus"></div>
+  <button id="rwVoiceLauncher" type="button" title="AI Voice Agent">RW</button>
+</div>
+<div id="rwAgentOverlay" aria-hidden="true">
+  <aside id="rwAgentPanel" role="dialog" aria-label="AI Voice Agent">
+    <div class="rw-memory-dot" id="rwMemoryDot" aria-hidden="true"></div>
+    <div class="rw-head" id="rwAgentHead"><div class="rw-logo">RW</div><div><div class="rw-agent-title">Agent Głosowy Platformy</div><div class="rw-agent-subtitle">AI Voice Agent</div><div class="rw-chiprow"><span class="rw-chip">AUTO</span></div></div><button class="rw-close" id="rwAgentClose" type="button" title="Close">×</button></div>
+    <div class="rw-body">
+      <div class="rw-holo" id="rwVisual"><div class="rw-dna"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="rw-orbit"><i></i><i></i><i></i><i></i></div><div class="rw-core"></div><div class="rw-save-led" id="rwSaveLed"></div><div class="rw-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="rw-stateTxt"><div class="s" id="rwState">Gotowy</div><div class="h" id="rwHint">Wydaj polecenie albo wpisz je poniżej.</div></div></div>
+      <div class="rw-controls"><button class="rw-btn" id="rwListenBtn" type="button">Start nasłuchu</button><button class="rw-btn secondary" id="rwTestVoiceBtn" type="button">Test głosu</button><button class="rw-btn ghost" id="rwStopSpeakBtn" type="button">Przestań mówić</button></div>
+      <div class="rw-row"><input class="rw-input" id="rwCommandInput" placeholder="np. przeanalizuj CV albo policz bill rate"><button class="rw-btn" id="rwSendBtn" type="button">Wyślij</button></div>
+      <div class="rw-row"><button class="rw-btn secondary" id="rwRefreshBtn" type="button">Odśwież</button></div>
+      <div class="rw-log" id="rwLog"></div>
+    </div>
+  </aside>
+</div>
+
+<script src="site.js?v=20260827-full-1"></script>
+<script src="../assets/js/voice-agent.js?v=20260713-perf-2" defer></script>
+</body>
+</html>
