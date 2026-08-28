@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>My Projects | Rafal Wilk AI</title>
+  <style>html,body{margin:0;min-height:100%;background:#f5f7fa;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}.loader{min-height:100vh;display:grid;place-items:center;color:#61646a}.loader strong{display:block;color:#111318;margin-bottom:7px}</style>
+</head>
+<body>
+<div class="loader" id="loader"><div><strong>Opening My Projects…</strong><span>Preparing the protected workspace.</span></div></div>
+<script>
+(async function(){
+  'use strict';
+  function fail(message){
+    const el=document.getElementById('loader');
+    if(el)el.innerHTML='<div><strong>Unable to open My Projects.</strong><span>'+String(message||'Module error')+'</span></div>';
+    try{parent.postMessage({type:'rw:module-error',detail:String(message||'My Projects error')},'*')}catch(_e){}
+  }
+  try{
+    const response=await fetch('../modules/my-company.html',{cache:'no-store'});
+    if(!response.ok)throw new Error('My Projects returned HTTP '+response.status+'.');
+    let html=await response.text();
+    const broken="const $ = (s)=>document.querySelector(s);\n  const $ = (s)=>Array.from(document.querySelectorAll(s));";
+    const fixed="const $ = (s)=>document.querySelector(s);\n  const $$ = (s)=>Array.from(document.querySelectorAll(s));";
+    if(html.includes(broken))html=html.replace(broken,fixed);
+    const absoluteBase=new URL('../',location.href).href;
+    if(!/<base\b/i.test(html)){
+      const baseTag='<base href="'+absoluteBase.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'">';
+      if(/<head\b[^>]*>/i.test(html))html=html.replace(/<head\b([^>]*)>/i,'<head$1>'+baseTag);
+      else html=baseTag+html;
+    }
+    const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    location.replace(URL.createObjectURL(blob));
+  }catch(error){fail(error&&error.message?error.message:String(error));}
+})();
+</script>
+</body>
+</html>
