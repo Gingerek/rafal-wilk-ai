@@ -32,6 +32,28 @@
       if(el)el.innerHTML='<div><strong>Unable to open this tool.</strong><p>'+String(message||'The module could not be loaded.')+'</p></div>';
       try{parent.postMessage({type:'rw:module-error',idx,detail:String(message||'Module error')},'*')}catch(_e){}
     }
+    function inspectInnerSrcdoc(parsed){
+      [...parsed.querySelectorAll('iframe[srcdoc]')].forEach((frame,frameIndex)=>{
+        const srcdoc=frame.getAttribute('srcdoc')||'';
+        if(!srcdoc.includes('translateMerit'))return;
+        const inner=new DOMParser().parseFromString(srcdoc,'text/html');
+        [...inner.scripts].forEach((script,scriptIndex)=>{
+          const code=script.textContent||'';
+          if(!code.includes('translateMerit'))return;
+          let from=0,hit=0;
+          while(true){
+            const pos=code.indexOf('translateMerit',from);
+            if(pos<0)break;
+            const start=Math.max(0,pos-2600);
+            const end=Math.min(code.length,pos+7000);
+            console.error('[RW_INNER_MERIT_'+frameIndex+'_'+scriptIndex+'_'+hit+'] '+code.slice(start,end).replace(/\s+/g,' '));
+            from=pos+'translateMerit'.length;
+            hit++;
+            if(hit>=5)break;
+          }
+        });
+      });
+    }
     function sanitizeMalformedInlineScripts(html){
       if(idx!==2)return html;
       const parsed=new DOMParser().parseFromString(html,'text/html');
@@ -40,14 +62,9 @@
         if(script.src||type==='module'||(type&&type!=='text/javascript'&&type!=='application/javascript'))return;
         const code=script.textContent||'';
         if(!code.trim())return;
-        try{new Function(code)}catch(_error){script.remove();return;}
-        if(code.includes('translateMerit')){
-          const pos=code.indexOf('translateMerit');
-          const start=Math.max(0,pos-1800);
-          const end=Math.min(code.length,pos+6500);
-          console.error('[RW_MERIT_SOURCE] '+code.slice(start,end).replace(/\s+/g,' '));
-        }
+        try{new Function(code)}catch(_error){script.remove();}
       });
+      inspectInnerSrcdoc(parsed);
       return '<!doctype html>\n'+parsed.documentElement.outerHTML;
     }
     try{
