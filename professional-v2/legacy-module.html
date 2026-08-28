@@ -41,10 +41,11 @@
         const code=script.textContent||'';
         if(!code.trim())return;
         try{new Function(code)}catch(_error){script.remove();return;}
-        if(code.includes('function translateMerit')){
-          const start=code.indexOf('function translateMerit');
-          const end=code.indexOf('function initMerit',start);
-          console.error('[RW_MERIT_SOURCE] '+code.slice(start,end>start?end:start+5000).replace(/\s+/g,' '));
+        if(code.includes('translateMerit')){
+          const pos=code.indexOf('translateMerit');
+          const start=Math.max(0,pos-1800);
+          const end=Math.min(code.length,pos+6500);
+          console.error('[RW_MERIT_SOURCE] '+code.slice(start,end).replace(/\s+/g,' '));
         }
       });
       return '<!doctype html>\n'+parsed.documentElement.outerHTML;
