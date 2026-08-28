@@ -63,6 +63,15 @@ const { chromium } = require('playwright-core');
       try{
         await toolPage.goto(tool.resolved,{waitUntil:'domcontentloaded',timeout:20000});
         await toolPage.waitForTimeout(tool.resolved.includes('legacy-module.html')?1300:600);
+        if(tool.id==='rekentool-master'){
+          const frameInfo=[];
+          for(const frame of toolPage.frames()){
+            let source='';
+            try{source=await frame.evaluate(()=>typeof window.translateMerit==='function'?window.translateMerit.toString():'')}catch(_e){}
+            frameInfo.push({url:frame.url(),hasTranslateMerit:!!source,source:source.slice(0,12000)});
+          }
+          console.log('[REKENTOOL FRAMES]',JSON.stringify(frameInfo));
+        }
         const bodyText=(await toolPage.locator('body').innerText().catch(()=>'' )).replace(/\s+/g,' ').trim();
         const nodes=await toolPage.locator('body > *').count().catch(()=>0);
         const loaderError=/Unable to open this tool/i.test(bodyText);
