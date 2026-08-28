@@ -6,13 +6,14 @@ const { chromium } = require('playwright-core');
   if(!executablePath) throw new Error('CHROME_BIN is not set');
   const browser=await chromium.launch({headless:true,executablePath,args:['--no-sandbox','--disable-dev-shm-usage']});
   const page=await browser.newPage({viewport:{width:1440,height:1000}});
-  const pageErrors=[];
-  page.on('pageerror',e=>pageErrors.push(String(e)));
-  page.on('console',m=>{if(m.type()==='error')console.log('[console error]',m.text())});
+  const shellErrors=[];
+  page.on('pageerror',e=>shellErrors.push(String(e)));
+  page.on('console',m=>{if(m.type()==='error')console.log('[shell console error]',m.text())});
   const assert=(cond,msg)=>{if(!cond)throw new Error(msg)};
   try{
     await page.goto(base,{waitUntil:'domcontentloaded',timeout:20000});
     await page.waitForFunction(()=>window.RWV2&&window.RWV2.tools?.length===17);
+    await page.waitForTimeout(100);
     console.log('[QA] shell loaded');
 
     await page.click('#openTools');
@@ -27,39 +28,61 @@ const { chromium } = require('playwright-core');
     assert(await page.locator('#pinGate').isVisible(),'PIN gate did not open');
     await page.fill('#pinInput','135'); await page.click('#pinSubmit');
     await page.waitForSelector('#workspace:not([hidden])',{timeout:5000});
-    const directFrame=page.frames().find(f=>/rekentool-professional-staffing\.html/.test(f.url()));
-    if(!directFrame){await page.waitForTimeout(1000)}
+    await page.waitForTimeout(700);
     const direct=page.frames().find(f=>/rekentool-professional-staffing\.html/.test(f.url()));
     assert(!!direct,'Professional Staffing frame not loaded');
     assert(/Professional Staffing/i.test(await direct.locator('body').innerText()),'Professional Staffing content missing');
-    console.log('[QA] direct module PASS');
+    console.log('[QA] workspace direct module PASS');
     await page.click('#workspaceBack');
 
-    const result=await page.evaluate(async()=>{
-      const tools=RWV2.tools;
-      function direct(tool){return new Promise(resolve=>{
-        const f=document.createElement('iframe');f.style.cssText='position:fixed;width:4px;height:4px;opacity:0;pointer-events:none;left:-30px;top:-30px';
-        let done=false;const finish=(ok,detail)=>{if(done)return;done=true;f.remove();resolve({id:tool.id,name:tool.name,type:tool.type,ok,detail})};
-        const timer=setTimeout(()=>finish(false,'direct timeout'),12000);
-        f.onload=()=>setTimeout(()=>{clearTimeout(timer);try{const d=f.contentDocument;const text=(d?.body?.innerText||'').replace(/\s+/g,' ').trim();const nodes=d?.body?.children?.length||0;finish(text.length>10||nodes>0,`body:${text.length};nodes:${nodes}`)}catch(e){finish(false,String(e?.message||e))}},100);
-        f.src=tool.src;document.body.appendChild(f);
-      })}
-      function legacy(tool){return new Promise(resolve=>{
-        const f=document.createElement('iframe');f.style.cssText='position:fixed;width:4px;height:4px;opacity:0;pointer-events:none;left:-40px;top:-40px';let done=false;
-        const finish=(ok,detail)=>{if(done)return;done=true;window.removeEventListener('message',onMsg);f.remove();resolve({id:tool.id,name:tool.name,type:tool.type,ok,detail})};
-        const onMsg=e=>{if(e.source===f.contentWindow&&e.data?.type==='rw:legacy-status'&&Number(e.data.idx)===tool.idx)finish(!!e.data.ok,e.data.detail||'')};window.addEventListener('message',onMsg);
-        setTimeout(()=>finish(false,'legacy timeout'),20000);f.src=`./legacy-bridge.html?idx=${tool.idx}&qa=1`;document.body.appendChild(f);
-      })}
-      async function download(tool){try{const r=await fetch(tool.src,{cache:'no-store'});return{id:tool.id,name:tool.name,type:tool.type,ok:r.ok,detail:`HTTP ${r.status}`}}catch(e){return{id:tool.id,name:tool.name,type:tool.type,ok:false,detail:String(e)}}}
-      const results=[];
-      for(const tool of tools){const r=tool.type==='legacy'?await legacy(tool):tool.type==='download'?await download(tool):await direct(tool);console.log('[matrix]',r.ok?'PASS':'FAIL',r.name,r.detail);results.push(r)}
-      return{count:results.length,passed:results.filter(x=>x.ok).length,failed:results.filter(x=>!x.ok).length,results};
-    });
-    console.log('[QA MATRIX]',JSON.stringify(result,null,2));
-    assert(result.count===17,'matrix count is not 17');
-    assert(result.failed===0,'module failures: '+JSON.stringify(result.results.filter(x=>!x.ok)));
-    assert(pageErrors.length===0,'page errors: '+JSON.stringify(pageErrors));
-    console.log('[QA] ALL 17 PASS');
+    const tools=await page.evaluate(()=>RWV2.tools.map(t=>({
+      id:t.id,name:t.name,type:t.type,src:t.src,pin:t.pin||null,
+      resolved:t.src?new URL(t.src,location.href).href:null
+    })));
+    const results=[];
+    for(const tool of tools){
+      if(tool.type==='download'){
+        try{
+          const response=await page.request.get(tool.resolved,{timeout:15000});
+          const item={id:tool.id,name:tool.name,type:tool.type,ok:response.ok(),detail:`HTTP ${response.status()}`,errors:[]};
+          console.log('[TOOL QA]',item.ok?'PASS':'FAIL',tool.name,item.detail);
+          results.push(item);
+        }catch(error){
+          const item={id:tool.id,name:tool.name,type:tool.type,ok:false,detail:String(error),errors:[]};
+          console.log('[TOOL QA] FAIL',tool.name,item.detail);results.push(item);
+        }
+        continue;
+      }
+
+      const toolPage=await browser.newPage({viewport:{width:1280,height:900}});
+      const errors=[];
+      const consoleErrors=[];
+      toolPage.on('pageerror',e=>errors.push(String(e)));
+      toolPage.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});
+      let detail='';let ok=false;
+      try{
+        await toolPage.goto(tool.resolved,{waitUntil:'domcontentloaded',timeout:20000});
+        await toolPage.waitForTimeout(tool.resolved.includes('legacy-module.html')?1300:600);
+        const bodyText=(await toolPage.locator('body').innerText().catch(()=>'' )).replace(/\s+/g,' ').trim();
+        const nodes=await toolPage.locator('body > *').count().catch(()=>0);
+        const loaderError=/Unable to open this tool/i.test(bodyText);
+        ok=!loaderError&&(bodyText.length>10||nodes>0)&&errors.length===0;
+        detail=`url:${toolPage.url()};body:${bodyText.length};nodes:${nodes};consoleErrors:${consoleErrors.length}`;
+      }catch(error){detail=String(error);ok=false;}
+      const item={id:tool.id,name:tool.name,type:tool.type,ok,detail,errors,consoleErrors};
+      console.log('[TOOL QA]',ok?'PASS':'FAIL',tool.name,detail);
+      if(errors.length)console.log('[TOOL ERRORS]',tool.name,JSON.stringify(errors));
+      if(consoleErrors.length)console.log('[TOOL CONSOLE]',tool.name,JSON.stringify(consoleErrors));
+      results.push(item);
+      await toolPage.close();
+    }
+
+    const failed=results.filter(x=>!x.ok);
+    console.log('[QA MATRIX]',JSON.stringify({count:results.length,passed:results.length-failed.length,failed:failed.length,results},null,2));
+    assert(results.length===17,'matrix count is not 17');
+    assert(shellErrors.length===0,'shell page errors: '+JSON.stringify(shellErrors));
+    assert(failed.length===0,'tool failures: '+JSON.stringify(failed,null,2));
+    console.log('[QA] ALL 17 PASS WITH ZERO PAGE ERRORS');
   } finally {
     await browser.close();
   }
