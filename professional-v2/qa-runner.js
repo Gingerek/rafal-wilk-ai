@@ -5,7 +5,7 @@ const { chromium } = require('playwright-core');
   const base=process.env.RW_BASE_URL||'http://127.0.0.1:4173/professional-v2/index.html';
   if(!executablePath) throw new Error('CHROME_BIN is not set');
   const browser=await chromium.launch({headless:true,executablePath,args:['--no-sandbox','--disable-dev-shm-usage']});
-  const page=await browser.newPage({viewport:{width:1440,height:1000}});
+  const page=await browser.newPage({viewport:{width:1440,height:1000},deviceScaleFactor:1});
   const shellErrors=[];
   page.on('pageerror',e=>shellErrors.push(e&&e.stack?e.stack:String(e)));
   page.on('console',m=>{if(m.type()==='error')console.log('[shell console error]',m.text())});
@@ -13,7 +13,12 @@ const { chromium } = require('playwright-core');
   try{
     await page.goto(base,{waitUntil:'domcontentloaded',timeout:20000});
     await page.waitForFunction(()=>window.RWV2&&window.RWV2.tools?.length===17);
-    await page.waitForTimeout(100);
+    await page.evaluate(()=>document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).catch(()=>{});
+    await page.locator('.hero-visual img').waitFor({state:'visible',timeout:10000}).catch(()=>{});
+    await page.waitForFunction(()=>{const i=document.querySelector('.hero-visual img');return !i||i.complete;}).catch(()=>{});
+    await page.waitForTimeout(600);
+    await page.screenshot({path:'professional-v2/qa-homepage.png',fullPage:true});
+    console.log('[QA] homepage screenshot captured');
     console.log('[QA] shell loaded');
 
     await page.click('#openTools');
