@@ -9,14 +9,23 @@ const { chromium } = require('playwright-core');
   const shellErrors=[];
   page.on('pageerror',e=>shellErrors.push(e&&e.stack?e.stack:String(e)));
   page.on('console',m=>{if(m.type()==='error')console.log('[shell console error]',m.text())});
+  page.on('requestfailed',r=>console.log('[REQUEST FAILED]',r.url(),r.failure()?.errorText||''));
   const assert=(cond,msg)=>{if(!cond)throw new Error(msg)};
   try{
     await page.goto(base,{waitUntil:'domcontentloaded',timeout:20000});
     await page.waitForFunction(()=>window.RWV2&&window.RWV2.tools?.length===17);
     await page.evaluate(()=>document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).catch(()=>{});
-    await page.locator('.hero-visual img').waitFor({state:'visible',timeout:10000}).catch(()=>{});
-    await page.waitForFunction(()=>{const i=document.querySelector('.hero-visual img');return !i||i.complete;}).catch(()=>{});
-    await page.waitForTimeout(600);
+    await page.locator('.hero-visual img').waitFor({state:'attached',timeout:10000}).catch(()=>{});
+    await page.waitForTimeout(1000);
+    const heroState=await page.evaluate(()=>{
+      const box=document.querySelector('.hero-visual');
+      const img=box?.querySelector('img');
+      const cs=box?getComputedStyle(box):null;
+      const is=img?getComputedStyle(img):null;
+      const r=box?.getBoundingClientRect();
+      return {box:{w:r?.width,h:r?.height,backgroundImage:cs?.backgroundImage,backgroundColor:cs?.backgroundColor},img:{src:img?.currentSrc||img?.src,naturalWidth:img?.naturalWidth,naturalHeight:img?.naturalHeight,complete:img?.complete,display:is?.display,opacity:is?.opacity}};
+    });
+    console.log('[HERO STATE]',JSON.stringify(heroState));
     await page.screenshot({path:'professional-v2/qa-homepage.png',fullPage:true});
     console.log('[QA] homepage screenshot captured');
     console.log('[QA] shell loaded');
@@ -40,55 +49,17 @@ const { chromium } = require('playwright-core');
     console.log('[QA] workspace direct module PASS');
     await page.click('#workspaceBack');
 
-    const tools=await page.evaluate(()=>RWV2.tools.map(t=>({
-      id:t.id,name:t.name,type:t.type,src:t.src,pin:t.pin||null,
-      resolved:t.src?new URL(t.src,location.href).href:null
-    })));
+    const tools=await page.evaluate(()=>RWV2.tools.map(t=>({id:t.id,name:t.name,type:t.type,src:t.src,pin:t.pin||null,resolved:t.src?new URL(t.src,location.href).href:null})));
     const results=[];
     for(const tool of tools){
       if(tool.type==='download'){
-        try{
-          const response=await page.request.get(tool.resolved,{timeout:15000});
-          const item={id:tool.id,name:tool.name,type:tool.type,ok:response.ok(),detail:`HTTP ${response.status()}`,errors:[]};
-          console.log('[TOOL QA]',item.ok?'PASS':'FAIL',tool.name,item.detail);
-          results.push(item);
-        }catch(error){
-          const item={id:tool.id,name:tool.name,type:tool.type,ok:false,detail:String(error),errors:[]};
-          console.log('[TOOL QA] FAIL',tool.name,item.detail);results.push(item);
-        }
+        try{const response=await page.request.get(tool.resolved,{timeout:15000});const item={id:tool.id,name:tool.name,type:tool.type,ok:response.ok(),detail:`HTTP ${response.status()}`,errors:[]};console.log('[TOOL QA]',item.ok?'PASS':'FAIL',tool.name,item.detail);results.push(item)}catch(error){const item={id:tool.id,name:tool.name,type:tool.type,ok:false,detail:String(error),errors:[]};console.log('[TOOL QA] FAIL',tool.name,item.detail);results.push(item)}
         continue;
       }
-
-      const toolPage=await browser.newPage({viewport:{width:1280,height:900}});
-      const errors=[];
-      const consoleErrors=[];
-      toolPage.on('pageerror',e=>errors.push(e&&e.stack?e.stack:String(e)));
-      toolPage.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});
-      let detail='';let ok=false;
-      try{
-        await toolPage.goto(tool.resolved,{waitUntil:'domcontentloaded',timeout:20000});
-        await toolPage.waitForTimeout(tool.resolved.includes('legacy-module.html')?1300:600);
-        const bodyText=(await toolPage.locator('body').innerText().catch(()=>'' )).replace(/\s+/g,' ').trim();
-        const nodes=await toolPage.locator('body > *').count().catch(()=>0);
-        const loaderError=/Unable to open this tool/i.test(bodyText);
-        ok=!loaderError&&(bodyText.length>10||nodes>0)&&errors.length===0;
-        detail=`url:${toolPage.url()};body:${bodyText.length};nodes:${nodes};consoleErrors:${consoleErrors.length}`;
-      }catch(error){detail=String(error);ok=false;}
-      const item={id:tool.id,name:tool.name,type:tool.type,ok,detail,errors,consoleErrors};
-      console.log('[TOOL QA]',ok?'PASS':'FAIL',tool.name,detail);
-      if(errors.length)console.log('[TOOL ERRORS]',tool.name,JSON.stringify(errors));
-      if(consoleErrors.length)console.log('[TOOL CONSOLE]',tool.name,JSON.stringify(consoleErrors));
-      results.push(item);
-      await toolPage.close();
+      const toolPage=await browser.newPage({viewport:{width:1280,height:900}});const errors=[];const consoleErrors=[];toolPage.on('pageerror',e=>errors.push(e&&e.stack?e.stack:String(e)));toolPage.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});let detail='';let ok=false;
+      try{await toolPage.goto(tool.resolved,{waitUntil:'domcontentloaded',timeout:20000});await toolPage.waitForTimeout(tool.resolved.includes('legacy-module.html')?1300:600);const bodyText=(await toolPage.locator('body').innerText().catch(()=>'' )).replace(/\s+/g,' ').trim();const nodes=await toolPage.locator('body > *').count().catch(()=>0);const loaderError=/Unable to open this tool/i.test(bodyText);ok=!loaderError&&(bodyText.length>10||nodes>0)&&errors.length===0;detail=`url:${toolPage.url()};body:${bodyText.length};nodes:${nodes};consoleErrors:${consoleErrors.length}`}catch(error){detail=String(error);ok=false}
+      const item={id:tool.id,name:tool.name,type:tool.type,ok,detail,errors,consoleErrors};console.log('[TOOL QA]',ok?'PASS':'FAIL',tool.name,detail);if(errors.length)console.log('[TOOL ERRORS]',tool.name,JSON.stringify(errors));if(consoleErrors.length)console.log('[TOOL CONSOLE]',tool.name,JSON.stringify(consoleErrors));results.push(item);await toolPage.close();
     }
-
-    const failed=results.filter(x=>!x.ok);
-    console.log('[QA MATRIX]',JSON.stringify({count:results.length,passed:results.length-failed.length,failed:failed.length,results},null,2));
-    assert(results.length===17,'matrix count is not 17');
-    assert(shellErrors.length===0,'shell page errors: '+JSON.stringify(shellErrors));
-    assert(failed.length===0,'tool failures: '+JSON.stringify(failed,null,2));
-    console.log('[QA] ALL 17 PASS WITH ZERO PAGE ERRORS');
-  } finally {
-    await browser.close();
-  }
+    const failed=results.filter(x=>!x.ok);console.log('[QA MATRIX]',JSON.stringify({count:results.length,passed:results.length-failed.length,failed:failed.length,results},null,2));assert(results.length===17,'matrix count is not 17');assert(shellErrors.length===0,'shell page errors: '+JSON.stringify(shellErrors));assert(failed.length===0,'tool failures: '+JSON.stringify(failed,null,2));console.log('[QA] ALL 17 PASS WITH ZERO PAGE ERRORS');
+  } finally {await browser.close()}
 })().catch(e=>{console.error(e.stack||e);process.exit(1)});
