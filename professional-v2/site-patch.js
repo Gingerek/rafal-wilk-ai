@@ -8,10 +8,10 @@ const COPY={
 };
 function lang(){const v=(document.documentElement.lang||localStorage.getItem('rw_lang')||'pl').slice(0,2).toLowerCase();return ['pl','en','nl'].includes(v)?v:'pl'}
 function render(){const dict=COPY[lang()]||COPY.pl;document.querySelectorAll('[data-site-i18n]').forEach(el=>{const v=dict[el.dataset.siteI18n];if(v)el.textContent=v});document.querySelectorAll('[data-contact-email]').forEach(el=>{el.textContent=EMAIL;if(el.tagName==='A')el.href='mailto:'+EMAIL})}
-function patchTools(){const tools=window.RWV2&&Array.isArray(window.RWV2.tools)?window.RWV2.tools:[];for(const tool of tools){if(tool.type==='legacy'){tool.type='direct';tool.src=`./legacy-module.html?idx=${tool.idx}&lang=${encodeURIComponent(lang())}`;tool.legacyDirect=true}}}
-function refreshLegacyLang(){const tools=window.RWV2&&Array.isArray(window.RWV2.tools)?window.RWV2.tools:[];for(const tool of tools){if(tool.legacyDirect)tool.src=`./legacy-module.html?idx=${tool.idx}&lang=${encodeURIComponent(lang())}`}}
+function patchTools(){const tools=window.RWV2&&Array.isArray(window.RWV2.tools)?window.RWV2.tools:[];for(const tool of tools){if(tool.type==='legacy'){tool.type='direct';tool.src=`./legacy-module.html?idx=${tool.idx}&lang=${encodeURIComponent(lang())}`;tool.legacyDirect=true}if(tool.id==='projects'){tool.type='direct';tool.src='./my-projects-module.html';tool.projectsWrapped=true}}}
+function refreshToolLang(){const tools=window.RWV2&&Array.isArray(window.RWV2.tools)?window.RWV2.tools:[];for(const tool of tools){if(tool.legacyDirect)tool.src=`./legacy-module.html?idx=${tool.idx}&lang=${encodeURIComponent(lang())}`}}
 function bindSiteActions(){document.querySelectorAll('[data-open-tools]').forEach(el=>el.addEventListener('click',()=>window.RWV2&&window.RWV2.openTools()));document.querySelectorAll('[data-open-ai]').forEach(el=>el.addEventListener('click',()=>document.getElementById('openAi')?.click()));}
 patchTools();render();bindSiteActions();
-new MutationObserver(()=>{render();refreshLegacyLang()}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+new MutationObserver(()=>{render();refreshToolLang()}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
 window.addEventListener('message',event=>{if(event.data&&event.data.type==='rw:module-error'){const loading=document.getElementById('moduleLoading');const p=loading&&loading.querySelector('p');if(loading)loading.classList.remove('done');if(p)p.textContent=event.data.detail||'Unable to open tool.';}});
 })();
