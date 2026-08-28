@@ -7,7 +7,7 @@ const { chromium } = require('playwright-core');
   const browser=await chromium.launch({headless:true,executablePath,args:['--no-sandbox','--disable-dev-shm-usage']});
   const page=await browser.newPage({viewport:{width:1440,height:1000}});
   const shellErrors=[];
-  page.on('pageerror',e=>shellErrors.push(String(e)));
+  page.on('pageerror',e=>shellErrors.push(e&&e.stack?e.stack:String(e)));
   page.on('console',m=>{if(m.type()==='error')console.log('[shell console error]',m.text())});
   const assert=(cond,msg)=>{if(!cond)throw new Error(msg)};
   try{
@@ -57,7 +57,7 @@ const { chromium } = require('playwright-core');
       const toolPage=await browser.newPage({viewport:{width:1280,height:900}});
       const errors=[];
       const consoleErrors=[];
-      toolPage.on('pageerror',e=>errors.push(String(e)));
+      toolPage.on('pageerror',e=>errors.push(e&&e.stack?e.stack:String(e)));
       toolPage.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text())});
       let detail='';let ok=false;
       try{
