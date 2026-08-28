@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#06101d">
+  <meta name="theme-color" content="#020912">
   <meta name="description" content="Rafal Wilk AI — practical AI, automation and business tools for calculations, staffing workflows, workforce operations and private projects.">
   <meta name="author" content="Rafal Wilk">
   <meta property="og:title" content="Rafal Wilk AI">
@@ -14,115 +14,119 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css?v=3">
-  <link rel="stylesheet" href="./site-overrides.css?v=3">
-  <link rel="stylesheet" href="./premium-v3.css?v=1">
+  <link rel="stylesheet" href="./reference-v4.css?v=1">
 </head>
 <body>
-  <div class="ambient" aria-hidden="true"></div>
-  <header class="topbar">
-    <a class="wordmark" href="#top" aria-label="Rafal Wilk AI home">
-      <span class="wordmark-rw">RW</span>
-      <span class="wordmark-copy">Rafal Wilk <b>AI</b></span>
-    </a>
-    <nav class="top-actions" aria-label="Primary navigation">
-      <button class="nav-text" type="button" data-scroll="#principles" data-i18n="navAbout">Platforma</button>
-      <button class="nav-text" type="button" data-scroll="#contact" data-site-i18n="footerContact">Kontakt</button>
-      <button class="nav-text" type="button" id="openAi" data-i18n="navAi">AI Assistant</button>
-      <button class="tools-trigger" id="openTools" type="button" aria-haspopup="dialog" aria-controls="toolPalette">
-        <span class="tools-trigger-dot"></span><span data-i18n="openTools">Narzędzia</span><kbd>⌘K</kbd>
-      </button>
-      <div class="language" aria-label="Language">
-        <button type="button" data-lang="pl">PL</button><button type="button" data-lang="en">EN</button><button type="button" data-lang="nl">NL</button>
-      </div>
-    </nav>
-  </header>
-
-  <main id="top">
-    <section class="hero">
-      <div class="hero-copy">
-        <p class="eyebrow" data-site-i18n="heroKicker">SMART TOOLS. REAL IMPACT.</p>
-        <h1 data-site-i18n-html="heroTitle">Wszystko, czego potrzebujesz.<br><span>Bez zbędnego chaosu.</span></h1>
-        <p class="hero-lead" data-site-i18n="heroLead">Praktyczna platforma dla kalkulatorów, automatyzacji, procesów staffingowych, narzędzi workforce i prywatnych projektów.</p>
-        <div class="hero-cta-row">
-          <button class="primary-cta" id="heroTools" type="button"><span data-i18n="launchTools">Otwórz narzędzia</span><span aria-hidden="true">↗</span></button>
-          <button class="hero-secondary" type="button" data-scroll="#principles" data-site-i18n="explorePlatform">Poznaj platformę</button>
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="wordmark" href="#top" aria-label="Rafal Wilk AI home">
+        <span class="wordmark-rw">RW</span>
+        <span class="wordmark-copy">Rafal Wilk <b>AI</b></span>
+      </a>
+      <nav class="top-actions" aria-label="Primary navigation">
+        <button class="nav-text active" type="button" data-scroll="#top" data-site-i18n="navPlatform">Platform</button>
+        <button class="nav-text" type="button" id="openTools" aria-haspopup="dialog" aria-controls="toolPalette" data-site-i18n="navTools">Tools</button>
+        <button class="nav-text" type="button" data-open-projects data-site-i18n="navProjects">Projects</button>
+        <button class="nav-text" type="button" id="openAi" data-site-i18n="navAssistant">AI Assistant</button>
+        <button class="nav-text" type="button" data-scroll="#contact" data-site-i18n="navContact">Contact</button>
+        <button class="tools-trigger" type="button" data-open-tools aria-haspopup="dialog" aria-controls="toolPalette">
+          <span class="tools-trigger-dot"></span><span data-site-i18n="openToolsTop">Open tools</span><kbd>⌘K</kbd>
+        </button>
+        <div class="language" aria-label="Language">
+          <button type="button" data-lang="pl">PL</button><button type="button" data-lang="en">EN</button><button type="button" data-lang="nl">NL</button>
         </div>
-        <div class="hero-metrics" aria-label="Platform highlights">
-          <div class="hero-metric"><strong>17</strong><span data-site-i18n="metricTools">narzędzi</span></div>
-          <div class="hero-metric"><strong>PL / EN / NL</strong><span data-site-i18n="metricLanguages">3 języki</span></div>
-          <div class="hero-metric"><strong data-site-i18n="metricSecureStrong">Secure</strong><span data-site-i18n="metricSecure">chroniony workspace</span></div>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-label="Rafal Wilk AI platform">
+        <div class="hero-copy">
+          <p class="eyebrow" data-site-i18n="heroKicker">SMART TOOLS. REAL IMPACT.</p>
+          <h1 data-site-i18n-html="heroTitle">Everything you need.<br><span>Nothing in your way.</span></h1>
+          <p class="hero-lead" data-site-i18n="heroLead">A focused workspace for calculators, staffing workflows, workforce utilities and private projects. Built for clarity, speed and results.</p>
+          <div class="hero-cta-row">
+            <button class="primary-cta" id="heroTools" type="button"><span data-site-i18n="launchTools">Launch tools</span><span aria-hidden="true">↗</span></button>
+            <button class="hero-secondary" type="button" data-scroll="#tools-overview" data-site-i18n="explorePlatform">Explore platform</button>
+          </div>
+          <div class="hero-metrics" aria-label="Platform highlights">
+            <div class="hero-metric"><strong>17 Tools</strong><span data-site-i18n="metricToolsSub">Ready to use</span></div>
+            <div class="hero-metric"><strong>3 Languages</strong><span>PL / EN / NL</span></div>
+            <div class="hero-metric"><strong data-site-i18n="metricSecureStrong">Secure</strong><span data-site-i18n="metricSecure">Protected workspace</span></div>
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <img src="./hero-reference.webp?v=1" alt="" width="976" height="505">
+        </div>
+      </section>
+
+      <section class="tools-overview" id="tools-overview" aria-label="Tools overview">
+        <div class="tools-heading-row">
+          <div>
+            <span class="section-label" data-site-i18n="toolsOverviewLabel">TOOLS OVERVIEW</span>
+            <h2 data-site-i18n="toolsOverviewTitle">Powerful tools for staffing, HR and operations</h2>
+          </div>
+          <button class="view-all-tools" id="bottomTools" type="button"><span data-site-i18n="viewAllTools">View all tools</span> &nbsp;→</button>
+        </div>
+        <div class="tool-categories">
+          <button class="category-card" type="button" data-open-tools>
+            <span class="category-icon">▦</span><strong data-site-i18n="cardCalculators">Calculators</strong><small data-site-i18n="cardCalculatorsCopy">Rates, budgets, payroll and financial tools.</small>
+          </button>
+          <button class="category-card" type="button" data-open-tools>
+            <span class="category-icon">◎</span><strong data-site-i18n="cardStaffing">Staffing & Recruitment</strong><small data-site-i18n="cardStaffingCopy">Workflows, matching, intake and CV tools.</small>
+          </button>
+          <button class="category-card" type="button" data-open-tools>
+            <span class="category-icon">◯</span><strong data-site-i18n="cardWorkforce">HR & Workforce</strong><small data-site-i18n="cardWorkforceCopy">Workforce utilities, registrations and trackers.</small>
+          </button>
+          <button class="category-card" type="button" data-open-tools>
+            <span class="category-icon">≋</span><strong data-site-i18n="cardOperations">Operations</strong><small data-site-i18n="cardOperationsCopy">Daily operations, planning and overviews.</small>
+          </button>
+          <button class="category-card" type="button" data-open-tools>
+            <span class="category-icon">⌁</span><strong data-site-i18n="cardAnalytics">Analytics</strong><small data-site-i18n="cardAnalyticsCopy">Insights, calculations and reporting tools.</small>
+          </button>
+          <button class="category-card" type="button" data-open-projects>
+            <span class="category-icon">□</span><strong data-site-i18n="cardProjects">My Projects</strong><small data-site-i18n="cardProjectsCopy">Private workspace for your projects.</small>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="contact">
+      <div class="site-footer-inner">
+        <div class="footer-grid">
+          <div class="footer-brand-block">
+            <div class="footer-brand-line"><span class="footer-logo">RW</span><span><span class="footer-brand-name">Rafal Wilk <b>AI</b></span><span class="footer-brand-sub">BUSINESS OPERATING LAYER</span></span></div>
+            <p data-site-i18n="footerAbout">Creating practical AI, automation and business tools that turn complexity into clear action.</p>
+          </div>
+          <div class="footer-column">
+            <h3 data-site-i18n="footerContact">Contact</h3>
+            <a href="mailto:rafalwilk.aitech@gmail.com" data-contact-email>rafalwilk.aitech@gmail.com</a>
+            <a href="#top">Rafal Wilk AI</a>
+          </div>
+          <div class="footer-column">
+            <h3 data-site-i18n="footerPlatform">Platform</h3>
+            <button type="button" data-open-tools data-site-i18n="footerAllTools">All Tools</button>
+            <button type="button" data-open-ai>AI Assistant</button>
+            <button type="button" data-open-projects data-site-i18n="footerProjects">Projects</button>
+          </div>
+          <div class="footer-column">
+            <h3 data-site-i18n="footerLegal">Legal</h3>
+            <a href="./legal.html#privacy" data-site-i18n="linkPrivacy">Privacy Policy</a>
+            <a href="./legal.html#terms" data-site-i18n="linkTerms">Terms of Use</a>
+            <a href="./legal.html#disclaimer" data-site-i18n="linkDisclaimer">Disclaimer</a>
+            <a href="./legal.html#copyright" data-site-i18n="linkCopyright">Copyright</a>
+          </div>
+          <div class="security-card">
+            <span class="shield">◇</span><strong data-site-i18n="securityTitle">Secure & Private</strong>
+            <p data-site-i18n="securityCopy">Protected workspace with access-controlled tool entry.</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <div>© 2026 Rafal Wilk AI. <span data-site-i18n="rights">All rights reserved.</span></div>
+          <div class="footer-bottom-right" data-site-i18n="independent">Independent platform. Third-party names and trademarks remain the property of their respective owners.</div>
         </div>
       </div>
-      <div class="hero-visual">
-        <img src="./hero-visual.svg?v=1" alt="Rafal Wilk AI — nowoczesny panel biznesowy i narzędzia AI" width="1200" height="760">
-      </div>
-    </section>
-
-    <section class="statement" id="principles">
-      <div class="section-number mono">01</div>
-      <div>
-        <p class="section-kicker" data-i18n="principleKicker">ZAPROJEKTOWANE WOKÓŁ PRACY</p>
-        <h2 data-i18n="principleTitle">Jeden spokojny interfejs. Każde narzędzie o jedno polecenie dalej.</h2>
-      </div>
-      <p class="statement-copy" data-i18n="principleCopy">Strona jest warstwą sterującą, a nie katalogiem. Kalkulatory i moduły operacyjne pozostają schowane w przeszukiwalnym launcherze i otwierają się w czystym workspace z zachowaniem własnego interfejsu.</p>
-    </section>
-
-    <section class="service-lines" aria-label="Capabilities">
-      <article><span class="mono">01</span><h3 data-i18n="cap1">Stawki i finanse</h3><p data-i18n="cap1c">Budżet, bill rate, merit i kalkulacje CAO.</p></article>
-      <article><span class="mono">02</span><h3 data-i18n="cap2">Staffing i rekrutacja</h3><p data-i18n="cap2c">Intake, CV matching i workflow dostawców.</p></article>
-      <article><span class="mono">03</span><h3 data-i18n="cap3">Workforce operations</h3><p data-i18n="cap3c">Spotkania, home office i rejestry operacyjne.</p></article>
-      <article><span class="mono">04</span><h3 data-i18n="cap4">Prywatny workspace</h3><p data-i18n="cap4c">Chronione projekty i lokalny asystent AI.</p></article>
-    </section>
-
-    <section class="launcher-callout">
-      <div><span class="mono" data-i18n="command">COMMAND CENTER</span><h2 data-i18n="calloutTitle">Znajdź narzędzie. Otwórz je. Wracaj do pracy.</h2></div>
-      <button type="button" id="bottomTools"><span data-i18n="browseTools">Pokaż wszystkie narzędzia</span><span>→</span></button>
-    </section>
-
-    <section class="contact-section" id="contact">
-      <div class="section-number mono">02</div>
-      <div>
-        <p class="section-kicker" data-site-i18n="contactKicker">KONTAKT</p>
-        <h2 data-site-i18n="contactTitle">Porozmawiajmy o AI, automatyzacji i praktycznych narzędziach.</h2>
-      </div>
-      <div class="contact-panel">
-        <p data-site-i18n="contactCopy">Rafal Wilk AI to niezależna platforma skupiona na praktycznych rozwiązaniach AI, automatyzacji procesów i narzędziach wspierających codzienną pracę biznesową.</p>
-        <a class="contact-link" href="mailto:rafalwilk.aitech@gmail.com"><span data-site-i18n="contactLabel">E-mail</span><strong data-contact-email>rafalwilk.aitech@gmail.com</strong></a>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="site-footer-inner">
-      <div class="footer-grid">
-        <div class="footer-brand-block">
-          <div class="footer-brand">Rafal Wilk <b>AI</b></div>
-          <p data-site-i18n="footerAbout">Praktyczne AI, automatyzacja i narzędzia biznesowe w jednym uporządkowanym środowisku.</p>
-        </div>
-        <div class="footer-column">
-          <h3 data-site-i18n="footerNav">Nawigacja</h3>
-          <a href="#principles" data-site-i18n="linkPlatform">Platforma</a>
-          <button type="button" data-open-tools data-site-i18n="linkTools">Narzędzia</button>
-          <button type="button" data-open-ai data-site-i18n="linkAssistant">AI Assistant</button>
-        </div>
-        <div class="footer-column">
-          <h3 data-site-i18n="footerContact">Kontakt</h3>
-          <a href="mailto:rafalwilk.aitech@gmail.com" data-contact-email>rafalwilk.aitech@gmail.com</a>
-          <a href="#contact">Rafal Wilk AI</a>
-        </div>
-        <div class="footer-column">
-          <h3 data-site-i18n="footerLegal">Informacje prawne</h3>
-          <a href="./legal.html#privacy" data-site-i18n="linkLegal">Prywatność i informacje prawne</a>
-          <a href="./legal.html#terms" data-site-i18n="linkTerms">Warunki korzystania</a>
-          <a href="./legal.html#disclaimer" data-site-i18n="linkDisclaimer">Zastrzeżenia</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <div class="footer-bottom-left"><span>© 2026 Rafal Wilk AI</span><span data-site-i18n="rights">Wszelkie prawa zastrzeżone.</span></div>
-        <div class="footer-bottom-right" data-site-i18n="independent">Niezależna strona internetowa. Nazwy i znaki podmiotów trzecich należą do ich właścicieli.</div>
-      </div>
-    </div>
-  </footer>
+    </footer>
+  </div>
 
   <div class="palette-backdrop" id="paletteBackdrop" hidden></div>
   <section class="palette" id="toolPalette" role="dialog" aria-modal="true" aria-labelledby="paletteTitle" hidden>
@@ -130,9 +134,7 @@
       <div><span class="mono" data-i18n="launcherLabel">TOOL LAUNCHER</span><h2 id="paletteTitle" data-i18n="launcherTitle">Czego potrzebujesz?</h2></div>
       <button class="icon-button" id="closeTools" type="button" aria-label="Close">×</button>
     </div>
-    <div class="search-wrap">
-      <span aria-hidden="true">⌕</span><input id="toolSearch" autocomplete="off" spellcheck="false" data-i18n-placeholder="search" placeholder="Szukaj narzędzia, kalkulacji lub procesu…"><kbd>ESC</kbd>
-    </div>
+    <div class="search-wrap"><span aria-hidden="true">⌕</span><input id="toolSearch" autocomplete="off" spellcheck="false" data-i18n-placeholder="search" placeholder="Szukaj narzędzia, kalkulacji lub procesu…"><kbd>ESC</kbd></div>
     <div class="palette-body">
       <aside class="filters" id="toolFilters" aria-label="Categories"></aside>
       <div class="tool-results">
@@ -149,22 +151,11 @@
       <div class="workspace-identity"><span class="mono" id="workspaceCategory">TOOL</span><strong id="workspaceTitle">Tool</strong></div>
       <div class="workspace-actions"><span id="workspaceStatus" class="workspace-status"><i></i><span data-i18n="loaded">GOTOWE</span></span><div class="workspace-language language"><button type="button" data-lang="pl">PL</button><button type="button" data-lang="en">EN</button><button type="button" data-lang="nl">NL</button></div></div>
     </header>
-    <div class="workspace-stage">
-      <div class="module-loading" id="moduleLoading"><span></span><p data-i18n="loading">Otwieram narzędzie…</p></div>
-      <iframe id="moduleFrame" title="Rafal Wilk AI tool" allow="clipboard-read; clipboard-write"></iframe>
-    </div>
+    <div class="workspace-stage"><div class="module-loading" id="moduleLoading"><span></span><p data-i18n="loading">Otwieram narzędzie…</p></div><iframe id="moduleFrame" title="Rafal Wilk AI tool" allow="clipboard-read; clipboard-write"></iframe></div>
   </section>
 
   <div class="gate" id="pinGate" role="dialog" aria-modal="true" aria-labelledby="pinTitle" hidden>
-    <div class="gate-card">
-      <div class="gate-mark">RW</div>
-      <span class="mono" data-i18n="protected">CHRONIONY DOSTĘP</span>
-      <h2 id="pinTitle" data-i18n="pinTitle">Wpisz kod dostępu</h2>
-      <p id="pinTool"></p>
-      <input id="pinInput" type="password" inputmode="numeric" autocomplete="one-time-code" aria-label="PIN">
-      <div class="pin-error" id="pinError" aria-live="polite"></div>
-      <div class="gate-actions"><button id="pinCancel" type="button" data-i18n="cancel">Anuluj</button><button id="pinSubmit" type="button" data-i18n="continue">Dalej</button></div>
-    </div>
+    <div class="gate-card"><div class="gate-mark">RW</div><span class="mono" data-i18n="protected">CHRONIONY DOSTĘP</span><h2 id="pinTitle" data-i18n="pinTitle">Wpisz kod dostępu</h2><p id="pinTool"></p><input id="pinInput" type="password" inputmode="numeric" autocomplete="one-time-code" aria-label="PIN"><div class="pin-error" id="pinError" aria-live="polite"></div><div class="gate-actions"><button id="pinCancel" type="button" data-i18n="cancel">Anuluj</button><button id="pinSubmit" type="button" data-i18n="continue">Dalej</button></div></div>
   </div>
 
   <div class="ai-backdrop" id="aiBackdrop" hidden></div>
@@ -177,6 +168,6 @@
   </aside>
 
   <script src="./app.js?v=3"></script>
-  <script src="./site-patch.js?v=4"></script>
+  <script src="./site-patch.js?v=5"></script>
 </body>
 </html>
