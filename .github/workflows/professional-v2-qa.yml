@@ -41,6 +41,13 @@ jobs:
         env:
           RW_BASE_URL: http://127.0.0.1:4173/professional-v2/index.html
         run: node professional-v2/qa-runner.js
+      - name: Upload homepage screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: professional-v2-homepage
+          path: professional-v2/qa-homepage.png
+          if-no-files-found: ignore
       - name: Show server log on failure
         if: failure()
         run: cat /tmp/rw-http.log || true
