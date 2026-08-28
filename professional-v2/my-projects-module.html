@@ -16,13 +16,22 @@
     if(el)el.innerHTML='<div><strong>Unable to open My Projects.</strong><span>'+String(message||'Module error')+'</span></div>';
     try{parent.postMessage({type:'rw:module-error',detail:String(message||'My Projects error')},'*')}catch(_e){}
   }
+  function sanitize(html){
+    html=html.replace(/const\s+\$\s*=\s*\(s\)\s*=>\s*Array\.from\(document\.querySelectorAll\(s\)\)\s*;/g,'const $$ = (s)=>Array.from(document.querySelectorAll(s));');
+    const parsed=new DOMParser().parseFromString(html,'text/html');
+    [...parsed.scripts].forEach(script=>{
+      const type=(script.getAttribute('type')||'').trim().toLowerCase();
+      if(script.src||type==='module'||(type&&type!=='text/javascript'&&type!=='application/javascript'))return;
+      const code=script.textContent||'';
+      if(!code.trim())return;
+      try{new Function(code)}catch(_error){script.remove();}
+    });
+    return '<!doctype html>\n'+parsed.documentElement.outerHTML;
+  }
   try{
     const response=await fetch('../modules/my-company.html',{cache:'no-store'});
     if(!response.ok)throw new Error('My Projects returned HTTP '+response.status+'.');
-    let html=await response.text();
-    const broken="const $ = (s)=>document.querySelector(s);\n  const $ = (s)=>Array.from(document.querySelectorAll(s));";
-    const fixed="const $ = (s)=>document.querySelector(s);\n  const $$ = (s)=>Array.from(document.querySelectorAll(s));";
-    if(html.includes(broken))html=html.replace(broken,fixed);
+    let html=sanitize(await response.text());
     const absoluteBase=new URL('../',location.href).href;
     if(!/<base\b/i.test(html)){
       const baseTag='<base href="'+absoluteBase.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'">';
