@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f3f1ec">
+  <meta name="description" content="Rafal Wilk AI — practical business tools, workforce utilities and AI in one focused workspace.">
+  <title>Rafal Wilk AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css?v=2">
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="wordmark" href="#top" aria-label="Rafal Wilk AI home">
+      <span class="wordmark-rw">RW</span>
+      <span class="wordmark-copy">Rafal Wilk <b>AI</b></span>
+    </a>
+    <nav class="top-actions" aria-label="Primary navigation">
+      <button class="nav-text" type="button" data-scroll="#principles" data-i18n="navAbout">Platform</button>
+      <button class="nav-text" type="button" id="openAi" data-i18n="navAi">AI Assistant</button>
+      <button class="tools-trigger" id="openTools" type="button" aria-haspopup="dialog" aria-controls="toolPalette">
+        <span class="tools-trigger-dot"></span><span data-i18n="openTools">Open tools</span><kbd>⌘K</kbd>
+      </button>
+      <div class="language" aria-label="Language">
+        <button type="button" data-lang="pl">PL</button><button type="button" data-lang="en">EN</button><button type="button" data-lang="nl">NL</button>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-index mono">01 / PLATFORM</div>
+      <div class="hero-copy">
+        <p class="eyebrow" data-i18n="eyebrow">BUSINESS OPERATING LAYER</p>
+        <h1 data-i18n-html="headline">Work tools.<br><span>Without the clutter.</span></h1>
+        <p class="hero-lead" data-i18n="lead">A focused workspace for calculators, staffing workflows, workforce utilities and private projects. Tools stay out of the way until you need them.</p>
+        <div class="hero-cta-row">
+          <button class="primary-cta" id="heroTools" type="button"><span data-i18n="launchTools">Launch tools</span><span aria-hidden="true">↗</span></button>
+          <span class="hero-note mono" data-i18n="heroNote">17 entries · PL / EN / NL · protected workspace</span>
+        </div>
+      </div>
+      <div class="hero-system" aria-label="Platform status">
+        <div class="system-line"><span data-i18n="system">SYSTEM</span><b class="system-ok"><i></i><span data-i18n="ready">READY</span></b></div>
+        <div class="system-line"><span data-i18n="interface">INTERFACE</span><b>V2 / PRIVATE PREVIEW</b></div>
+        <div class="system-line"><span data-i18n="access">ACCESS</span><b>PIN / LOCAL</b></div>
+      </div>
+    </section>
+
+    <section class="statement" id="principles">
+      <div class="section-number mono">02</div>
+      <div>
+        <p class="section-kicker" data-i18n="principleKicker">DESIGNED AROUND THE WORK</p>
+        <h2 data-i18n="principleTitle">One calm interface. Every tool one command away.</h2>
+      </div>
+      <p class="statement-copy" data-i18n="principleCopy">The website is the control layer, not a catalogue. Calculators and operational modules remain hidden inside a searchable launcher and open in a distraction-free workspace with their original interface intact.</p>
+    </section>
+
+    <section class="service-lines" aria-label="Capabilities">
+      <article><span class="mono">01</span><h3 data-i18n="cap1">Rates & finance</h3><p data-i18n="cap1c">Budget, bill rate, merit and CAO calculations.</p></article>
+      <article><span class="mono">02</span><h3 data-i18n="cap2">Staffing & recruitment</h3><p data-i18n="cap2c">Intake, CV matching and supplier workflows.</p></article>
+      <article><span class="mono">03</span><h3 data-i18n="cap3">Workforce operations</h3><p data-i18n="cap3c">Meetings, home office and operational registers.</p></article>
+      <article><span class="mono">04</span><h3 data-i18n="cap4">Private workspace</h3><p data-i18n="cap4c">Protected projects and local AI assistance.</p></article>
+    </section>
+
+    <section class="launcher-callout">
+      <div><span class="mono" data-i18n="command">COMMAND CENTER</span><h2 data-i18n="calloutTitle">Find the tool. Open it. Get back to work.</h2></div>
+      <button type="button" id="bottomTools"><span data-i18n="browseTools">Browse all tools</span><span>→</span></button>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-brand">Rafal Wilk AI</div>
+    <div class="footer-meta mono"><span>© 2026</span><span data-i18n="footer">BUSINESS TOOLS / AUTOMATION / AI</span></div>
+  </footer>
+
+  <div class="palette-backdrop" id="paletteBackdrop" hidden></div>
+  <section class="palette" id="toolPalette" role="dialog" aria-modal="true" aria-labelledby="paletteTitle" hidden>
+    <div class="palette-head">
+      <div><span class="mono" data-i18n="launcherLabel">TOOL LAUNCHER</span><h2 id="paletteTitle" data-i18n="launcherTitle">What do you need?</h2></div>
+      <button class="icon-button" id="closeTools" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="search-wrap">
+      <span aria-hidden="true">⌕</span><input id="toolSearch" autocomplete="off" spellcheck="false" data-i18n-placeholder="search" placeholder="Search tools, calculations or workflows…"><kbd>ESC</kbd>
+    </div>
+    <div class="palette-body">
+      <aside class="filters" id="toolFilters" aria-label="Categories"></aside>
+      <div class="tool-results">
+        <div class="results-meta"><span id="resultsCount" class="mono"></span><span class="mono" data-i18n="selectHint">ENTER TO OPEN</span></div>
+        <div id="toolList" class="tool-list" role="listbox"></div>
+        <div id="emptyState" class="empty-state" hidden><span>⌕</span><p data-i18n="noResults">No matching tools.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="workspace" id="workspace" aria-label="Tool workspace" hidden>
+    <header class="workspace-bar">
+      <button id="workspaceBack" class="workspace-back" type="button"><span>←</span><span data-i18n="back">Back</span></button>
+      <div class="workspace-identity"><span class="mono" id="workspaceCategory">TOOL</span><strong id="workspaceTitle">Tool</strong></div>
+      <div class="workspace-actions"><span id="workspaceStatus" class="workspace-status"><i></i><span data-i18n="loaded">LOADED</span></span><div class="workspace-language language"><button type="button" data-lang="pl">PL</button><button type="button" data-lang="en">EN</button><button type="button" data-lang="nl">NL</button></div></div>
+    </header>
+    <div class="workspace-stage">
+      <div class="module-loading" id="moduleLoading"><span></span><p data-i18n="loading">Opening tool…</p></div>
+      <iframe id="moduleFrame" title="Rafal Wilk AI tool" allow="clipboard-read; clipboard-write"></iframe>
+    </div>
+  </section>
+
+  <div class="gate" id="pinGate" role="dialog" aria-modal="true" aria-labelledby="pinTitle" hidden>
+    <div class="gate-card">
+      <div class="gate-mark">RW</div>
+      <span class="mono" data-i18n="protected">PROTECTED ACCESS</span>
+      <h2 id="pinTitle" data-i18n="pinTitle">Enter access code</h2>
+      <p id="pinTool"></p>
+      <input id="pinInput" type="password" inputmode="numeric" autocomplete="one-time-code" aria-label="PIN">
+      <div class="pin-error" id="pinError" aria-live="polite"></div>
+      <div class="gate-actions"><button id="pinCancel" type="button" data-i18n="cancel">Cancel</button><button id="pinSubmit" type="button" data-i18n="continue">Continue</button></div>
+    </div>
+  </div>
+
+  <div class="ai-backdrop" id="aiBackdrop" hidden></div>
+  <aside class="ai-panel" id="aiPanel" aria-label="AI Assistant" hidden>
+    <div class="ai-head"><div><span class="mono">LOCAL ASSISTANT</span><h2>Rafal Wilk AI</h2></div><button id="closeAi" class="icon-button" type="button">×</button></div>
+    <p class="ai-intro" data-i18n="aiIntro">Ask about the platform or tell me which tool you want to open. No API key is required.</p>
+    <div class="ai-log" id="aiLog"></div>
+    <div class="ai-compose"><input id="aiInput" data-i18n-placeholder="aiPlaceholder" placeholder="Ask about the platform…"><button id="aiSend" type="button">↑</button></div>
+    <div class="ai-local-note mono" data-i18n="aiNote">SITE COMMANDS RUN LOCALLY · GENERAL AI IS OPTIONAL</div>
+  </aside>
+
+  <script src="./app.js?v=2"></script>
+</body>
+</html>
