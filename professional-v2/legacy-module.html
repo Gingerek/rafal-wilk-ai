@@ -32,12 +32,30 @@
       if(el)el.innerHTML='<div><strong>Unable to open this tool.</strong><p>'+String(message||'The module could not be loaded.')+'</p></div>';
       try{parent.postMessage({type:'rw:module-error',idx,detail:String(message||'Module error')},'*')}catch(_e){}
     }
+    function diagnoseInlineScripts(html){
+      if(idx!==2)return;
+      try{
+        const parsed=new DOMParser().parseFromString(html,'text/html');
+        [...parsed.scripts].forEach((script,i)=>{
+          const type=(script.getAttribute('type')||'').trim().toLowerCase();
+          if(script.src||type==='module'||(type&&type!=='text/javascript'&&type!=='application/javascript'))return;
+          const code=script.textContent||'';
+          if(!code.trim())return;
+          try{new Function(code)}catch(error){
+            const head=code.slice(0,700).replace(/\s+/g,' ');
+            const tail=code.slice(-1100).replace(/\s+/g,' ');
+            console.error('[RW_DIAG] idx=2 script='+i+' '+error.name+': '+error.message+' | HEAD '+head+' | TAIL '+tail);
+          }
+        });
+      }catch(error){console.error('[RW_DIAG] parser '+error.message)}
+    }
     try{
       if(!Number.isFinite(idx))throw new Error('Invalid module index.');
       if(typeof APPS==='undefined'||!Array.isArray(APPS))throw new Error('Legacy application library is unavailable.');
       const app=APPS[idx];
       if(!app||!app.b64)throw new Error('Requested module was not found.');
       let html=decodeUtf8Base64(app.b64);
+      diagnoseInlineScripts(html);
       const absoluteBase=new URL('../',location.href).href;
       if(!/<base\b/i.test(html)){
         const baseTag='<base href="'+escapeAttr(absoluteBase)+'">';
