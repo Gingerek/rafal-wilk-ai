@@ -20,61 +20,44 @@ const qa=params.get('qa')==='1';
 const host=document.getElementById('host');
 const error=document.getElementById('error');
 let settled=false;
-function tell(ok,detail){
-  if(settled&&ok)return;
-  if(ok)settled=true;
-  try{parent.postMessage({type:'rw:legacy-status',idx,ok,detail:detail||''},'*')}catch(_e){}
-}
-function fail(message){error.classList.add('show');host.style.display='none';tell(false,message||'Legacy tool failed')}
+function tell(ok,detail){if(settled)return;if(ok)settled=true;try{parent.postMessage({type:'rw:legacy-status',idx,ok,detail:detail||''},'*')}catch(_e){}}
+function fail(message){if(settled)return;error.classList.add('show');host.style.display='none';tell(false,message||'Legacy tool failed')}
 function isolate(doc){
   if(doc.getElementById('rw-v2-legacy-isolation'))return;
   const style=doc.createElement('style');style.id='rw-v2-legacy-isolation';
-  style.textContent=`
-    html,body{margin:0!important;width:100%!important;height:100%!important;overflow:hidden!important;background:#fff!important}
-    body>*{display:none!important}
-    body>.viewport{display:block!important;position:fixed!important;inset:0!important;width:100%!important;height:100%!important;z-index:2147480000!important;background:#fff!important}
-    body>.viewport>#appframe,body>.viewport #appframe{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;background:#fff!important;display:block!important;opacity:1!important;visibility:visible!important;transform:none!important}
-    body>.viewport>iframe:not(#appframe),body>.viewport iframe:not(#appframe){display:none!important}
-  `;
+  style.textContent=`html,body{margin:0!important;width:100%!important;height:100%!important;overflow:hidden!important;background:#fff!important}body>*{display:none!important}body>.viewport{display:block!important;position:fixed!important;inset:0!important;width:100%!important;height:100%!important;z-index:2147480000!important;background:#fff!important}body>.viewport>#appframe,body>.viewport #appframe{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;border:0!important;background:#fff!important;display:block!important;opacity:1!important;visibility:visible!important;transform:none!important}body>.viewport>iframe:not(#appframe),body>.viewport iframe:not(#appframe){display:none!important}`;
   doc.head.appendChild(style);
 }
-function moduleReady(win,doc){
-  const frame=doc.getElementById('appframe');
-  if(!frame)return false;
-  isolate(doc);
-  frame.classList.add('show');
-  try{
-    const fd=frame.contentDocument;
-    const text=(fd?.body?.innerText||'').replace(/\s+/g,' ').trim();
-    if(text.length>20){host.style.opacity='1';tell(true,text.slice(0,100));return true}
-  }catch(_e){}
-  return false;
+function inspect(frame){
+  const srcdoc=String(frame.getAttribute('srcdoc')||frame.srcdoc||'');
+  const src=String(frame.getAttribute('src')||'');
+  let href='',nodes=0,textLen=0;
+  try{href=String(frame.contentWindow?.location?.href||'')}catch(_e){}
+  try{const body=frame.contentDocument?.body;nodes=body?.children?.length||0;textLen=(body?.innerText||'').trim().length}catch(_e){}
+  const payload=srcdoc.length>120||(src&&src!=='about:blank')||(href&&href!=='about:blank')||nodes>0||textLen>10;
+  return{payload,srcdoc:srcdoc.length,src,href,nodes,textLen,shown:frame.classList.contains('show')};
+}
+function moduleReady(doc){
+  const frame=doc.getElementById('appframe');if(!frame)return false;
+  const state=inspect(frame);
+  if(!state.payload)return false;
+  isolate(doc);frame.classList.add('show');host.style.opacity='1';tell(true,JSON.stringify(state));return true;
 }
 async function boot(){
   if(!Number.isFinite(idx))return fail('Invalid module index');
-  let win,doc;
-  try{win=host.contentWindow;doc=host.contentDocument}catch(e){return fail('Host access failed')}
+  let win,doc;try{win=host.contentWindow;doc=host.contentDocument}catch(e){return fail('Host access failed')}
   if(!win||!doc)return fail('Host unavailable');
-  host.style.opacity='0';
-  // Calling loadApp directly deliberately reuses the exact legacy loader from main.
   const started=Date.now();
   while(typeof win.loadApp!=='function'&&Date.now()-started<8000)await new Promise(r=>setTimeout(r,80));
   if(typeof win.loadApp!=='function')return fail('Legacy loader unavailable');
-  try{
-    const result=win.loadApp(idx);
-    if(result&&typeof result.then==='function')await result.catch(()=>{});
-  }catch(e){return fail(String(e?.message||e))}
-  const frame=doc.getElementById('appframe');
-  if(frame)frame.addEventListener('load',()=>{setTimeout(()=>moduleReady(win,doc),30)},{once:false});
+  try{const result=win.loadApp(idx);if(result&&typeof result.then==='function')await result.catch(()=>{})}catch(e){return fail(String(e?.message||e))}
+  const frame=doc.getElementById('appframe');if(frame)frame.addEventListener('load',()=>setTimeout(()=>moduleReady(doc),40),{once:false});
   const deadline=Date.now()+14000;
-  while(Date.now()<deadline){
-    if(moduleReady(win,doc))return;
-    await new Promise(r=>setTimeout(r,120));
-  }
-  fail('Legacy module timeout');
+  while(Date.now()<deadline){if(moduleReady(doc))return;await new Promise(r=>setTimeout(r,100))}
+  const state=frame?inspect(frame):null;fail('Legacy module timeout'+(state?' '+JSON.stringify(state):''));
 }
-host.addEventListener('load',()=>setTimeout(boot,80),{once:true});
-setTimeout(()=>{if(!settled&&qa)tell(false,'QA timeout')},16000);
+host.addEventListener('load',()=>setTimeout(boot,100),{once:true});
+setTimeout(()=>{if(!settled&&qa)tell(false,'QA timeout')},17000);
 })();
 </script>
 </body>
