@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Rafal Wilk AI Tool</title>
+  <style>
+    html,body{margin:0;min-height:100%;background:#fff;color:#111318;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+    .rw-loader{min-height:100vh;display:grid;place-items:center;padding:24px;text-align:center;background:#f5f3ee;color:#61646a}
+    .rw-loader strong{display:block;color:#111318;margin-bottom:8px}.rw-loader p{margin:0;max-width:520px;line-height:1.6;font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="rw-loader" id="rwLoader"><div><strong>Opening tool…</strong><p>The module is being prepared inside the Rafal Wilk AI workspace.</p></div></div>
+  <script src="../assets/js/legacy-apps-bundle.js?v=20260727-cv-match-engine-4"></script>
+  <script>
+  (function(){
+    'use strict';
+    const params=new URLSearchParams(location.search);
+    const idx=Number(params.get('idx'));
+    const lang=(params.get('lang')||localStorage.getItem('rw_lang')||'pl').slice(0,2).toLowerCase();
+    try{localStorage.setItem('rw_lang',lang);localStorage.setItem('doc_lang',lang);localStorage.setItem('supplier_lang',lang)}catch(_e){}
+    function decodeUtf8Base64(value){
+      const bin=atob(String(value||''));
+      const bytes=new Uint8Array(bin.length);
+      for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+      return new TextDecoder('utf-8').decode(bytes);
+    }
+    function showError(message){
+      const el=document.getElementById('rwLoader');
+      if(el)el.innerHTML='<div><strong>Unable to open this tool.</strong><p>'+String(message||'The module could not be loaded.')+'</p></div>';
+      try{parent.postMessage({type:'rw:module-error',idx,detail:String(message||'Module error')},'*')}catch(_e){}
+    }
+    try{
+      if(!Number.isFinite(idx))throw new Error('Invalid module index.');
+      if(typeof APPS==='undefined'||!Array.isArray(APPS))throw new Error('Legacy application library is unavailable.');
+      const app=APPS[idx];
+      if(!app||!app.b64)throw new Error('Requested module was not found.');
+      let html=decodeUtf8Base64(app.b64);
+      if(!/<base\b/i.test(html)){
+        if(/<head\b[^>]*>/i.test(html))html=html.replace(/<head\b([^>]*)>/i,'<head$1><base href="../">');
+        else html='<base href="../">'+html;
+      }
+      document.open();
+      document.write(html);
+      document.close();
+    }catch(error){showError(error&&error.message?error.message:String(error));}
+  })();
+  </script>
+</body>
+</html>
