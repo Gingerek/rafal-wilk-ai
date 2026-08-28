@@ -26,6 +26,7 @@
       for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
       return new TextDecoder('utf-8').decode(bytes);
     }
+    function escapeAttr(value){return String(value).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}
     function showError(message){
       const el=document.getElementById('rwLoader');
       if(el)el.innerHTML='<div><strong>Unable to open this tool.</strong><p>'+String(message||'The module could not be loaded.')+'</p></div>';
@@ -37,13 +38,15 @@
       const app=APPS[idx];
       if(!app||!app.b64)throw new Error('Requested module was not found.');
       let html=decodeUtf8Base64(app.b64);
+      const absoluteBase=new URL('../',location.href).href;
       if(!/<base\b/i.test(html)){
-        if(/<head\b[^>]*>/i.test(html))html=html.replace(/<head\b([^>]*)>/i,'<head$1><base href="../">');
-        else html='<base href="../">'+html;
+        const baseTag='<base href="'+escapeAttr(absoluteBase)+'">';
+        if(/<head\b[^>]*>/i.test(html))html=html.replace(/<head\b([^>]*)>/i,'<head$1>'+baseTag);
+        else html=baseTag+html;
       }
-      document.open();
-      document.write(html);
-      document.close();
+      const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+      const blobUrl=URL.createObjectURL(blob);
+      location.replace(blobUrl);
     }catch(error){showError(error&&error.message?error.message:String(error));}
   })();
   </script>
