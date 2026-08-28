@@ -66,11 +66,26 @@ const { chromium } = require('playwright-core');
         if(tool.id==='rekentool-master'){
           const frameInfo=[];
           for(const frame of toolPage.frames()){
-            let source='';
-            try{source=await frame.evaluate(()=>typeof window.translateMerit==='function'?window.translateMerit.toString():'')}catch(_e){}
-            frameInfo.push({url:frame.url(),hasTranslateMerit:!!source,source:source.slice(0,12000)});
+            let inspection={};
+            try{
+              inspection=await frame.evaluate(()=>{
+                const html=document.documentElement?document.documentElement.outerHTML:'';
+                const hits=[];
+                let from=0;
+                while(true){
+                  const pos=html.indexOf('translateMerit',from);
+                  if(pos<0)break;
+                  hits.push(html.slice(Math.max(0,pos-3200),Math.min(html.length,pos+9000)).replace(/\s+/g,' '));
+                  from=pos+14;
+                  if(hits.length>=6)break;
+                }
+                const lines=html.split('\n');
+                return {hits,line7146:lines.slice(7138,7155).join('\n')};
+              });
+            }catch(_e){}
+            frameInfo.push({url:frame.url(),inspection});
           }
-          console.log('[REKENTOOL FRAMES]',JSON.stringify(frameInfo));
+          console.log('[REKENTOOL INNER SOURCE]',JSON.stringify(frameInfo));
         }
         const bodyText=(await toolPage.locator('body').innerText().catch(()=>'' )).replace(/\s+/g,' ').trim();
         const nodes=await toolPage.locator('body > *').count().catch(()=>0);
