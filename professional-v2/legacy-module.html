@@ -40,7 +40,12 @@
         if(script.src||type==='module'||(type&&type!=='text/javascript'&&type!=='application/javascript'))return;
         const code=script.textContent||'';
         if(!code.trim())return;
-        try{new Function(code)}catch(_error){script.remove();}
+        try{new Function(code)}catch(_error){script.remove();return;}
+        if(code.includes('function translateMerit')){
+          const start=code.indexOf('function translateMerit');
+          const end=code.indexOf('function initMerit',start);
+          console.error('[RW_MERIT_SOURCE] '+code.slice(start,end>start?end:start+5000).replace(/\s+/g,' '));
+        }
       });
       return '<!doctype html>\n'+parsed.documentElement.outerHTML;
     }
