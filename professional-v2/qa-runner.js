@@ -63,30 +63,6 @@ const { chromium } = require('playwright-core');
       try{
         await toolPage.goto(tool.resolved,{waitUntil:'domcontentloaded',timeout:20000});
         await toolPage.waitForTimeout(tool.resolved.includes('legacy-module.html')?1300:600);
-        if(tool.id==='rekentool-master'){
-          const frameInfo=[];
-          for(const frame of toolPage.frames()){
-            let inspection={};
-            try{
-              inspection=await frame.evaluate(()=>{
-                const html=document.documentElement?document.documentElement.outerHTML:'';
-                const hits=[];
-                let from=0;
-                while(true){
-                  const pos=html.indexOf('translateMerit',from);
-                  if(pos<0)break;
-                  hits.push(html.slice(Math.max(0,pos-3200),Math.min(html.length,pos+9000)).replace(/\s+/g,' '));
-                  from=pos+14;
-                  if(hits.length>=6)break;
-                }
-                const lines=html.split('\n');
-                return {hits,line7146:lines.slice(7138,7155).join('\n')};
-              });
-            }catch(_e){}
-            frameInfo.push({url:frame.url(),inspection});
-          }
-          console.log('[REKENTOOL INNER SOURCE]',JSON.stringify(frameInfo));
-        }
         const bodyText=(await toolPage.locator('body').innerText().catch(()=>'' )).replace(/\s+/g,' ').trim();
         const nodes=await toolPage.locator('body > *').count().catch(()=>0);
         const loaderError=/Unable to open this tool/i.test(bodyText);
