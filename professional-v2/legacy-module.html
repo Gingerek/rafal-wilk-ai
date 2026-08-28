@@ -26,33 +26,75 @@
       for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
       return new TextDecoder('utf-8').decode(bytes);
     }
+    function encodeUtf8Base64(value){
+      const bytes=new TextEncoder().encode(String(value||''));
+      let bin='';
+      const chunk=0x8000;
+      for(let i=0;i<bytes.length;i+=chunk){
+        bin+=String.fromCharCode(...bytes.subarray(i,Math.min(i+chunk,bytes.length)));
+      }
+      return btoa(bin);
+    }
     function escapeAttr(value){return String(value).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}
     function showError(message){
       const el=document.getElementById('rwLoader');
       if(el)el.innerHTML='<div><strong>Unable to open this tool.</strong><p>'+String(message||'The module could not be loaded.')+'</p></div>';
       try{parent.postMessage({type:'rw:module-error',idx,detail:String(message||'Module error')},'*')}catch(_e){}
     }
-    function inspectInnerSrcdoc(parsed){
-      [...parsed.querySelectorAll('iframe[srcdoc]')].forEach((frame,frameIndex)=>{
-        const srcdoc=frame.getAttribute('srcdoc')||'';
-        if(!srcdoc.includes('translateMerit'))return;
-        const inner=new DOMParser().parseFromString(srcdoc,'text/html');
-        [...inner.scripts].forEach((script,scriptIndex)=>{
-          const code=script.textContent||'';
-          if(!code.includes('translateMerit'))return;
-          let from=0,hit=0;
-          while(true){
-            const pos=code.indexOf('translateMerit',from);
-            if(pos<0)break;
-            const start=Math.max(0,pos-2600);
-            const end=Math.min(code.length,pos+7000);
-            console.error('[RW_INNER_MERIT_'+frameIndex+'_'+scriptIndex+'_'+hit+'] '+code.slice(start,end).replace(/\s+/g,' '));
-            from=pos+'translateMerit'.length;
-            hit++;
-            if(hit>=5)break;
-          }
-        });
-      });
+    const SAFE_TRANSLATE_MERIT=`function translateMerit(){
+      const setMeritText=function(id,value){const el=document.getElementById(id);if(el)el.textContent=value;};
+      setMeritText('meritPanelTitle',mt('panelTitle'));
+      setMeritText('meritPanelHint',mt('panelHint'));
+      const moduleWrap=document.querySelector('.module-switch-wrap');
+      const moduleTabs=document.querySelector('.module-switch[role="tablist"]');
+      const billBtn=document.querySelector('.module-switch-btn[data-module-target="bill"]');
+      const caoBtn=document.querySelector('.module-switch-btn[data-module-target="cao"]');
+      if(moduleWrap)moduleWrap.setAttribute('aria-label',mt('moduleAria'));
+      if(moduleTabs)moduleTabs.setAttribute('aria-label',mt('moduleAria'));
+      if(billBtn)billBtn.textContent=mt('moduleBill');
+      if(caoBtn)caoBtn.textContent=mt('moduleCao');
+      setMeritText('meritScenarioLabel',mt('scenarioLabel'));
+      setMeritText('meritScenarioOptionCao',mt('scenarioCao'));
+      setMeritText('meritScenarioOptionManual',mt('scenarioManual'));
+      setMeritText('meritYearLabel',mt('yearLabel'));
+      setMeritText('meritPathwayLabel',mt('pathwayLabel'));
+      setMeritText('meritMarkupLabel',mt('markupLabel'));
+      setMeritText('meritScaleLabel',mt('scaleLabel'));
+      setMeritText('meritLeftKicker',mt('leftKicker'));
+      setMeritText('meritRightKicker',mt('rightKicker'));
+      setMeritText('meritAgencyFactorLabel',mt('agencyFactorRow'));
+      setMeritText('meritSystemInputLabel',mt('systemInputLabel'));
+      setMeritText('meritSystemInputSub',mt('systemInputSub'));
+      setMeritText('meritPctLabel',mt('meritPctLabel'));
+      setMeritText('meritPctSub',mt('meritPctSub'));
+      setMeritText('meritAnnualLabel',mt('annualLabel'));
+      setMeritText('meritMonthlyLabel',mt('monthlyLabel'));
+      setMeritText('meritBeforeMarkupTitle',mt('beforeMarkupTitle'));
+      setMeritText('meritBeforeMarkupSub',mt('beforeMarkupSub'));
+      setMeritText('meritAfterMarkupTitle',mt('afterMarkupTitle'));
+      setMeritText('meritAfterMarkupSub',mt('afterMarkupSub'));
+      setMeritText('meritCurrentSubtle',mt('currentSubtle'));
+      setMeritText('meritCurrentTitle',mt('currentTitle'));
+      setMeritText('meritNewSubtle',mt('newSubtle'));
+      setMeritText('meritNewTitle',mt('newTitle'));
+      setMeritText('meritScaleLookupTitle',mt('scaleLookupTitle'));
+      setMeritText('meritMatrixTitle',mt('matrixTitle'));
+      setScenarioUI(false);
+      populatePathways();
+      updateScaleButtons();
+      calcMerit();
+    }`;
+    function patchRekentoolMasterInner(html){
+      if(idx!==2)return html;
+      const masterRe=/(['"]Master['"]\s*:\s*['"])([A-Za-z0-9+/=]+)(['"])/;
+      const match=masterRe.exec(html);
+      if(!match)return html;
+      let inner=decodeUtf8Base64(match[2]);
+      const fnRe=/function translateMerit\(\)\{[\s\S]*?setScenarioUI\(false\);\s*populatePathways\(\);\s*updateScaleButtons\(\);\s*calcMerit\(\);\s*\}/;
+      if(!fnRe.test(inner))return html;
+      inner=inner.replace(fnRe,SAFE_TRANSLATE_MERIT);
+      const encoded=encodeUtf8Base64(inner);
+      return html.slice(0,match.index)+match[1]+encoded+match[3]+html.slice(match.index+match[0].length);
     }
     function sanitizeMalformedInlineScripts(html){
       if(idx!==2)return html;
@@ -64,7 +106,6 @@
         if(!code.trim())return;
         try{new Function(code)}catch(_error){script.remove();}
       });
-      inspectInnerSrcdoc(parsed);
       return '<!doctype html>\n'+parsed.documentElement.outerHTML;
     }
     try{
@@ -73,6 +114,7 @@
       const app=APPS[idx];
       if(!app||!app.b64)throw new Error('Requested module was not found.');
       let html=decodeUtf8Base64(app.b64);
+      html=patchRekentoolMasterInner(html);
       html=sanitizeMalformedInlineScripts(html);
       const absoluteBase=new URL('../',location.href).href;
       if(!/<base\b/i.test(html)){
