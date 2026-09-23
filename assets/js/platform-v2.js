@@ -1985,7 +1985,7 @@
         closeCommandPalette();
         if (item?.card?.classList?.contains('rw-preid-card')) {
           const a = document.createElement('a');
-          a.href = 'modules/pre-id-candidate.html?v=20260923-preid-4';
+          a.href = 'modules/pre-id-candidate.html?v=20260923-preid-5';
           a.download = 'Pre ID.html';
           document.body.appendChild(a);
           a.click();
@@ -2002,7 +2002,7 @@
         event.stopPropagation();
         closeCommandPalette();
         const a = document.createElement('a');
-        a.href = 'modules/pre-id-candidate.html?v=20260923-preid-4';
+        a.href = 'modules/pre-id-candidate.html?v=20260923-preid-5';
         a.download = 'Pre ID.html';
         document.body.appendChild(a);
         a.click();

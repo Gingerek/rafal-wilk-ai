@@ -673,6 +673,53 @@
               <label><span data-i18n="jobNumber">Job number</span> <span class="required">*</span>
                 <input data-field="jobNumber" data-ph="jobNumberPh" />
               </label>
+              <label><span data-i18n="caoPathway">MSD CAO pathway</span> <span class="required">*</span>
+                <select data-field="caoPathway">
+                  <option value="" selected disabled data-i18n-option="caoPathwayChoose">Select pathway</option>
+                  <optgroup label="Business Support">
+                    <option value="B1">B1</option>
+                    <option value="B2">B2</option>
+                    <option value="B3">B3</option>
+                    <option value="B4">B4</option>
+                  </optgroup>
+                  <optgroup label="Production & Operations">
+                    <option value="O1">O1</option>
+                    <option value="O2 low">O2 low</option>
+                    <option value="O2 mid">O2 mid</option>
+                    <option value="O2 high">O2 high</option>
+                    <option value="O3">O3</option>
+                    <option value="O4">O4</option>
+                  </optgroup>
+                  <optgroup label="Professional">
+                    <option value="P1">P1</option>
+                    <option value="P2">P2</option>
+                    <option value="P3">P3</option>
+                    <option value="P4">P4</option>
+                  </optgroup>
+                  <optgroup label="Research / Data & Digital">
+                    <option value="R1">R1</option>
+                    <option value="R2">R2</option>
+                    <option value="R3">R3</option>
+                    <option value="R4">R4</option>
+                  </optgroup>
+                  <optgroup label="Sales">
+                    <option value="S1">S1</option>
+                    <option value="S2">S2</option>
+                    <option value="S3">S3</option>
+                    <option value="M1 Sales">M1 Sales</option>
+                    <option value="M2 Sales">M2 Sales</option>
+                  </optgroup>
+                  <optgroup label="Management">
+                    <option value="M1">M1</option>
+                    <option value="M2">M2</option>
+                  </optgroup>
+                </select>
+              </label>
+              <label><span data-i18n="salaryScale">Salary scale</span> <span class="required">*</span>
+                <select data-field="salaryScale" disabled>
+                  <option value="" selected disabled data-i18n-option="salaryScaleChoose">Select salary scale</option>
+                </select>
+              </label>
               <label><span data-i18n="startDate">Start date</span> <span class="required">*</span>
                 <input data-field="startDate" data-datepicker type="text" data-ph="datePh" autocomplete="off" />
               </label>
@@ -760,6 +807,8 @@
                       <div class="pdf-field"><span id="l-manager"></span><strong id="p-managerName"></strong></div>
                       <div class="pdf-field"><span id="l-supplier"></span><strong id="p-supplierName"></strong></div>
                       <div class="pdf-field wide"><span id="l-position"></span><strong id="p-position"></strong></div>
+                      <div class="pdf-field"><span id="l-caoPathway"></span><strong id="p-caoPathway"></strong></div>
+                      <div class="pdf-field"><span id="l-salaryScale"></span><strong id="p-salaryScale"></strong></div>
                       <div class="pdf-field"><span id="l-startDate"></span><strong id="p-startDate"></strong></div>
                       <div class="pdf-field"><span id="l-endDate"></span><strong id="p-endDate"></strong></div>
                       <div class="pdf-field"><span id="l-hours"></span><strong id="p-hours"></strong></div>
@@ -801,9 +850,37 @@
   let currentLang = "en";
   let pickers = [];
 
+  const CAO_PATHWAY_SCALES = {
+    "B1": ["A"],
+    "B2": ["B"],
+    "B3": ["D"],
+    "B4": ["E", "F"],
+    "O1": ["A"],
+    "O2 low": ["A"],
+    "O2 mid": ["B", "C"],
+    "O2 high": ["C", "D"],
+    "O3": ["D", "E"],
+    "O4": ["F", "G"],
+    "P1": ["F", "G"],
+    "P2": ["G", "H"],
+    "P3": ["I", "J", "K"],
+    "P4": ["K", "L", "M"],
+    "R1": ["E", "F", "G"],
+    "R2": ["G", "H"],
+    "R3": ["J", "K"],
+    "R4": ["L", "M"],
+    "S1": ["G"],
+    "S2": ["H", "I"],
+    "S3": ["J"],
+    "M1 Sales": ["I"],
+    "M2 Sales": ["K", "L"],
+    "M1": ["I"],
+    "M2": ["K", "L"]
+  };
+
   const requiredFields = [
     "requesterName", "employeeName", "employeeEmail", "managerName",
-    "supplierName", "position", "jobNumber", "startDate", "endDate",
+    "supplierName", "position", "jobNumber", "caoPathway", "salaryScale", "startDate", "endDate",
     "hoursPerWeek", "payRate"
   ];
 
@@ -835,6 +912,10 @@
       positionPh: "e.g. Production Operator",
       jobNumber: "Job number",
       jobNumberPh: "e.g. P1-12345",
+      caoPathway: "MSD CAO pathway",
+      caoPathwayChoose: "Select pathway",
+      salaryScale: "Salary scale",
+      salaryScaleChoose: "Select salary scale",
       startDate: "Start date",
       endDate: "End date",
       datePh: "dd-mm-yyyy",
@@ -903,6 +984,10 @@
       positionPh: "bijv. Productiemedewerker",
       jobNumber: "Jobnummer",
       jobNumberPh: "bijv. P1-12345",
+      caoPathway: "MSD CAO pathway",
+      caoPathwayChoose: "Kies pathway",
+      salaryScale: "Salarisschaal",
+      salaryScaleChoose: "Kies salarisschaal",
       startDate: "Startdatum",
       endDate: "Einddatum",
       datePh: "dd-mm-jjjj",
@@ -963,6 +1048,30 @@
   function value(name) {
     const el = field(name);
     return el ? el.value.trim() : "";
+  }
+
+  function updateSalaryScaleOptions() {
+    const pathway = value("caoPathway");
+    const scaleSelect = field("salaryScale");
+    if (!scaleSelect) return;
+
+    const previous = scaleSelect.value;
+    const allowed = CAO_PATHWAY_SCALES[pathway] || [];
+    scaleSelect.innerHTML = `<option value="" disabled>${tr("salaryScaleChoose")}</option>`;
+
+    allowed.forEach(scale => {
+      const option = document.createElement("option");
+      option.value = scale;
+      option.textContent = scale;
+      scaleSelect.appendChild(option);
+    });
+
+    scaleSelect.disabled = allowed.length === 0;
+    if (allowed.includes(previous)) {
+      scaleSelect.value = previous;
+    } else {
+      scaleSelect.value = "";
+    }
   }
 
   function parseDecimal(raw) {
@@ -1099,7 +1208,7 @@ function missingRequired() {
     if (billInput) billInput.value = c.bill === null ? "" : money(c.bill);
 
     setText("p-date", formatDate(t));
-    ["requesterName","employeeName","employeeEmail","employeePhone","managerName","supplierName","position","jobNumber","notes"]
+    ["requesterName","employeeName","employeeEmail","employeePhone","managerName","supplierName","position","jobNumber","caoPathway","salaryScale","notes"]
       .forEach(name => setText(`p-${name}`, value(name)));
 
     setText("p-startDate", formatDate(c.start));
@@ -1146,6 +1255,8 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
     setText("l-manager", tr("manager"));
     setText("l-supplier", tr("supplier"));
     setText("l-position", tr("position"));
+    setText("l-caoPathway", tr("caoPathway"));
+    setText("l-salaryScale", tr("salaryScale"));
     setText("l-startDate", tr("startDate"));
     setText("l-endDate", tr("endDate"));
     setText("l-hours", tr("hours"));
@@ -1158,6 +1269,7 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
     setText("pdfSecNotes", tr("pdfSecNotes"));
     setText("l-notes", tr("notes"));
 
+    updateSalaryScaleOptions();
     initCalendars();
     updatePreview();
   }
@@ -1317,7 +1429,9 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
       pdfField(pdf, left, y, half, 15, tr("manager"), value("managerName"));
       pdfField(pdf, left + half + colGap, y, half, 15, tr("supplier"), value("supplierName"));
       y += 18;
-      pdfField(pdf, left, y, contentW, 15, tr("position"), value("position"));
+      pdfField(pdf, left, y, third, 15, tr("position"), value("position"));
+      pdfField(pdf, left + third + colGap, y, third, 15, tr("caoPathway"), value("caoPathway"));
+      pdfField(pdf, left + (third + colGap) * 2, y, third, 15, tr("salaryScale"), value("salaryScale"));
       y += 18;
       pdfField(pdf, left, y, third, 15, tr("startDate"), formatDate(c.start));
       pdfField(pdf, left + third + colGap, y, third, 15, tr("endDate"), formatDate(c.end));
@@ -1360,6 +1474,7 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
   function resetForm() {
     form.reset();
     field("supplierName").value = "Gi Group";
+    updateSalaryScaleOptions();
     hideMessage();
     updatePreview();
   }
@@ -1392,6 +1507,10 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
 
   form.addEventListener("input", updatePreview);
   form.addEventListener("change", updatePreview);
+  field("caoPathway").addEventListener("change", () => {
+    updateSalaryScaleOptions();
+    updatePreview();
+  });
   downloadBtn.addEventListener("click", downloadPDF);
   document.getElementById("resetBtn").addEventListener("click", resetForm);
 
