@@ -16,7 +16,7 @@ const TOOLS=[
 {id:'cao',name:'MSD CAO Salary Check',abbr:'CAO',category:'finance',type:'direct',src:'../modules/msd-cao-salary-check.html?v=20260817-v19-calculator-impact-v1',desc:'CAO salary check and impact calculation.',keywords:'msd cao salary check'},
 {id:'merit-excel',name:'Merit Excel 350',abbr:'XL',category:'finance',type:'download',src:'../downloads/Merit_2026_Employee_Bulk_Calculator_350_exact.xlsx',desc:'Bulk merit calculation workbook.',keywords:'excel merit bulk 350',pin:EXCEL_PIN},
 {id:'intake',name:'Intake Call',abbr:'IC',category:'staffing',type:'legacy',idx:3,desc:'Structured intake-call support.',keywords:'intake recruitment hiring'},
-{id:'pre-id-candidates',name:'Pre ID',abbr:'PID',category:'staffing',type:'direct',src:'../modules/pre-id-candidate.html?v=20260923-preid-4',desc:'Create a candidate Pre-ID and automatically calculate the bill rate using markup 2.325.',keywords:'pre id candidate free id gi group bill rate markup 2.325'},
+{id:'pre-id-candidates',name:'Pre ID',abbr:'PID',category:'staffing',type:'direct',src:'../modules/pre-id-candidate.html?v=20260923-preid-4',downloadSrc:'../modules/pre-id-candidate.html?v=20260923-preid-4',downloadName:'Pre ID.html',desc:'Create a candidate Pre-ID and automatically calculate the bill rate using markup 2.325.',keywords:'pre id candidate gi group bill rate markup 2.325'},
 {id:'cv-match',name:'CV Match',abbr:'CV',category:'staffing',type:'legacy',idx:4,desc:'Candidate and vacancy fit assessment.',keywords:'cv resume match candidate vacancy'},
 {id:'agency',name:'Agency Overview',abbr:'AO',category:'staffing',type:'legacy',idx:7,desc:'Agency and supplier overview.',keywords:'agency supplier overview'},
 {id:'manager-meetings',name:'Manager Meeting Register',abbr:'MM',category:'workforce',type:'direct',src:'../modules/manager-meeting-tracker.html',desc:'Manager meeting register and follow-up.',keywords:'manager meeting register tracker'},
@@ -39,14 +39,53 @@ function setLang(v){lang=normalizeLang(v);localStorage.setItem('rw_lang',lang);l
 function renderLanguage(){document.documentElement.lang=lang;$$('[data-i18n]').forEach(el=>{const v=tr(el.dataset.i18n);if(v)el.textContent=v});$$('[data-i18n-html]').forEach(el=>{const v=tr(el.dataset.i18nHtml);if(v)el.innerHTML=v});$$('[data-i18n-placeholder]').forEach(el=>el.placeholder=tr(el.dataset.i18nPlaceholder));$$('[data-lang]').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang))}
 function renderFilters(){const wrap=$('#toolFilters');if(!wrap)return;wrap.innerHTML=CATEGORIES.map(c=>{const count=c==='all'?TOOLS.length:TOOLS.filter(t=>t.category===c).length;return `<button class="filter-button ${c===activeCategory?'active':''}" type="button" data-filter="${c}"><span>${esc(categoryLabel(c))}</span><span>${count}</span></button>`}).join('');$$('[data-filter]',wrap).forEach(b=>b.addEventListener('click',()=>{activeCategory=b.dataset.filter;selectedIndex=0;renderFilters();renderTools()}))}
 function normalized(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
-function renderTools(){const q=normalized(query).trim();filteredTools=TOOLS.filter(t=>(activeCategory==='all'||t.category===activeCategory)&&(!q||normalized(`${t.name} ${t.desc} ${t.keywords}`).includes(q)));if(selectedIndex>=filteredTools.length)selectedIndex=Math.max(0,filteredTools.length-1);$('#resultsCount').textContent=`${filteredTools.length} ${tr('results')}`;$('#emptyState').hidden=filteredTools.length>0;const list=$('#toolList');list.innerHTML=filteredTools.map((t,i)=>`<button class="tool-row ${i===selectedIndex?'selected':''}" type="button" role="option" aria-selected="${i===selectedIndex}" data-tool="${t.id}"><span class="tool-abbr">${esc(t.abbr)}</span><span class="tool-copy"><strong>${esc(t.name)}</strong><small>${esc(t.desc)}</small></span><span class="tool-category">${esc(categoryLabel(t.category))}</span><span class="tool-arrow">→</span></button>`).join('');$$('[data-tool]',list).forEach((row,i)=>{row.addEventListener('mouseenter',()=>{selectedIndex=i;updateSelection()});row.addEventListener('click',()=>requestOpen(TOOLS.find(t=>t.id===row.dataset.tool)))})}
+function renderTools(){
+  const q=normalized(query).trim();
+  filteredTools=TOOLS.filter(t=>(activeCategory==='all'||t.category===activeCategory)&&(!q||normalized(`${t.name} ${t.desc} ${t.keywords}`).includes(q)));
+  if(selectedIndex>=filteredTools.length)selectedIndex=Math.max(0,filteredTools.length-1);
+  $('#resultsCount').textContent=`${filteredTools.length} ${tr('results')}`;
+  $('#emptyState').hidden=filteredTools.length>0;
+  const list=$('#toolList');
+  list.innerHTML=filteredTools.map((t,i)=>{
+    const selected=i===selectedIndex?'selected':'';
+    if(t.id==='pre-id-candidates'){
+      return `<div class="tool-row tool-row-actions ${selected}" role="option" aria-selected="${i===selectedIndex}" data-tool="${t.id}">
+        <span class="tool-abbr">${esc(t.abbr)}</span>
+        <span class="tool-copy"><strong>${esc(t.name)}</strong><small>${esc(t.desc)}</small></span>
+        <span class="tool-category">${esc(categoryLabel(t.category))}</span>
+        <span class="tool-actions">
+          <button class="tool-action tool-action-open" type="button" data-open-tool="${t.id}">Open</button>
+          <button class="tool-action tool-action-download" type="button" data-download-tool="${t.id}">Download</button>
+        </span>
+      </div>`;
+    }
+    return `<button class="tool-row ${selected}" type="button" role="option" aria-selected="${i===selectedIndex}" data-tool="${t.id}"><span class="tool-abbr">${esc(t.abbr)}</span><span class="tool-copy"><strong>${esc(t.name)}</strong><small>${esc(t.desc)}</small></span><span class="tool-category">${esc(categoryLabel(t.category))}</span><span class="tool-arrow">→</span></button>`;
+  }).join('');
+  $$('[data-tool]',list).forEach((row,i)=>{
+    row.addEventListener('mouseenter',()=>{selectedIndex=i;updateSelection()});
+    row.addEventListener('click',(event)=>{
+      if(event.target.closest('[data-open-tool],[data-download-tool]'))return;
+      requestOpen(TOOLS.find(t=>t.id===row.dataset.tool));
+    });
+  });
+  $$('[data-open-tool]',list).forEach(button=>button.addEventListener('click',(event)=>{
+    event.stopPropagation();
+    requestOpen(TOOLS.find(t=>t.id===button.dataset.openTool));
+  }));
+  $$('[data-download-tool]',list).forEach(button=>button.addEventListener('click',(event)=>{
+    event.stopPropagation();
+    const source=TOOLS.find(t=>t.id===button.dataset.downloadTool);
+    if(!source)return;
+    requestOpen({...source,type:'download',src:source.downloadSrc||source.src,downloadName:source.downloadName||'Pre ID.html'});
+  }));
+}
 function updateSelection(){$$('.tool-row').forEach((r,i)=>{r.classList.toggle('selected',i===selectedIndex);r.setAttribute('aria-selected',String(i===selectedIndex))});$('.tool-row.selected')?.scrollIntoView({block:'nearest'})}
 function openPalette(){const p=$('#toolPalette'),b=$('#paletteBackdrop');p.hidden=false;b.hidden=false;document.body.style.overflow='hidden';query='';activeCategory='all';selectedIndex=0;$('#toolSearch').value='';renderFilters();renderTools();setTimeout(()=>$('#toolSearch').focus(),50)}
 function closePalette(){if($('#toolPalette').hidden)return;$('#toolPalette').hidden=true;$('#paletteBackdrop').hidden=true;if($('#workspace').hidden&&$('#aiPanel').hidden)document.body.style.overflow='';}
 function requestOpen(tool){if(!tool)return;closePalette();pendingTool=tool;const gate=$('#pinGate');$('#pinTool').textContent=tool.name;$('#pinInput').value='';$('#pinInput').maxLength=(tool.pin||DEFAULT_PIN).length;$('#pinError').textContent='';gate.hidden=false;setTimeout(()=>$('#pinInput').focus(),20)}
 function cancelPin(){$('#pinGate').hidden=true;pendingTool=null}
 function submitPin(){if(!pendingTool)return;const expected=pendingTool.pin||DEFAULT_PIN;if($('#pinInput').value!==expected){$('#pinError').textContent=tr('wrongPin');$('#pinInput').value='';$('#pinInput').focus();return}const tool=pendingTool;pendingTool=null;$('#pinGate').hidden=true;openTool(tool)}
-function openTool(tool){if(tool.type==='download'){const a=document.createElement('a');a.href=tool.src;a.download='Merit_2026_Employee_Bulk_Calculator_350_exact.xlsx';document.body.appendChild(a);a.click();a.remove();return}activeTool=tool;try{localStorage.setItem('rw_active_v2_tool',tool.id)}catch{};$('#workspaceTitle').textContent=tool.name;$('#workspaceCategory').textContent=categoryLabel(tool.category).toUpperCase();$('#workspace').hidden=false;document.body.style.overflow='hidden';const loading=$('#moduleLoading');loading.classList.remove('done');loading.querySelector('p').textContent=tr('loading');const frame=$('#moduleFrame');frame.removeAttribute('srcdoc');frame.src='about:blank';setTimeout(()=>{frame.src=tool.type==='legacy'?`./legacy-bridge.html?idx=${tool.idx}&lang=${lang}`:tool.src},0)}
+function openTool(tool){if(tool.type==='download'){const a=document.createElement('a');a.href=tool.src;a.download=tool.downloadName||'Merit_2026_Employee_Bulk_Calculator_350_exact.xlsx';document.body.appendChild(a);a.click();a.remove();return}activeTool=tool;try{localStorage.setItem('rw_active_v2_tool',tool.id)}catch{};$('#workspaceTitle').textContent=tool.name;$('#workspaceCategory').textContent=categoryLabel(tool.category).toUpperCase();$('#workspace').hidden=false;document.body.style.overflow='hidden';const loading=$('#moduleLoading');loading.classList.remove('done');loading.querySelector('p').textContent=tr('loading');const frame=$('#moduleFrame');frame.removeAttribute('srcdoc');frame.src='about:blank';setTimeout(()=>{frame.src=tool.type==='legacy'?`./legacy-bridge.html?idx=${tool.idx}&lang=${lang}`:tool.src},0)}
 function closeWorkspace(){activeTool=null;$('#workspace').hidden=true;$('#moduleFrame').src='about:blank';document.body.style.overflow='';try{localStorage.removeItem('rw_active_v2_tool')}catch{}}
 function markLoaded(){setTimeout(()=>$('#moduleLoading').classList.add('done'),80)}
 function syncActiveLanguage(){const frame=$('#moduleFrame');if(!activeTool||!frame)return;try{frame.contentWindow?.postMessage({type:'rw:setLang',lang},'*')}catch{};try{const w=frame.contentWindow;w?.localStorage?.setItem('rw_lang',lang);w?.localStorage?.setItem('doc_lang',lang)}catch{};$('#workspaceCategory').textContent=categoryLabel(activeTool.category).toUpperCase()}

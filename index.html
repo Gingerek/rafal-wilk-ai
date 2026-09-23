@@ -285,6 +285,77 @@
 })();
 </script>
 
+
+<style id="rw-preid-dual-actions">
+body.rw-v2-ready main.wrap .card.rw-preid-card,
+body.rw-v2-ready:not(.app-open) main.wrap .card.rw-preid-card{
+  grid-template-columns:48px minmax(0,1fr) auto!important;
+}
+body.rw-v2-ready main.wrap .rw-preid-actions,
+body.rw-v2-ready:not(.app-open) main.wrap .rw-preid-actions{
+  grid-column:3!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:center!important;
+  display:flex!important;
+  gap:7px!important;
+  z-index:2!important;
+}
+body.rw-v2-ready main.wrap .rw-preid-actions .btn,
+body.rw-v2-ready:not(.app-open) main.wrap .rw-preid-actions .btn{
+  width:auto!important;
+  min-width:76px!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:0 12px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:999px!important;
+  font-size:10px!important;
+  line-height:1!important;
+  text-indent:0!important;
+  overflow:visible!important;
+  white-space:nowrap!important;
+  text-decoration:none!important;
+}
+body.rw-v2-ready main.wrap .rw-preid-actions .rw-v2-card-open::before,
+body.rw-v2-ready:not(.app-open) main.wrap .rw-preid-actions .rw-v2-card-open::before{
+  display:none!important;
+}
+body.rw-v2-ready main.wrap .rw-preid-actions .rw-preid-open svg,
+body.rw-v2-ready:not(.app-open) main.wrap .rw-preid-actions .rw-preid-open svg{
+  display:none!important;
+}
+body.rw-v2-ready main.wrap .rw-preid-actions .rw-preid-open::after,
+body.rw-v2-ready:not(.app-open) main.wrap .rw-preid-actions .rw-preid-open::after{
+  content:"Open";
+  font-size:10px!important;
+  line-height:1!important;
+  text-indent:0!important;
+}
+body.rw-v2-ready main.wrap .rw-preid-actions .rw-preid-download,
+body.rw-v2-ready:not(.app-open) main.wrap .rw-preid-actions .rw-preid-download{
+  background:#fff!important;
+  color:#12304f!important;
+  border:1px solid rgba(66,122,171,.30)!important;
+  box-shadow:none!important;
+}
+@media(max-width:640px){
+  body.rw-v2-ready main.wrap .card.rw-preid-card,
+  body.rw-v2-ready:not(.app-open) main.wrap .card.rw-preid-card{
+    grid-template-columns:42px minmax(0,1fr)!important;
+  }
+  body.rw-v2-ready main.wrap .rw-preid-actions,
+  body.rw-v2-ready:not(.app-open) main.wrap .rw-preid-actions{
+    grid-column:2!important;
+    grid-row:3!important;
+    justify-self:start!important;
+    margin-top:8px!important;
+  }
+}
+</style>
+
 </head>
 <body>
 <!-- Home / Back button (added) -->
@@ -352,9 +423,12 @@
 <div class="title" data-title-key="Intake Call">Intake Call</div>
 <button class="btn" data-idx="3" type="button">Open in platform</button>
 </article>
-<article class="card">
+<article class="card rw-preid-card">
 <div class="title" data-title-key="Pre ID">Pre ID</div>
-<a class="btn" onclick="openApp('preidcandidate', this.parentElement.querySelector('.title').textContent)">Open</a>
+<div class="rw-preid-actions">
+<a class="btn rw-preid-open" data-label="Open" onclick="openApp('preidcandidate', this.closest('.card').querySelector('.title').textContent)">Open</a>
+<a class="btn rw-preid-download" href="modules/pre-id-candidate.html?v=20260923-preid-4" download="Pre ID.html">Download</a>
+</div>
 </article>
 <article class="card">
 <div class="title" data-title-key="Ocena dopasowania CV">Ocena dopasowania CV</div>
