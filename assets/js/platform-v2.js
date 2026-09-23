@@ -1984,12 +1984,7 @@
         const item = rows[index];
         closeCommandPalette();
         if (item?.card?.classList?.contains('rw-preid-card')) {
-          const a = document.createElement('a');
-          a.href = 'modules/pre-id-candidate.html?v=20260923-preid-5';
-          a.download = 'Pre ID.html';
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
+          item.card.querySelector('.rw-preid-open')?.click();
           return;
         }
         item?.card?.querySelector('.btn')?.click();
@@ -2000,13 +1995,10 @@
       button.addEventListener('click', (event) => {
         event.preventDefault();
         event.stopPropagation();
+        const row = button.closest('[data-rw-command-index]');
+        const item = rows[Number(row?.dataset.rwCommandIndex || 0)];
         closeCommandPalette();
-        const a = document.createElement('a');
-        a.href = 'modules/pre-id-candidate.html?v=20260923-preid-5';
-        a.download = 'Pre ID.html';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
+        item?.card?.querySelector('.rw-preid-open')?.click();
       });
     });
 
