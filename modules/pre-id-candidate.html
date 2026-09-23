@@ -786,7 +786,7 @@
                 </div>
 
                 <div class="pdf-foot">
-                                    <span id="pdfStamp"></span>
+                                    
                 </div>
               </div>
             </div>
@@ -1157,7 +1157,6 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
     setText("l-estimatedValue", tr("estimatedValue"));
     setText("pdfSecNotes", tr("pdfSecNotes"));
     setText("l-notes", tr("notes"));
-    setText("pdfStamp", `${tr("requestDate")}: ${formatDate(today())}`);
 
     initCalendars();
     updatePreview();
@@ -1343,7 +1342,6 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
       const footerY = 289;
       pdf.setDrawColor(...pdfColor("#e2e7ed"));
       pdf.line(11, footerY - 5, 199, footerY - 5);
-      pdfText(pdf, `${tr("requestDate")}: ${formatDate(today())}`, 199, footerY, { size: 6.5, color: "#7a8491", align: "right" });
 
       const candidateName = safeFilePart(value("employeeName"));
       const jobNumber = safeFilePart(value("jobNumber"));
