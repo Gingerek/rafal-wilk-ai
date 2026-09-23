@@ -1206,12 +1206,12 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
     return true;
   }
 
-  function safeName(text) {
-    return (text || "candidate")
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-zA-Z0-9_-]+/g, "_")
-      .replace(/^_+|_+$/g, "")
-      .slice(0, 48) || "candidate";
+  function safeFilePart(text) {
+    return String(text || "")
+      .normalize("NFC")
+      .replace(/[\\/:*?"<>|]+/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   function pdfColor(hex) {
@@ -1348,8 +1348,9 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
       pdfText(pdf, tr("footer"), 11, footerY, { size: 6.5, color: "#7a8491" });
       pdfText(pdf, `${tr("requestDate")}: ${formatDate(today())}`, 199, footerY, { size: 6.5, color: "#7a8491", align: "right" });
 
-      const fileDate = new Date().toISOString().slice(0,10);
-      pdf.save(`${tr("filePrefix")}_${safeName(value("employeeName"))}_${fileDate}.pdf`);
+      const candidateName = safeFilePart(value("employeeName"));
+      const jobNumber = safeFilePart(value("jobNumber"));
+      pdf.save(`${candidateName} ${jobNumber}.pdf`);
       showMessage(tr("pdfDone"), true);
     } catch (err) {
       console.error(err);
