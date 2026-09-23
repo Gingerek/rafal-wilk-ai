@@ -356,8 +356,123 @@ body.rw-v2-ready:not(.app-open) main.wrap .rw-preid-actions .rw-preid-download{
 }
 </style>
 
+<style id="rw-visual-refresh-20260923">
+/* Visual refresh only. The original face video, its positioning and all module logic are preserved. */
+body.rw-v2-ready:not(.app-open) .rw-identity {
+  position:fixed; left:28px; bottom:26px; z-index:150;
+  display:flex; align-items:center; gap:13px; padding:13px 18px;
+  color:#f1f7fc; background:rgba(7,17,29,.88);
+  border:1px solid rgba(170,205,228,.2); border-radius:14px;
+  box-shadow:0 8px 30px rgba(0,0,0,.16); pointer-events:none;
+  font-family:"Segoe UI",system-ui,sans-serif;
+}
+.rw-identity-mark {display:grid;place-items:center;width:38px;height:38px;border:1px solid #72c9e6;border-radius:50%;font-size:13px;font-weight:650;letter-spacing:-.05em;color:#a9e5f5}
+.rw-identity-name {display:block;font-size:17px;font-weight:650;letter-spacing:-.025em;line-height:1.3}
+.rw-identity-caption {display:block;margin-top:3px;color:#a5bacb;font-size:9px;letter-spacing:.19em;line-height:1.5;text-transform:uppercase}
+body.app-open .rw-identity, body.rw-v2-command-open .rw-identity {display:none!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-floating-lang {
+  position:fixed!important;top:24px!important;right:28px!important;left:auto!important;
+  width:144px!important;min-height:46px!important;padding:5px!important;gap:4px!important;
+  display:flex!important;justify-content:center!important;
+  background:rgba(7,17,29,.9)!important;border:1px solid rgba(170,205,228,.24)!important;
+  border-radius:12px!important;box-shadow:none!important;filter:none!important;backdrop-filter:blur(12px)!important;
+}
+body.rw-v2-ready:not(.app-open) .rw-v2-floating-lang button {
+  width:42px!important;min-width:0!important;height:34px!important;min-height:34px!important;
+  padding:0!important;border:0!important;border-radius:7px!important;background:transparent!important;
+  color:#b9cad7!important;font:600 12px/1 "Segoe UI",system-ui,sans-serif!important;
+  box-shadow:none!important;text-shadow:none!important;backdrop-filter:none!important;transform:none!important;
+}
+body.rw-v2-ready:not(.app-open) .rw-v2-floating-lang button[aria-pressed="true"] {
+  background:#b5e9f5!important;color:#102531!important;box-shadow:none!important;border:0!important;
+}
+body.rw-v2-ready:not(.app-open) .rw-v2-floating-lang button::after {display:none!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-floating-lang button:hover {background:#23394a!important;color:#fff!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-trigger {
+  position:fixed!important;top:80px!important;right:28px!important;left:auto!important;
+  width:144px!important;min-width:0!important;height:44px!important;padding:0 16px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;gap:10px!important;
+  border:1px solid rgba(170,205,228,.3)!important;border-radius:12px!important;
+  background:rgba(7,17,29,.92)!important;color:#f0f7fb!important;
+  font:600 13px/1 "Segoe UI",system-ui,sans-serif!important;
+  box-shadow:none!important;text-shadow:none!important;transform:none!important;
+}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-trigger::before {
+  content:""!important;position:static!important;display:block!important;visibility:visible!important;opacity:1!important;
+  width:16px!important;height:16px!important;flex:0 0 16px!important;
+  background:currentColor!important;border:0!important;box-shadow:none!important;transform:none!important;
+  clip-path:polygon(40% 0,65% 7%,80% 28%,80% 55%,100% 83%,89% 94%,67% 66%,43% 77%,18% 68%,4% 47%,4% 24%,20% 5%,40% 0,40% 12%,24% 17%,16% 31%,17% 47%,30% 60%,45% 64%,61% 57%,68% 43%,66% 27%,53% 15%,40% 12%)!important;
+}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-trigger::after {display:none!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-trigger:hover {background:#193346!important;border-color:#83cde4!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-floating-lang button:focus-visible,
+body.rw-v2-ready:not(.app-open) .rw-v2-command-trigger:focus-visible {outline:2px solid #a9e5f5!important;outline-offset:3px!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-palette {
+  padding:clamp(20px,9vh,80px) 16px!important;place-items:center!important;
+  background:rgba(3,10,18,.58)!important;backdrop-filter:blur(14px)!important;z-index:23000!important;
+}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-dialog {
+  width:min(660px,100%)!important;max-height:100%!important;display:flex!important;flex-direction:column!important;
+  border:1px solid rgba(169,202,225,.24)!important;border-radius:22px!important;
+  background:#0c1927!important;box-shadow:0 24px 80px rgba(0,0,0,.4)!important;backdrop-filter:none!important;
+}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-head {padding:24px 26px 18px!important;flex-shrink:0!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-head strong {font:600 21px/1.3 "Segoe UI",system-ui,sans-serif!important;letter-spacing:-.025em!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-head button {width:34px!important;height:34px!important;border:0!important;background:#1b2b3b!important;border-radius:9px!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-input {
+  width:calc(100% - 52px)!important;min-height:50px!important;height:50px!important;flex-shrink:0!important;
+  margin:0 26px 18px!important;padding:0 16px!important;border-radius:11px!important;
+  border:1px solid #395469!important;background:#08121e!important;box-shadow:none!important;
+  font:400 15px/1.4 "Segoe UI",system-ui,sans-serif!important;
+}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-input::placeholder {color:#9cabbc!important;opacity:1!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-input:focus {border-color:#90d3e9!important;box-shadow:0 0 0 3px rgba(144,211,233,.1)!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-list {
+  min-height:0!important;max-height:480px!important;gap:6px!important;padding:0 18px 20px 26px!important;margin-right:8px!important;
+  scrollbar-width:thin;scrollbar-color:#486276 transparent;overscroll-behavior:contain;
+}
+.rw-v2-command-list::-webkit-scrollbar {width:6px}
+.rw-v2-command-list::-webkit-scrollbar-thumb {background:#486276;border-radius:8px}
+.rw-v2-command-list::-webkit-scrollbar-track {background:transparent}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-item {
+  min-height:70px!important;grid-template-columns:38px minmax(0,1fr) auto!important;
+  gap:15px!important;padding:13px 14px!important;border:1px solid transparent!important;
+  border-radius:12px!important;background:#122231!important;box-shadow:none!important;transform:none!important;
+}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-item:hover,
+body.rw-v2-ready:not(.app-open) .rw-v2-command-item.is-active,
+body.rw-v2-ready:not(.app-open) .rw-v2-command-item:focus-visible {background:#1a3345!important;border-color:#527a90!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-icon {width:36px!important;height:36px!important;border:0!important;background:#1c3546!important;border-radius:10px!important;color:#9edbed!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-item span:not(.rw-v2-command-icon) {font:600 15px/1.4 "Segoe UI",system-ui,sans-serif!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-text {min-width:0!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-item small {display:block!important;margin-top:4px!important;color:#a5b9ca!important;font:500 10px/1.4 "Segoe UI",system-ui,sans-serif!important;letter-spacing:.065em!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-command-arrow {border:0!important;background:transparent!important;box-shadow:none!important;color:#91b9cf!important}
+body.rw-v2-ready:not(.app-open) .rw-v2-hotspot:focus-visible {outline:2px solid #a9e5f5!important;outline-offset:4px!important}
+@media(max-width:760px) {
+  body.rw-v2-ready:not(.app-open) .rw-identity {left:16px;bottom:max(18px,env(safe-area-inset-bottom));padding:10px 13px;gap:10px;border-radius:12px}
+  .rw-identity-mark {width:32px;height:32px;font-size:11px}
+  .rw-identity-name {font-size:15px}
+  .rw-identity-caption {font-size:8px;letter-spacing:.13em}
+  body.rw-v2-ready:not(.app-open) .rw-v2-floating-lang {top:16px!important;right:16px!important;width:132px!important}
+  body.rw-v2-ready:not(.app-open) .rw-v2-command-trigger {top:72px!important;right:16px!important;width:132px!important}
+  body.rw-v2-ready:not(.app-open) .rw-v2-command-palette {padding:16px 12px!important}
+  body.rw-v2-ready:not(.app-open) .rw-v2-command-dialog {max-height:calc(100dvh - 32px)!important;border-radius:18px!important}
+  body.rw-v2-ready:not(.app-open) .rw-v2-command-head {padding:18px 18px 14px!important}
+  body.rw-v2-ready:not(.app-open) .rw-v2-command-input {width:calc(100% - 36px)!important;margin:0 18px 14px!important}
+  body.rw-v2-ready:not(.app-open) .rw-v2-command-list {max-height:60dvh!important;padding:0 10px 16px 18px!important}
+  body.rw-v2-ready:not(.app-open) .rw-v2-command-item {gap:10px!important;padding:12px 10px!important}
+  body.rw-v2-ready:not(.app-open) .rw-v2-command-item span:not(.rw-v2-command-icon) {font-size:14px!important}
+  body.rw-v2-ready:not(.app-open) .rw-v2-command-item-preid {grid-template-columns:38px minmax(0,1fr)!important}
+}
+
+body.rw-v2-ready.rw-v2-command-open:not(.app-open) .rw-v2-command-trigger {visibility:hidden!important}
+
+body.rw-v2-ready.rw-v2-command-open:not(.app-open) .rw-v2-command-trigger::before {visibility:hidden!important}
+
+</style>
 </head>
 <body>
+<div class="rw-identity" aria-label="Rafał Wilk AI — Digital Workshop"><span class="rw-identity-mark" aria-hidden="true">RW</span><div><span class="rw-identity-name">Rafał Wilk AI</span><span class="rw-identity-caption">Digital Workshop</span></div></div>
 <!-- Home / Back button (added) -->
 <button id="rw_home_btn" class="rw-home" type="button">← Powrót do startu</button>
 
