@@ -407,3 +407,14 @@ body.rw-v2-ready.rw-v2-video-face-ready:not(.app-open) .rw-v2-face-neural-link::
     transform: translate3d(0, 0, 0) scale(1.010);
   }
 }
+
+/* Pre ID display label */
+main.wrap .grid .title[data-title-key="Free ID Candidates"]{
+  font-size:0 !important;
+}
+main.wrap .grid .title[data-title-key="Free ID Candidates"]::after{
+  content:"Pre ID";
+  font-size:initial;
+  font-weight:inherit;
+  letter-spacing:inherit;
+}
