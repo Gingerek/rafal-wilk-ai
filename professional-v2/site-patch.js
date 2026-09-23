@@ -71,7 +71,7 @@ window.addEventListener('message',event=>{if(event.data&&event.data.type==='rw:m
       download.addEventListener('click',function(event){
         event.preventDefault();event.stopPropagation();
         const a=document.createElement('a');
-        a.href='../modules/pre-id-candidate.html?v=20260923-preid-4';
+        a.href='../modules/pre-id-candidate.html?v=20260923-preid-5';
         a.download='Pre ID.html';
         document.body.appendChild(a);
         a.click();
