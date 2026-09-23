@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pre-ID Candidate</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/nl.js"></script>
+
+  <style>
+    :root {
+      --navy: #132238;
+      --navy-2: #1c314d;
+      --blue: #2f6feb;
+      --cyan: #2aa7b8;
+      --green: #17855b;
+      --orange: #d97706;
+      --red: #c93a3a;
+      --ink: #18212f;
+      --muted: #667085;
+      --line: #dfe5ec;
+      --line-2: #edf1f5;
+      --bg: #f4f7fa;
+      --card: #ffffff;
+      --soft-blue: #eef4ff;
+      --soft-cyan: #ecf9fb;
+      --soft-green: #edf8f3;
+      --shadow: 0 16px 44px rgba(19, 34, 56, 0.10);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 0%, rgba(47,111,235,.10), transparent 30%),
+        radial-gradient(circle at 92% 10%, rgba(42,167,184,.10), transparent 28%),
+        var(--bg);
+    }
+
+    button, input, select, textarea { font: inherit; }
+
+    .app {
+      max-width: 1460px;
+      margin: 0 auto;
+      padding: 22px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      background: rgba(255,255,255,.94);
+      border: 1px solid rgba(223,229,236,.95);
+      border-radius: 20px;
+      padding: 14px 16px;
+      box-shadow: 0 10px 28px rgba(19,34,56,.07);
+      position: sticky;
+      top: 10px;
+      z-index: 20;
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      color: #fff;
+      font-weight: 900;
+      letter-spacing: -.04em;
+      box-shadow: 0 9px 20px rgba(47,111,235,.20);
+    }
+
+    .brand-copy {
+      min-width: 0;
+      line-height: 1.15;
+    }
+
+    .brand-copy strong {
+      display: block;
+      font-size: 18px;
+      letter-spacing: -.02em;
+    }
+
+    .brand-copy span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .lang-switch {
+      display: inline-flex;
+      background: #f1f4f8;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 3px;
+    }
+
+    .lang-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 9px;
+      padding: 8px 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .lang-btn.active {
+      background: #fff;
+      color: var(--navy);
+      box-shadow: 0 2px 8px rgba(19,34,56,.08);
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 34px;
+      padding: 8px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .chip strong { color: var(--navy); }
+    .chip.good { background: var(--soft-green); color: #116642; border-color: #cfe9dc; }
+    .chip.warn { background: #fff8ea; color: #9a5b00; border-color: #f4deb2; }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(390px, 520px) minmax(650px, 1fr);
+      gap: 20px;
+      margin-top: 20px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(255,255,255,.96);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--line-2);
+      background: linear-gradient(180deg, #fff, #fbfcfe);
+    }
+
+    .eyebrow {
+      margin: 0 0 7px;
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.08;
+      letter-spacing: -.035em;
+    }
+
+    .sub {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .form-body {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+      max-height: calc(100vh - 154px);
+      overflow: auto;
+      scrollbar-width: thin;
+    }
+
+    .section-card {
+      border: 1px solid var(--line-2);
+      border-radius: 14px;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 42px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line-2);
+      background: #fbfcfe;
+      color: var(--navy);
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .section-title .num {
+      width: 25px;
+      height: 25px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: var(--navy);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 11px;
+      padding: 12px;
+    }
+
+    .grid.single { grid-template-columns: 1fr; }
+    .wide { grid-column: 1 / -1; }
+
+    label {
+      display: block;
+      color: #344054;
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1.25;
+    }
+
+    label > input,
+    label > select,
+    label > textarea,
+    label .flatpickr-input {
+      margin-top: 7px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      min-height: 43px;
+      padding: 11px 12px;
+      border: 1px solid #d8e0e8;
+      border-radius: 11px;
+      background: #fff;
+      color: var(--ink);
+      font-size: 13px;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(47,111,235,.11);
+    }
+
+    textarea {
+      min-height: 82px;
+      resize: vertical;
+      line-height: 1.4;
+    }
+
+    input[readonly] {
+      background: var(--soft-blue);
+      border-color: #cfdcff;
+      color: #174ea6;
+      font-weight: 850;
+      cursor: default;
+    }
+
+    input::placeholder, textarea::placeholder { color: #9aa4b2; }
+
+    .required { color: var(--red); }
+
+    .rate-note {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 11px;
+      border-radius: 11px;
+      background: var(--soft-cyan);
+      border: 1px solid #d3edf1;
+      color: #2c5961;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .rate-note strong {
+      color: #174d56;
+      font-size: 12px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 9px;
+      padding: 14px;
+      border-top: 1px solid var(--line-2);
+      background: #fbfcfe;
+    }
+
+    .actions button {
+      min-height: 44px;
+      border: 0;
+      border-radius: 11px;
+      padding: 11px 15px;
+      cursor: pointer;
+      font-weight: 850;
+      transition: transform .12s ease, opacity .12s ease, box-shadow .12s ease;
+    }
+
+    .actions button:hover { transform: translateY(-1px); }
+    .actions button:active { transform: translateY(0); }
+
+    .primary {
+      flex: 1;
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      color: #fff;
+      box-shadow: 0 9px 20px rgba(47,111,235,.18);
+    }
+
+    .secondary {
+      background: #fff;
+      color: var(--navy);
+      border: 1px solid var(--line) !important;
+    }
+
+    .message {
+      display: none;
+      margin: 0 14px 14px;
+      padding: 10px 12px;
+      border-radius: 11px;
+      background: #fff0ef;
+      border: 1px solid #f1c7c3;
+      color: #a22d2d;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .message.show { display: block; }
+    .message.ok {
+      background: var(--soft-green);
+      border-color: #cfe9dc;
+      color: #116642;
+    }
+
+    .preview-wrap { padding: 15px; }
+
+    .preview-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 11px;
+      flex-wrap: wrap;
+    }
+
+    .preview-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--navy);
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .preview-title .mini {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      background: var(--soft-blue);
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .preview-chips {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .sheet-frame {
+      border: 1px solid #d7dee7;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 10px 26px rgba(19,34,56,.06);
+    }
+
+    .sheet-scroll {
+      overflow: auto;
+      max-height: calc(100vh - 165px);
+      padding: 13px;
+      background: #f8fafc;
+    }
+
+    #pdfSheet {
+      width: 820px;
+      margin: 0 auto;
+      background: #fff;
+      font-family: Arial, sans-serif;
+      color: #172033;
+      border: 1px solid #d5dce5;
+    }
+
+    .pdf-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 18px;
+      padding: 20px 22px;
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .pdf-header h2 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: -.02em;
+    }
+
+    .pdf-header p {
+      margin: 5px 0 0;
+      color: rgba(255,255,255,.75);
+      font-size: 12px;
+    }
+
+    .pdf-markup {
+      min-width: 130px;
+      padding: 10px 13px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.11);
+      border: 1px solid rgba(255,255,255,.18);
+      text-align: center;
+      font-size: 11px;
+    }
+
+    .pdf-markup strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 19px;
+    }
+
+    .pdf-body { padding: 16px 18px 18px; }
+
+    .pdf-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .meta-box, .pdf-field {
+      border: 1px solid #dbe2ea;
+      border-radius: 9px;
+      padding: 9px 10px;
+      background: #fff;
+      min-height: 52px;
+    }
+
+    .meta-box span, .pdf-field span {
+      display: block;
+      color: #667085;
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .meta-box strong, .pdf-field strong {
+      display: block;
+      margin-top: 5px;
+      color: #172033;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .pdf-section {
+      margin-top: 12px;
+    }
+
+    .pdf-section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 7px;
+      color: var(--navy);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .pdf-section-title::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: #dfe5ec;
+    }
+
+    .pdf-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 7px;
+    }
+
+    .pdf-grid .wide { grid-column: 1 / -1; }
+
+    .pdf-field.rate {
+      background: var(--soft-blue);
+      border-color: #cad8ff;
+    }
+
+    .pdf-field.total {
+      background: var(--soft-green);
+      border-color: #cfe9dc;
+    }
+
+    .pdf-field.notes { min-height: 72px; }
+
+    .pdf-foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 18px;
+      border-top: 1px solid #e4e9ef;
+      color: #7a8491;
+      font-size: 9px;
+    }
+
+    .flatpickr-wrapper, .flatpickr-wrapper input { width: 100%; display: block; }
+    .flatpickr-calendar { z-index: 99999 !important; }
+
+    @media (max-width: 1120px) {
+      .layout { grid-template-columns: 1fr; }
+      .form-body, .sheet-scroll { max-height: none; }
+      .topbar { position: static; }
+    }
+
+    @media (max-width: 660px) {
+      .app { padding: 10px; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .top-actions { justify-content: flex-start; }
+      .grid { grid-template-columns: 1fr; }
+      .wide, .rate-note { grid-column: 1; }
+      .actions { flex-direction: column; }
+      #pdfSheet { width: 780px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">P</div>
+        <div class="brand-copy">
+          <strong>Pre-ID Candidate</strong>
+          <span data-i18n="brandSub">Candidate intake and rate calculation</span>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <div class="chip"><span class="dot"></span><span data-i18n="markupChip">Pre-ID markup</span> <strong>2.325</strong></div>
+        <div class="chip warn" id="completeChip"><span class="dot"></span><span id="completeText"></span></div>
+        <div class="lang-switch" aria-label="Language">
+          <button class="lang-btn active" type="button" data-lang="en">EN</button>
+          <button class="lang-btn" type="button" data-lang="nl">NL</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="layout">
+      <aside class="panel">
+        <div class="panel-head">
+          <p class="eyebrow" data-i18n="eyebrow">Pre-ID form</p>
+          <h1 data-i18n="formTitle">Create a candidate Pre-ID</h1>
+          <p class="sub" data-i18n="formSub">Enter only the essential details. The bill rate and PDF are generated automatically.</p>
+        </div>
+
+        <form id="dataForm" class="form-body">
+          <div class="section-card">
+            <div class="section-title"><span class="num">1</span><span data-i18n="secRequest">Request</span></div>
+            <div class="grid">
+              <label class="wide"><span data-i18n="requester">Requester name</span> <span class="required">*</span>
+                <select data-field="requesterName">
+                  <option value="" selected disabled data-i18n-option="requesterChoose">Select requester</option>
+                  <option value="Daim">Daim</option>
+                  <option value="Ivana">Ivana</option>
+                  <option value="Rafal">Rafal</option>
+                  <option value="Danielle">Danielle</option>
+                  <option value="Tanja">Tanja</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="section-card">
+            <div class="section-title"><span class="num">2</span><span data-i18n="secCandidate">Candidate</span></div>
+            <div class="grid">
+              <label class="wide"><span data-i18n="candidateName">Candidate name</span> <span class="required">*</span>
+                <input data-field="employeeName" data-ph="candidateNamePh" autocomplete="off" />
+              </label>
+              <label><span data-i18n="candidateEmail">Email</span> <span class="required">*</span>
+                <input data-field="employeeEmail" type="email" data-ph="candidateEmailPh" />
+              </label>
+              <label><span data-i18n="candidatePhone">Phone</span>
+                <input data-field="employeePhone" data-ph="candidatePhonePh" />
+              </label>
+            </div>
+          </div>
+
+          <div class="section-card">
+            <div class="section-title"><span class="num">3</span><span data-i18n="secAssignment">Assignment</span></div>
+            <div class="grid">
+              <label><span data-i18n="manager">Manager</span> <span class="required">*</span>
+                <input data-field="managerName" data-ph="managerPh" />
+              </label>
+              <label><span data-i18n="supplier">Supplier</span> <span class="required">*</span>
+                <input data-field="supplierName" value="Gi Group" readonly />
+              </label>
+              <label><span data-i18n="position">Position</span> <span class="required">*</span>
+                <input data-field="position" data-ph="positionPh" />
+              </label>
+              <label><span data-i18n="jobNumber">Job number</span> <span class="required">*</span>
+                <input data-field="jobNumber" data-ph="jobNumberPh" />
+              </label>
+              <label><span data-i18n="startDate">Start date</span> <span class="required">*</span>
+                <input data-field="startDate" data-datepicker type="text" data-ph="datePh" autocomplete="off" />
+              </label>
+              <label><span data-i18n="endDate">End date</span> <span class="required">*</span>
+                <input data-field="endDate" data-datepicker type="text" data-ph="datePh" autocomplete="off" />
+              </label>
+              <label class="wide"><span data-i18n="hours">Hours per week</span> <span class="required">*</span>
+                <input data-field="hoursPerWeek" inputmode="decimal" data-ph="hoursPh" />
+              </label>
+            </div>
+          </div>
+
+          <div class="section-card">
+            <div class="section-title"><span class="num">4</span><span data-i18n="secCommercial">Commercial</span></div>
+            <div class="grid">
+              <label><span data-i18n="payRate">Pay rate per hour</span> <span class="required">*</span>
+                <input data-field="payRate" inputmode="decimal" data-ph="payRatePh" />
+              </label>
+              <label><span data-i18n="billRate">Bill rate per hour</span>
+                <input data-field="billRate" readonly />
+              </label>
+
+              <div class="rate-note">
+                <span data-i18n="formulaText">Automatic formula</span>
+                <strong>Pay rate × 2.325</strong>
+              </div>
+<label class="wide"><span data-i18n="notes">Notes</span>
+                <textarea data-field="notes" data-ph="notesPh"></textarea>
+              </label>
+            </div>
+          </div>
+        </form>
+
+        <div id="message" class="message"></div>
+
+        <div class="actions">
+          <button class="primary" type="button" id="downloadBtn" data-i18n="downloadPdf">Download PDF</button>
+          <button class="secondary" type="button" id="resetBtn" data-i18n="clear">Clear</button>
+        </div>
+      </aside>
+
+      <section class="panel">
+        <div class="preview-wrap">
+          <div class="preview-toolbar">
+            <div class="preview-title"><span class="mini">PDF</span><span data-i18n="pdfPreview">PDF preview</span></div>
+            <div class="preview-chips">
+              <div class="chip"><span class="dot"></span><span id="todayPreview"></span></div>
+              <div class="chip good"><span class="dot"></span><span id="billPreview"></span></div>
+            </div>
+          </div>
+
+          <div class="sheet-frame">
+            <div class="sheet-scroll">
+              <div id="pdfSheet">
+                <div class="pdf-header">
+                  <div>
+                    <h2>PRE-ID CANDIDATE</h2>
+                    <p id="pdfSubtitle"></p>
+                  </div>
+                  <div class="pdf-markup">
+                    <span id="pdfMarkupLabel"></span>
+                    <strong>2.325</strong>
+                  </div>
+                </div>
+
+                <div class="pdf-body">
+                  <div class="pdf-meta">
+                    <div class="meta-box"><span id="l-date"></span><strong id="p-date"></strong></div>
+                    <div class="meta-box"><span id="l-requester"></span><strong id="p-requesterName"></strong></div>
+                    <div class="meta-box"><span id="l-jobNumber"></span><strong id="p-jobNumber"></strong></div>
+                  </div>
+
+                  <section class="pdf-section">
+                    <div class="pdf-section-title" id="pdfSecCandidate"></div>
+                    <div class="pdf-grid">
+                      <div class="pdf-field wide"><span id="l-candidateName"></span><strong id="p-employeeName"></strong></div>
+                      <div class="pdf-field"><span id="l-candidateEmail"></span><strong id="p-employeeEmail"></strong></div>
+                      <div class="pdf-field"><span id="l-candidatePhone"></span><strong id="p-employeePhone"></strong></div>
+                    </div>
+                  </section>
+
+                  <section class="pdf-section">
+                    <div class="pdf-section-title" id="pdfSecAssignment"></div>
+                    <div class="pdf-grid">
+                      <div class="pdf-field"><span id="l-manager"></span><strong id="p-managerName"></strong></div>
+                      <div class="pdf-field"><span id="l-supplier"></span><strong id="p-supplierName"></strong></div>
+                      <div class="pdf-field wide"><span id="l-position"></span><strong id="p-position"></strong></div>
+                      <div class="pdf-field"><span id="l-startDate"></span><strong id="p-startDate"></strong></div>
+                      <div class="pdf-field"><span id="l-endDate"></span><strong id="p-endDate"></strong></div>
+                      <div class="pdf-field"><span id="l-hours"></span><strong id="p-hours"></strong></div>
+                      <div class="pdf-field"><span id="l-duration"></span><strong id="p-duration"></strong></div>
+                    </div>
+                  </section>
+
+                  <section class="pdf-section">
+                    <div class="pdf-section-title" id="pdfSecCommercial"></div>
+                    <div class="pdf-grid">
+                      <div class="pdf-field rate"><span id="l-payRate"></span><strong id="p-payRate"></strong></div>
+                      <div class="pdf-field rate"><span id="l-billRate"></span><strong id="p-billRate"></strong></div>
+<div class="pdf-field total"><span id="l-totalHours"></span><strong id="p-totalHours"></strong></div>
+                      <div class="pdf-field total"><span id="l-estimatedValue"></span><strong id="p-totalCost"></strong></div>
+                    </div>
+                  </section>
+
+                  <section class="pdf-section">
+                    <div class="pdf-section-title" id="pdfSecNotes"></div>
+                    <div class="pdf-grid">
+                      <div class="pdf-field notes wide"><span id="l-notes"></span><strong id="p-notes"></strong></div>
+                    </div>
+                  </section>
+                </div>
+
+                <div class="pdf-foot">
+                  <span id="pdfFooterLeft"></span>
+                  <span id="pdfStamp"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+<script>
+  const MARKUP = 2.325;
+  let currentLang = "en";
+  let pickers = [];
+
+  const requiredFields = [
+    "requesterName", "employeeName", "employeeEmail", "managerName",
+    "supplierName", "position", "jobNumber", "startDate", "endDate",
+    "hoursPerWeek", "payRate"
+  ];
+
+  const i18n = {
+    en: {
+      brandSub: "Candidate intake and rate calculation",
+      markupChip: "Pre-ID markup",
+      eyebrow: "Pre-ID form",
+      formTitle: "Create a candidate Pre-ID",
+      formSub: "Enter only the essential details. The bill rate and PDF are generated automatically.",
+      secRequest: "Request",
+      secCandidate: "Candidate",
+      secAssignment: "Assignment",
+      secCommercial: "Commercial",
+      requester: "Requester name",
+      requesterChoose: "Select requester",
+      requesterPh: "e.g. Rafal Wilk",
+      candidateName: "Candidate name",
+      candidateNamePh: "e.g. Jan Kowalski",
+      candidateEmail: "Email",
+      candidateEmailPh: "name@email.com",
+      candidatePhone: "Phone",
+      candidatePhonePh: "+31 ...",
+      manager: "Manager",
+      managerPh: "Manager name",
+      supplier: "Supplier",
+      supplierPh: "Supplier name",
+      position: "Position",
+      positionPh: "e.g. Production Operator",
+      jobNumber: "Job number",
+      jobNumberPh: "e.g. P1-12345",
+      startDate: "Start date",
+      endDate: "End date",
+      datePh: "dd-mm-yyyy",
+      hours: "Hours per week",
+      hoursPh: "e.g. 40 or 24-40",
+      payRate: "Pay rate per hour",
+      payRatePh: "e.g. 25.00",
+      billRate: "Bill rate per hour",
+      formulaText: "Automatic formula",
+      notes: "Notes",
+      notesPh: "Optional short note...",
+      downloadPdf: "Download PDF",
+      clear: "Clear",
+      pdfPreview: "PDF preview",
+      statusReady: "Ready",
+      statusFields: "{count}/{total} required",
+      today: "Date",
+      billPreview: "Bill rate",
+      validationRequired: "Please complete all required fields.",
+      validationDate: "End date cannot be before start date.",
+      validationPay: "Pay rate must be greater than zero.",
+      validationHours: "Hours per week must be one value or a valid range, for example 24-40.",
+      pdfUnavailable: "The PDF generator could not be loaded. Open the tool in Chrome or Edge and check the internet connection.",
+      pdfCreating: "Creating PDF...",
+      pdfDone: "PDF created successfully.",
+      pdfError: "The PDF could not be created. Open the tool in Chrome or Edge and try again.",
+      pdfSubtitle: "Candidate pre-identification and commercial summary",
+      pdfMarkup: "Markup",
+      requestDate: "Request date",
+      duration: "Assignment duration",
+      weeks: "weeks",
+      hour: "hours",
+      estimatedHours: "Estimated contract hours",
+      estimatedValue: "Estimated contract value",
+      pdfSecCandidate: "Candidate details",
+      pdfSecAssignment: "Assignment details",
+      pdfSecCommercial: "Commercial summary",
+      pdfSecNotes: "Notes",
+      footer: "Generated by Pre-ID Candidate",
+      filePrefix: "Pre-ID_Candidate"
+    },
+    nl: {
+      brandSub: "Kandidaatintake en tariefberekening",
+      markupChip: "Pre-ID markup",
+      eyebrow: "Pre-ID formulier",
+      formTitle: "Maak een kandidaat Pre-ID",
+      formSub: "Vul alleen de noodzakelijke gegevens in. Het bill rate en de PDF worden automatisch gegenereerd.",
+      secRequest: "Aanvraag",
+      secCandidate: "Kandidaat",
+      secAssignment: "Opdracht",
+      secCommercial: "Commercieel",
+      requester: "Naam aanvrager",
+      requesterChoose: "Kies aanvrager",
+      requesterPh: "bijv. Rafal Wilk",
+      candidateName: "Naam kandidaat",
+      candidateNamePh: "bijv. Jan Kowalski",
+      candidateEmail: "E-mail",
+      candidateEmailPh: "naam@email.com",
+      candidatePhone: "Telefoon",
+      candidatePhonePh: "+31 ...",
+      manager: "Manager",
+      managerPh: "Naam manager",
+      supplier: "Leverancier",
+      supplierPh: "Naam leverancier",
+      position: "Functie",
+      positionPh: "bijv. Productiemedewerker",
+      jobNumber: "Jobnummer",
+      jobNumberPh: "bijv. P1-12345",
+      startDate: "Startdatum",
+      endDate: "Einddatum",
+      datePh: "dd-mm-jjjj",
+      hours: "Uren per week",
+      hoursPh: "bijv. 40 of 24-40",
+      payRate: "Pay rate per uur",
+      payRatePh: "bijv. 25,00",
+      billRate: "Bill rate per uur",
+      formulaText: "Automatische formule",
+      notes: "Opmerkingen",
+      notesPh: "Optionele korte opmerking...",
+      downloadPdf: "PDF downloaden",
+      clear: "Wissen",
+      pdfPreview: "PDF voorbeeld",
+      statusReady: "Klaar",
+      statusFields: "{count}/{total} verplicht",
+      today: "Datum",
+      billPreview: "Bill rate",
+      validationRequired: "Vul alle verplichte velden in.",
+      validationDate: "De einddatum mag niet vóór de startdatum liggen.",
+      validationPay: "Pay rate moet groter zijn dan nul.",
+      validationHours: "Uren per week moet één waarde of een geldig bereik zijn, bijvoorbeeld 24-40.",
+      pdfUnavailable: "De PDF-generator kon niet worden geladen. Open de tool in Chrome of Edge en controleer de internetverbinding.",
+      pdfCreating: "PDF wordt gemaakt...",
+      pdfDone: "PDF is succesvol aangemaakt.",
+      pdfError: "De PDF kon niet worden aangemaakt. Open de tool in Chrome of Edge en probeer het opnieuw.",
+      pdfSubtitle: "Pre-identificatie kandidaat en commercieel overzicht",
+      pdfMarkup: "Markup",
+      requestDate: "Datum aanvraag",
+      duration: "Duur opdracht",
+      weeks: "weken",
+      hour: "uur",
+      estimatedHours: "Geschatte contracturen",
+      estimatedValue: "Geschatte contractwaarde",
+      pdfSecCandidate: "Kandidaatgegevens",
+      pdfSecAssignment: "Opdrachtgegevens",
+      pdfSecCommercial: "Commercieel overzicht",
+      pdfSecNotes: "Opmerkingen",
+      footer: "Gegenereerd door Pre-ID Candidate",
+      filePrefix: "Pre-ID_Kandidaat"
+    }
+  };
+
+  const form = document.getElementById("dataForm");
+  const messageBox = document.getElementById("message");
+  const downloadBtn = document.getElementById("downloadBtn");
+  const completeChip = document.getElementById("completeChip");
+  const completeText = document.getElementById("completeText");
+
+  function tr(key) {
+    return i18n[currentLang][key] ?? key;
+  }
+
+  function field(name) {
+    return form.querySelector(`[data-field="${name}"]`);
+  }
+
+  function value(name) {
+    const el = field(name);
+    return el ? el.value.trim() : "";
+  }
+
+  function parseDecimal(raw) {
+    if (!raw) return null;
+    const normalized = String(raw).replace(/\s/g, "").replace(",", ".");
+    const n = Number(normalized);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function parseHoursRange(raw) {
+    if (!raw) return null;
+    const normalized = String(raw).replace(/\s/g, "").replace(/,/g, ".").replace(/[–—]/g, "-");
+    const parts = normalized.split("-").filter(Boolean);
+    if (parts.length === 1) {
+      const n = Number(parts[0]);
+      return Number.isFinite(n) && n > 0 ? { min: n, max: n } : null;
+    }
+    if (parts.length === 2) {
+      const min = Number(parts[0]);
+      const max = Number(parts[1]);
+      if (Number.isFinite(min) && Number.isFinite(max) && min > 0 && max > 0 && min <= max) {
+        return { min, max };
+      }
+    }
+    return null;
+  }
+
+  function roundTo(n, decimals = 2) {
+    const p = Math.pow(10, decimals);
+    return Math.round((n + Number.EPSILON) * p) / p;
+  }
+
+  function money(n) {
+    if (n === null || n === undefined || Number.isNaN(n)) return "";    return new Intl.NumberFormat(currentLang === "nl" ? "nl-NL" : "en-GB", {
+      style: "currency",
+      currency: "EUR",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(n);
+  }
+
+  function rangeText(min, max, suffix = "") {
+    if (min === null || max === null) return "";
+    const locale = currentLang === "nl" ? "nl-NL" : "en-GB";
+    const fmt = x => new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(x);
+    const body = min === max ? fmt(min) : `${fmt(min)} - ${fmt(max)}`;
+    return suffix ? `${body} ${suffix}` : body;
+  }
+
+  function moneyRange(min, max) {
+    if (min === null || max === null) return "";
+    return min === max ? money(min) : `${money(min)} - ${money(max)}`;
+  }
+
+  function today() {
+    const d = new Date();
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+
+  function parseDate(raw) {
+    if (!raw) return null;
+    const iso = String(raw).trim().match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if (iso) return new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]));
+    const local = String(raw).trim().match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/);
+    if (local) return new Date(Number(local[3]), Number(local[2]) - 1, Number(local[1]));
+    return null;
+  }
+
+  function formatDate(d) {
+    if (!d) return "";
+    return `${String(d.getDate()).padStart(2, "0")}-${String(d.getMonth() + 1).padStart(2, "0")}-${d.getFullYear()}`;
+  }
+
+  function networkDays(start, end) {
+    if (!start || !end || end < start) return null;
+    let count = 0;
+    const d = new Date(start);
+    while (d <= end) {
+      const day = d.getDay();
+      if (day !== 0 && day !== 6) count++;
+      d.setDate(d.getDate() + 1);
+    }
+    return count;
+  }
+
+  function calculations() {
+    const start = parseDate(value("startDate"));
+    const end = parseDate(value("endDate"));
+    const workdays = networkDays(start, end);
+    const weeks = workdays === null ? null : roundTo(workdays / 5, 1);
+    const hoursRange = parseHoursRange(value("hoursPerWeek"));
+    const hoursMin = hoursRange ? hoursRange.min : null;
+    const hoursMax = hoursRange ? hoursRange.max : null;
+    const pay = parseDecimal(value("payRate"));
+
+    // Required business rule: every entered pay rate is multiplied by 2.325.
+    const bill = pay !== null ? roundTo(pay * MARKUP, 2) : null;
+
+    const totalHoursMin = hoursMin !== null && weeks !== null ? roundTo(hoursMin * weeks, 2) : null;
+    const totalHoursMax = hoursMax !== null && weeks !== null ? roundTo(hoursMax * weeks, 2) : null;
+    const totalCostMin = totalHoursMin !== null && bill !== null ? roundTo(totalHoursMin * bill, 2) : null;
+    const totalCostMax = totalHoursMax !== null && bill !== null ? roundTo(totalHoursMax * bill, 2) : null;
+
+    return { start, end, weeks, hoursRange, hoursMin, hoursMax, pay, bill, totalHoursMin, totalHoursMax, totalCostMin, totalCostMax };
+  }
+
+  function setText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text ?? "";
+  }
+function missingRequired() {
+    return requiredFields.filter(name => !value(name));
+  }
+
+  function updateCompleteness() {
+    const missing = missingRequired();
+    const count = requiredFields.length - missing.length;
+    const ready = missing.length === 0;
+    completeChip.classList.toggle("good", ready);
+    completeChip.classList.toggle("warn", !ready);
+    completeText.textContent = ready
+      ? tr("statusReady")
+      : tr("statusFields").replace("{count}", count).replace("{total}", requiredFields.length);
+  }
+
+  function updatePreview() {
+    const c = calculations();
+    const t = today();
+
+    setText("todayPreview", `${tr("today")}: ${formatDate(t)}`);
+    setText("billPreview", `${tr("billPreview")}: ${c.bill === null ? "-" : money(c.bill)}`);
+
+    const billInput = field("billRate");
+    if (billInput) billInput.value = c.bill === null ? "" : money(c.bill);
+
+    setText("p-date", formatDate(t));
+    ["requesterName","employeeName","employeeEmail","employeePhone","managerName","supplierName","position","jobNumber","notes"]
+      .forEach(name => setText(`p-${name}`, value(name)));
+
+    setText("p-startDate", formatDate(c.start));
+    setText("p-endDate", formatDate(c.end));
+    setText("p-hours", c.hoursRange ? rangeText(c.hoursMin, c.hoursMax, tr("hour")) : "");
+    setText("p-duration", c.weeks === null ? "" : `${c.weeks} ${tr("weeks")}`);
+    setText("p-payRate", c.pay === null ? "" : money(c.pay));
+    setText("p-billRate", c.bill === null ? "" : money(c.bill));
+    setText("p-totalHours", c.totalHoursMin === null ? "" : rangeText(c.totalHoursMin, c.totalHoursMax));
+    setText("p-totalCost", c.totalCostMin === null ? "" : moneyRange(c.totalCostMin, c.totalCostMax));
+
+    updateCompleteness();
+  }
+
+  function applyLanguage(lang) {
+    currentLang = lang === "nl" ? "nl" : "en";
+    document.documentElement.lang = currentLang;
+
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      el.textContent = tr(el.dataset.i18n);
+    });
+
+    document.querySelectorAll("[data-ph]").forEach(el => {
+      el.placeholder = tr(el.dataset.ph);
+    });
+
+    document.querySelectorAll("[data-i18n-option]").forEach(el => {
+      el.textContent = tr(el.dataset.i18nOption);
+    });
+
+    document.querySelectorAll(".lang-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.lang === currentLang);
+    });
+setText("pdfSubtitle", tr("pdfSubtitle"));
+    setText("pdfMarkupLabel", tr("pdfMarkup"));
+    setText("l-date", tr("requestDate"));
+    setText("l-requester", tr("requester"));
+    setText("l-jobNumber", tr("jobNumber"));
+    setText("pdfSecCandidate", tr("pdfSecCandidate"));
+    setText("l-candidateName", tr("candidateName"));
+    setText("l-candidateEmail", tr("candidateEmail"));
+    setText("l-candidatePhone", tr("candidatePhone"));
+    setText("pdfSecAssignment", tr("pdfSecAssignment"));
+    setText("l-manager", tr("manager"));
+    setText("l-supplier", tr("supplier"));
+    setText("l-position", tr("position"));
+    setText("l-startDate", tr("startDate"));
+    setText("l-endDate", tr("endDate"));
+    setText("l-hours", tr("hours"));
+    setText("l-duration", tr("duration"));
+    setText("pdfSecCommercial", tr("pdfSecCommercial"));
+    setText("l-payRate", tr("payRate"));
+    setText("l-billRate", tr("billRate"));
+    setText("l-totalHours", tr("estimatedHours"));
+    setText("l-estimatedValue", tr("estimatedValue"));
+    setText("pdfSecNotes", tr("pdfSecNotes"));
+    setText("l-notes", tr("notes"));
+    setText("pdfFooterLeft", tr("footer"));
+    setText("pdfStamp", `${tr("requestDate")}: ${formatDate(today())}`);
+
+    initCalendars();
+    updatePreview();
+  }
+
+  function showMessage(text, ok = false) {
+    messageBox.textContent = text;
+    messageBox.className = `message show${ok ? " ok" : ""}`;
+  }
+
+  function hideMessage() {
+    messageBox.className = "message";
+    messageBox.textContent = "";
+  }
+
+  function validateBeforeExport() {
+    if (missingRequired().length) {
+      showMessage(tr("validationRequired"));
+      return false;
+    }
+
+    const c = calculations();
+    if (c.start && c.end && c.end < c.start) {
+      showMessage(tr("validationDate"));
+      return false;
+    }
+
+    if (c.pay === null || c.pay <= 0) {
+      showMessage(tr("validationPay"));
+      return false;
+    }
+
+    if (!c.hoursRange) {
+      showMessage(tr("validationHours"));
+      return false;
+    }
+
+    if (!window.jspdf) {
+      showMessage(tr("pdfUnavailable"));
+      return false;
+    }
+
+    hideMessage();
+    return true;
+  }
+
+  function safeName(text) {
+    return (text || "candidate")
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-zA-Z0-9_-]+/g, "_")
+      .replace(/^_+|_+$/g, "")
+      .slice(0, 48) || "candidate";
+  }
+
+  function pdfColor(hex) {
+    const clean = hex.replace("#", "");
+    return [
+      parseInt(clean.slice(0,2),16),
+      parseInt(clean.slice(2,4),16),
+      parseInt(clean.slice(4,6),16)
+    ];
+  }
+
+  function pdfText(pdf, text, x, y, options = {}) {
+    const size = options.size || 9;
+    const style = options.style || "normal";
+    const color = options.color || "#172033";
+    const align = options.align || "left";
+    pdf.setFont("helvetica", style);
+    pdf.setFontSize(size);
+    pdf.setTextColor(...pdfColor(color));
+    pdf.text(String(text || ""), x, y, { align });
+  }
+
+  function pdfField(pdf, x, y, w, h, label, val, options = {}) {
+    const fill = options.fill || "#ffffff";
+    const border = options.border || "#dbe2ea";
+    pdf.setFillColor(...pdfColor(fill));
+    pdf.setDrawColor(...pdfColor(border));
+    pdf.setLineWidth(.25);
+    pdf.roundedRect(x, y, w, h, 2, 2, "FD");
+
+    pdfText(pdf, String(label || "").toUpperCase(), x + 3, y + 4.5, {
+      size: 6.3, style: "bold", color: "#667085"
+    });
+
+    const text = val === null || val === undefined ? "" : String(val);
+    if (!text) return;
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(options.valueSize || 8.3);
+    pdf.setTextColor(...pdfColor("#172033"));
+    const lines = pdf.splitTextToSize(text, w - 6).slice(0, options.maxLines || 3);
+    pdf.text(lines, x + 3, y + 9);
+  }
+
+  function pdfSectionTitle(pdf, title, y) {
+    pdfText(pdf, String(title || "").toUpperCase(), 11, y, { size: 7, style: "bold", color: "#132238" });
+    pdf.setDrawColor(...pdfColor("#dfe5ec"));
+    pdf.setLineWidth(.3);
+    pdf.line(48, y - .8, 199, y - .8);
+  }
+
+  async function downloadPDF() {
+    if (!validateBeforeExport()) return;
+
+    const originalText = downloadBtn.textContent;
+    downloadBtn.disabled = true;
+    downloadBtn.style.opacity = ".72";
+    downloadBtn.textContent = tr("pdfCreating");
+
+    try {
+      const c = calculations();
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      pdf.setProperties({
+        title: "Pre-ID Candidate",
+        subject: "Candidate Pre-ID",
+        creator: "Pre-ID Candidate"
+      });
+
+      const navy = "#132238";
+      pdf.setFillColor(...pdfColor(navy));
+      pdf.rect(0, 0, 210, 31, "F");
+
+      pdfText(pdf, "PRE-ID CANDIDATE", 11, 14, { size: 17, style: "bold", color: "#ffffff" });
+      pdfText(pdf, tr("pdfSubtitle"), 11, 21, { size: 7.5, color: "#d9e2ee" });
+
+      pdf.setFillColor(...pdfColor("#243a57"));
+      pdf.setDrawColor(...pdfColor("#3f5572"));
+      pdf.roundedRect(164, 7, 35, 17, 2, 2, "FD");
+      pdfText(pdf, tr("pdfMarkup"), 181.5, 12, { size: 6.5, style: "bold", color: "#cfd8e6", align: "center" });
+      pdfText(pdf, "2.325", 181.5, 19, { size: 12.5, style: "bold", color: "#ffffff", align: "center" });
+
+      const colGap = 3;
+      const left = 11;
+      const contentW = 188;
+      const half = (contentW - colGap) / 2;
+      const third = (contentW - colGap * 2) / 3;
+
+      let y = 37;
+      pdfField(pdf, left, y, third, 15, tr("requestDate"), formatDate(today()));
+      pdfField(pdf, left + third + colGap, y, third, 15, tr("requester"), value("requesterName"));
+      pdfField(pdf, left + (third + colGap) * 2, y, third, 15, tr("jobNumber"), value("jobNumber"));
+
+      y += 22;
+      pdfSectionTitle(pdf, tr("pdfSecCandidate"), y);
+      y += 4;
+      pdfField(pdf, left, y, contentW, 15, tr("candidateName"), value("employeeName"));
+      y += 18;
+      pdfField(pdf, left, y, half, 15, tr("candidateEmail"), value("employeeEmail"));
+      pdfField(pdf, left + half + colGap, y, half, 15, tr("candidatePhone"), value("employeePhone"));
+
+      y += 22;
+      pdfSectionTitle(pdf, tr("pdfSecAssignment"), y);
+      y += 4;
+      pdfField(pdf, left, y, half, 15, tr("manager"), value("managerName"));
+      pdfField(pdf, left + half + colGap, y, half, 15, tr("supplier"), value("supplierName"));
+      y += 18;
+      pdfField(pdf, left, y, contentW, 15, tr("position"), value("position"));
+      y += 18;
+      pdfField(pdf, left, y, third, 15, tr("startDate"), formatDate(c.start));
+      pdfField(pdf, left + third + colGap, y, third, 15, tr("endDate"), formatDate(c.end));
+      pdfField(pdf, left + (third + colGap) * 2, y, third, 15, tr("duration"), c.weeks === null ? "" : `${c.weeks} ${tr("weeks")}`);
+      y += 18;
+      pdfField(pdf, left, y, contentW, 15, tr("hours"), c.hoursRange ? rangeText(c.hoursMin, c.hoursMax, tr("hour")) : "");
+
+      y += 22;
+      pdfSectionTitle(pdf, tr("pdfSecCommercial"), y);
+      y += 4;
+      pdfField(pdf, left, y, half, 16, tr("payRate"), c.pay === null ? "" : money(c.pay), { fill: "#eef4ff", border: "#cad8ff" });
+      pdfField(pdf, left + half + colGap, y, half, 16, tr("billRate"), c.bill === null ? "" : money(c.bill), { fill: "#eef4ff", border: "#cad8ff" });
+      y += 19;
+      pdfField(pdf, left, y, half, 16, tr("estimatedHours"), c.totalHoursMin === null ? "" : rangeText(c.totalHoursMin, c.totalHoursMax), { fill: "#edf8f3", border: "#cfe9dc" });
+      pdfField(pdf, left + half + colGap, y, half, 16, tr("estimatedValue"), c.totalCostMin === null ? "" : moneyRange(c.totalCostMin, c.totalCostMax), { fill: "#edf8f3", border: "#cfe9dc" });
+
+      y += 23;
+      pdfSectionTitle(pdf, tr("pdfSecNotes"), y);
+      y += 4;
+      pdfField(pdf, left, y, contentW, 28, tr("notes"), value("notes"), { maxLines: 5 });
+
+      const footerY = 289;
+      pdf.setDrawColor(...pdfColor("#e2e7ed"));
+      pdf.line(11, footerY - 5, 199, footerY - 5);
+      pdfText(pdf, tr("footer"), 11, footerY, { size: 6.5, color: "#7a8491" });
+      pdfText(pdf, `${tr("requestDate")}: ${formatDate(today())}`, 199, footerY, { size: 6.5, color: "#7a8491", align: "right" });
+
+      const fileDate = new Date().toISOString().slice(0,10);
+      pdf.save(`${tr("filePrefix")}_${safeName(value("employeeName"))}_${fileDate}.pdf`);
+      showMessage(tr("pdfDone"), true);
+    } catch (err) {
+      console.error(err);
+      showMessage(tr("pdfError"));
+    } finally {
+      downloadBtn.disabled = false;
+      downloadBtn.style.opacity = "1";
+      downloadBtn.textContent = tr("downloadPdf");
+    }
+  }
+
+  function resetForm() {
+    form.reset();
+    field("supplierName").value = "Gi Group";
+    hideMessage();
+    updatePreview();
+  }
+
+  function initCalendars() {
+    pickers.forEach(p => p.destroy());
+    pickers = [];
+
+    if (!window.flatpickr) return;
+    const locale = currentLang === "nl" && window.flatpickr.l10ns?.nl ? window.flatpickr.l10ns.nl : "default";
+
+    document.querySelectorAll("[data-datepicker]").forEach(el => {
+      const p = flatpickr(el, {
+        locale,
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "d-m-Y",
+        allowInput: true,
+        disableMobile: true,
+        onChange: updatePreview,
+        onClose: updatePreview
+      });
+      pickers.push(p);
+    });
+  }
+
+  document.querySelectorAll(".lang-btn").forEach(btn => {
+    btn.addEventListener("click", () => applyLanguage(btn.dataset.lang));
+  });
+
+  form.addEventListener("input", updatePreview);
+  form.addEventListener("change", updatePreview);
+  downloadBtn.addEventListener("click", downloadPDF);
+  document.getElementById("resetBtn").addEventListener("click", resetForm);
+
+  field("supplierName").value = "Gi Group";
+  applyLanguage("en");
+
+  window.addEventListener("message", function(event) {
+    if (event && event.data && event.data.type === "rw:setLang") {
+      applyLanguage(event.data.lang === "nl" ? "nl" : "en");
+    }
+  });
+</script>
+</body>
+</html>
