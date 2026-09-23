@@ -12,8 +12,31 @@ const { chromium } = require('playwright-core');
   page.on('requestfailed',r=>console.log('[REQUEST FAILED]',r.url(),r.failure()?.errorText||''));
   const assert=(cond,msg)=>{if(!cond)throw new Error(msg)};
   try{
-    await page.goto(base,{waitUntil:'domcontentloaded',timeout:20000});
-    await page.waitForFunction(()=>window.RWV2&&window.RWV2.tools?.length===18);
+    const rootUrl=new URL('../index.html',base).href;
+    await page.goto(rootUrl,{waitUntil:'commit',timeout:20000});
+    await page.waitForSelector('main.wrap .rw-preid-card',{timeout:15000});
+    await page.waitForTimeout(1000);
+    const rootActions=await page.evaluate(()=>{
+      const open=document.querySelector('.rw-preid-card .rw-preid-open');
+      const download=document.querySelector('.rw-preid-card .rw-preid-download');
+      const visible=(el)=>{
+        if(!el)return false;
+        const r=el.getBoundingClientRect();
+        const s=getComputedStyle(el);
+        return r.width>0&&r.height>0&&s.display!=='none'&&s.visibility!=='hidden'&&s.opacity!=='0';
+      };
+      return {
+        open:visible(open),
+        download:visible(download),
+        openText:open?.textContent?.trim()||'',
+        downloadText:download?.textContent?.trim()||''
+      };
+    });
+    console.log('[QA] main Pre ID actions',JSON.stringify(rootActions));
+    assert(rootActions.open,'Main Pre ID Open action not visible');
+    assert(rootActions.download,'Main Pre ID Download action not visible');
+    await page.goto(base,{waitUntil:'commit',timeout:20000});
+    await page.waitForFunction(()=>window.RWV2&&window.RWV2.tools?.length===18,{timeout:30000});
     await page.evaluate(()=>document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).catch(()=>{});
     await page.locator('.hero-visual img').waitFor({state:'attached',timeout:10000}).catch(()=>{});
     await page.waitForTimeout(1000);
