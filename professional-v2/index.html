@@ -114,6 +114,27 @@
   <aside class="ai-panel" id="aiPanel" aria-label="AI Assistant" hidden><div class="ai-head"><div><span class="mono">LOCAL ASSISTANT</span><h2>Rafal Wilk AI</h2></div><button id="closeAi" class="icon-button" type="button">×</button></div><p class="ai-intro" data-i18n="aiIntro">Zapytaj o platformę albo powiedz, które narzędzie mam otworzyć. Klucz API nie jest potrzebny.</p><div class="ai-log" id="aiLog"></div><div class="ai-compose"><input id="aiInput" data-i18n-placeholder="aiPlaceholder" placeholder="Zapytaj o platformę…"><button id="aiSend" type="button">↑</button></div><div class="ai-local-note mono" data-i18n="aiNote">KOMENDY STRONY DZIAŁAJĄ LOKALNIE · GENERAL AI JEST OPCJONALNE</div></aside>
 
   <script src="./app.js?v=4"></script>
+  <script id="rw-pre-id-label-fix">
+  (function(){
+    function applyPreIdLabel(){
+      try{
+        const tool=window.RWV2 && Array.isArray(window.RWV2.tools)
+          ? window.RWV2.tools.find(function(item){ return item.id === 'pre-id-candidates'; })
+          : null;
+        if(tool) tool.name='Pre ID';
+      }catch(_e){}
+      document.querySelectorAll('[data-tool="pre-id-candidates"] .tool-copy strong').forEach(function(el){
+        el.textContent='Pre ID';
+      });
+      const workspaceTitle=document.getElementById('workspaceTitle');
+      if(workspaceTitle && workspaceTitle.textContent==='Free ID Candidates') workspaceTitle.textContent='Pre ID';
+      const pinTool=document.getElementById('pinTool');
+      if(pinTool && pinTool.textContent==='Free ID Candidates') pinTool.textContent='Pre ID';
+    }
+    applyPreIdLabel();
+    new MutationObserver(applyPreIdLabel).observe(document.body,{childList:true,subtree:true,characterData:true});
+  })();
+  </script>
   <script src="./site-patch.js?v=5"></script>
 </body>
 </html>
