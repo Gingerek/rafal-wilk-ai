@@ -42,3 +42,47 @@ patchTools();render();bindSiteActions();
 new MutationObserver(()=>{render();refreshToolLang()}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
 window.addEventListener('message',event=>{if(event.data&&event.data.type==='rw:module-error'){const loading=document.getElementById('moduleLoading');const p=loading&&loading.querySelector('p');if(loading)loading.classList.remove('done');if(p)p.textContent=event.data.detail||'Unable to open tool.';}});
 })();
+
+/* Pre ID visible Open / Download controls */
+(function(){
+  function ensurePreIdActions(){
+    const row=document.querySelector('#toolList [data-tool="pre-id-candidates"]');
+    if(!row)return;
+    let actions=row.querySelector('.tool-actions');
+    if(!actions){
+      const arrow=row.querySelector('.tool-arrow');
+      if(arrow)arrow.remove();
+      actions=document.createElement('span');
+      actions.className='tool-actions';
+      actions.innerHTML='<button class="tool-action tool-action-open" type="button" data-open-tool="pre-id-candidates">Open</button><button class="tool-action tool-action-download" type="button" data-download-tool="pre-id-candidates">Download</button>';
+      row.appendChild(actions);
+    }
+    const open=actions.querySelector('[data-open-tool]');
+    const download=actions.querySelector('[data-download-tool]');
+    if(open&&!open.dataset.rwBound){
+      open.dataset.rwBound='1';
+      open.addEventListener('click',function(event){
+        event.preventDefault();event.stopPropagation();
+        window.RWV2?.openToolById('pre-id-candidates');
+      });
+    }
+    if(download&&!download.dataset.rwBound){
+      download.dataset.rwBound='1';
+      download.addEventListener('click',function(event){
+        event.preventDefault();event.stopPropagation();
+        const a=document.createElement('a');
+        a.href='../modules/pre-id-candidate.html?v=20260923-preid-4';
+        a.download='Pre ID.html';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      });
+    }
+  }
+  document.addEventListener('click',function(event){
+    if(event.target.closest('[data-open-tools],#openTools,#heroTools,#bottomTools')) setTimeout(ensurePreIdActions,30);
+  },true);
+  new MutationObserver(ensurePreIdActions).observe(document.documentElement,{childList:true,subtree:true});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ensurePreIdActions);
+  else ensurePreIdActions();
+})();

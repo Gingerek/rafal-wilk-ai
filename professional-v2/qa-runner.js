@@ -13,7 +13,7 @@ const { chromium } = require('playwright-core');
   const assert=(cond,msg)=>{if(!cond)throw new Error(msg)};
   try{
     await page.goto(base,{waitUntil:'domcontentloaded',timeout:20000});
-    await page.waitForFunction(()=>window.RWV2&&window.RWV2.tools?.length===17);
+    await page.waitForFunction(()=>window.RWV2&&window.RWV2.tools?.length===18);
     await page.evaluate(()=>document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).catch(()=>{});
     await page.locator('.hero-visual img').waitFor({state:'attached',timeout:10000}).catch(()=>{});
     await page.waitForTimeout(1000);
@@ -32,7 +32,10 @@ const { chromium } = require('playwright-core');
 
     await page.click('#openTools');
     assert(await page.locator('#toolPalette').isVisible(),'tool palette not visible');
-    assert(await page.locator('.tool-row').count()===17,'launcher does not contain 17 entries');
+    assert(await page.locator('.tool-row').count()===18,'launcher does not contain 18 entries');
+    const preIdRow=page.locator('.tool-row[data-tool="pre-id-candidates"]');
+    assert(await preIdRow.locator('[data-open-tool="pre-id-candidates"]').isVisible(),'Pre ID Open button not visible');
+    assert(await preIdRow.locator('[data-download-tool="pre-id-candidates"]').isVisible(),'Pre ID Download button not visible');
     await page.fill('#toolSearch','Professional Staffing');
     assert(await page.locator('.tool-row').count()===1,'search filtering mismatch');
     await page.click('#closeTools');
@@ -60,6 +63,6 @@ const { chromium } = require('playwright-core');
       try{await toolPage.goto(tool.resolved,{waitUntil:'domcontentloaded',timeout:20000});await toolPage.waitForTimeout(tool.resolved.includes('legacy-module.html')?1300:600);const bodyText=(await toolPage.locator('body').innerText().catch(()=>'' )).replace(/\s+/g,' ').trim();const nodes=await toolPage.locator('body > *').count().catch(()=>0);const loaderError=/Unable to open this tool/i.test(bodyText);ok=!loaderError&&(bodyText.length>10||nodes>0)&&errors.length===0;detail=`url:${toolPage.url()};body:${bodyText.length};nodes:${nodes};consoleErrors:${consoleErrors.length}`}catch(error){detail=String(error);ok=false}
       const item={id:tool.id,name:tool.name,type:tool.type,ok,detail,errors,consoleErrors};console.log('[TOOL QA]',ok?'PASS':'FAIL',tool.name,detail);if(errors.length)console.log('[TOOL ERRORS]',tool.name,JSON.stringify(errors));if(consoleErrors.length)console.log('[TOOL CONSOLE]',tool.name,JSON.stringify(consoleErrors));results.push(item);await toolPage.close();
     }
-    const failed=results.filter(x=>!x.ok);console.log('[QA MATRIX]',JSON.stringify({count:results.length,passed:results.length-failed.length,failed:failed.length,results},null,2));assert(results.length===17,'matrix count is not 17');assert(shellErrors.length===0,'shell page errors: '+JSON.stringify(shellErrors));assert(failed.length===0,'tool failures: '+JSON.stringify(failed,null,2));console.log('[QA] ALL 17 PASS WITH ZERO PAGE ERRORS');
+    const failed=results.filter(x=>!x.ok);console.log('[QA MATRIX]',JSON.stringify({count:results.length,passed:results.length-failed.length,failed:failed.length,results},null,2));assert(results.length===18,'matrix count is not 18');assert(shellErrors.length===0,'shell page errors: '+JSON.stringify(shellErrors));assert(failed.length===0,'tool failures: '+JSON.stringify(failed,null,2));console.log('[QA] ALL 18 PASS WITH ZERO PAGE ERRORS');
   } finally {await browser.close()}
 })().catch(e=>{console.error(e.stack||e);process.exit(1)});
