@@ -1957,17 +1957,56 @@
     const list = document.querySelector('.rw-v2-command-list');
     if (!list) return;
     const rows = commandRows(query);
-    list.innerHTML = rows.length ? rows.map((item, index) => `
-      <button type="button" class="rw-v2-command-item${index === 0 ? ' is-active' : ''}" data-rw-command-index="${index}">
-        <span class="rw-v2-command-icon">${icons[item.meta.icon] || icons.project}</span>
-        <span class="rw-v2-command-text"><span>${item.title}</span><small>${categoryLabel(item.meta.category)} / ${moduleStatus(item.meta)}</small></span>
-        <span class="rw-v2-command-arrow">&nearr;</span>
-      </button>`).join('') : `<div class="rw-v2-command-empty">${uiText('commandEmpty')}</div>`;
-    list.querySelectorAll('[data-rw-command-index]').forEach((button, index) => {
-      button.addEventListener('click', () => {
+    list.innerHTML = rows.length ? rows.map((item, index) => {
+      const isPreId = item.card?.classList?.contains('rw-preid-card') || item.title === 'Pre ID';
+      if (isPreId) {
+        return `
+          <div class="rw-v2-command-item rw-v2-command-item-preid${index === 0 ? ' is-active' : ''}" data-rw-command-index="${index}" role="group" aria-label="Pre ID">
+            <span class="rw-v2-command-icon">${icons[item.meta.icon] || icons.project}</span>
+            <span class="rw-v2-command-text"><span>${item.title}</span><small>${categoryLabel(item.meta.category)} / ${moduleStatus(item.meta)}</small></span>
+            <span class="rw-v2-command-actions">
+              <button type="button" class="rw-v2-command-action rw-v2-command-open" data-rw-command-open="1">Open</button>
+              <button type="button" class="rw-v2-command-action rw-v2-command-download" data-rw-command-download="1">Download</button>
+            </span>
+          </div>`;
+      }
+      return `
+        <button type="button" class="rw-v2-command-item${index === 0 ? ' is-active' : ''}" data-rw-command-index="${index}">
+          <span class="rw-v2-command-icon">${icons[item.meta.icon] || icons.project}</span>
+          <span class="rw-v2-command-text"><span>${item.title}</span><small>${categoryLabel(item.meta.category)} / ${moduleStatus(item.meta)}</small></span>
+          <span class="rw-v2-command-arrow">&nearr;</span>
+        </button>`;
+    }).join('') : `<div class="rw-v2-command-empty">${uiText('commandEmpty')}</div>`;
+
+    list.querySelectorAll('[data-rw-command-index]').forEach((row, index) => {
+      row.addEventListener('click', (event) => {
+        if (event.target.closest('[data-rw-command-open],[data-rw-command-download]')) return;
         const item = rows[index];
         closeCommandPalette();
-        item?.card?.querySelector('.btn')?.click();
+        const target = item?.card?.querySelector('.rw-preid-open, .btn');
+        target?.click();
+      });
+    });
+
+    list.querySelectorAll('[data-rw-command-open]').forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const row = button.closest('[data-rw-command-index]');
+        const item = rows[Number(row?.dataset.rwCommandIndex || 0)];
+        closeCommandPalette();
+        item?.card?.querySelector('.rw-preid-open, .btn')?.click();
+      });
+    });
+
+    list.querySelectorAll('[data-rw-command-download]').forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const row = button.closest('[data-rw-command-index]');
+        const item = rows[Number(row?.dataset.rwCommandIndex || 0)];
+        closeCommandPalette();
+        item?.card?.querySelector('.rw-preid-download')?.click();
       });
     });
   }

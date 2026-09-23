@@ -418,3 +418,56 @@ main.wrap .grid .title[data-title-key="Free ID Candidates"]::after{
   font-weight:inherit;
   letter-spacing:inherit;
 }
+
+
+/* Pre ID Command Center dual actions */
+.rw-v2-command-item-preid{
+  grid-template-columns:34px minmax(0,1fr) auto!important;
+  cursor:default!important;
+}
+.rw-v2-command-actions{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:7px!important;
+  margin-left:10px!important;
+}
+.rw-v2-command-action{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:auto!important;
+  min-width:72px!important;
+  height:30px!important;
+  padding:0 10px!important;
+  border-radius:999px!important;
+  border:1px solid rgba(126,211,255,.34)!important;
+  font:700 9px/1 system-ui,-apple-system,"Segoe UI",sans-serif!important;
+  letter-spacing:.01em!important;
+  cursor:pointer!important;
+  white-space:nowrap!important;
+}
+.rw-v2-command-open{
+  background:rgba(95,211,255,.16)!important;
+  color:#eefbff!important;
+}
+.rw-v2-command-download{
+  background:rgba(255,255,255,.06)!important;
+  color:#d9e7f3!important;
+}
+.rw-v2-command-action:hover,
+.rw-v2-command-action:focus-visible{
+  border-color:rgba(126,211,255,.75)!important;
+  background:rgba(95,211,255,.24)!important;
+  color:#fff!important;
+}
+@media(max-width:620px){
+  .rw-v2-command-item-preid{
+    grid-template-columns:30px minmax(0,1fr)!important;
+  }
+  .rw-v2-command-actions{
+    grid-column:2!important;
+    margin:7px 0 0!important;
+    justify-content:flex-start!important;
+  }
+}
