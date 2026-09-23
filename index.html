@@ -46,7 +46,7 @@
 <link rel="preload" as="style" href="assets/css/platform-v2.min.css?v=20260806-cleanwall-2">
 <link rel="preload" as="style" href="assets/css/platform-nextlevel.css?v=20260807-zero-shadow-3">
 <link rel="preload" as="style" href="assets/css/platform-face-clarity.css?v=20260810-face-clarity-23">
-<link rel="preload" as="script" href="assets/js/platform-v2.js?v=20260807-binary-alpha-1">
+<link rel="preload" as="script" href="assets/js/platform-v2.js?v=20260923-preid-1">
 <title>Rafal Wilk AI ©</title>
 <style id="rw-critical-startup-guard">
   html{background:#05080d}
@@ -353,6 +353,10 @@
 <button class="btn" data-idx="3" type="button">Open in platform</button>
 </article>
 <article class="card">
+<div class="title" data-title-key="Free ID Candidates">Free ID Candidates</div>
+<a class="btn" onclick="openApp('preidcandidate', this.parentElement.querySelector('.title').textContent)">Open</a>
+</article>
+<article class="card">
 <div class="title" data-title-key="Ocena dopasowania CV">Ocena dopasowania CV</div>
 <button class="btn" data-idx="4" type="button">Open in platform</button>
 </article>
@@ -389,6 +393,7 @@
 <div class="card"><div class="title" data-title-key="My Projects">My Projects</div><a class="btn" onclick="openMc()">Open</a></div></section>
 <section class="viewport">
 <iframe id="appframe" title="Aplikacja" loading="lazy"></iframe>
+<iframe id="preidcandidate" title="Free ID Candidates" data-src="modules/pre-id-candidate.html?v=20260923-preid-1" loading="lazy"></iframe>
 <iframe id="managermeetingtracker" title="Rejestr spotkań z managerami" data-src="modules/manager-meeting-tracker.html" loading="lazy"></iframe>
 
 <iframe id="homeofficetracker" title="Home Office Tracker" data-src="modules/home-office-tracker.html" loading="lazy"></iframe>
@@ -885,4 +890,4 @@ function openApp(id, title){
   render();
 })();
 </script>
-<script src="assets/js/platform-v2.js?v=20260807-binary-alpha-1" defer></script>
+<script src="assets/js/platform-v2.js?v=20260923-preid-1" defer></script>
