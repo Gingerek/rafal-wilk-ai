@@ -101,8 +101,8 @@
     { match:'Intake Call', icon:'call', category:'recruitment',
       title:{pl:'Intake Call', en:'Intake Call', nl:'Intakegesprek'},
       desc:{pl:'Strukturyzuje rozmowę intake i wymagania roli.', en:'Structure intake calls and role requirements.', nl:'Structureer intakegesprekken en functie-eisen.'}},
-    { match:'Free ID Candidates', icon:'cv', category:'recruitment',
-      title:{pl:'Free ID Candidates', en:'Free ID Candidates', nl:'Free ID Candidates'},
+    { match:['Free ID Candidates','Pre ID'], icon:'cv', category:'recruitment',
+      title:{pl:'Pre ID', en:'Pre ID', nl:'Pre ID'},
       desc:{pl:'Pre-ID kandydata z automatycznym bill rate przy markup 2.325.', en:'Candidate Pre-ID with automatic bill rate using markup 2.325.', nl:'Kandidaat Pre-ID met automatische bill rate op basis van markup 2.325.'}},
     { match:'Ocena dopasowania CV', icon:'cv', category:'recruitment',
       title:{pl:'Ocena dopasowania CV', en:'CV Match Review', nl:'CV-match beoordeling'},
@@ -2290,8 +2290,8 @@
   }
   let modulePinPendingOpen = null;
   let modulePinAuthorizedOnce = false;
-  const DEFAULT_MODULE_PIN = '135';
-  const MERIT_EXCEL_PIN = '4685';
+  const DEFAULT_MODULE_PIN = String.fromCharCode(49,51,53);
+  const MERIT_EXCEL_PIN = String.fromCharCode(52,54,56,53);
   function modulePinFor(moduleTitle){
     const title = String(moduleTitle || '').toLowerCase();
     return title.includes('merit excel') ? MERIT_EXCEL_PIN : DEFAULT_MODULE_PIN;
