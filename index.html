@@ -94,14 +94,14 @@
 <link rel="stylesheet" href="assets/css/platform-face-clarity.css?v=20260923-preid-3">
 <script id="rw-module-pin-bootstrap">
 (function(){
-  var DEFAULT_PIN = '135';
-  var MERIT_EXCEL_PIN = '4685';
+  var DEFAULT_PIN = '4685';
+  var PRE_ID_PIN = '135';
   var pendingPin = DEFAULT_PIN;
   var pendingOpen = null;
   var authorizedOnce = false;
   function modulePinFor(moduleTitle){
     var title = String(moduleTitle || '').toLowerCase();
-    return title.indexOf('merit excel') !== -1 ? MERIT_EXCEL_PIN : DEFAULT_PIN;
+    return title.indexOf('pre id') !== -1 ? PRE_ID_PIN : DEFAULT_PIN;
   }
   function configurePinInput(input, pin){
     if (!input) return;
