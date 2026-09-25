@@ -446,20 +446,6 @@
       wallCanvas.setAttribute('aria-hidden', 'true');
       shell.appendChild(wallCanvas);
     }
-    // Scenery-only layer: deliberately isolated from the face/video/blink stack.
-    if (!shell.querySelector('.rw-v2-hologram-array')) {
-      const holograms = document.createElement('div');
-      holograms.className = 'rw-v2-hologram-array';
-      holograms.setAttribute('aria-hidden', 'true');
-      holograms.innerHTML = '<span class="rw-v2-hologram rw-v2-hologram-main"><i></i><b></b></span><span class="rw-v2-hologram rw-v2-hologram-side"><i></i><b></b></span><span class="rw-v2-hologram rw-v2-hologram-data"><i></i><b></b></span>';
-      shell.appendChild(holograms);
-    }
-    if (!shell.querySelector('.rw-v2-desk-trim')) {
-      const deskTrim = document.createElement('div');
-      deskTrim.className = 'rw-v2-desk-trim';
-      deskTrim.setAttribute('aria-hidden', 'true');
-      shell.appendChild(deskTrim);
-    }
     if (!shell.querySelector('.rw-v2-ai-global-grade')) {
       const globalGrade = document.createElement('div');
       globalGrade.className = 'rw-v2-ai-global-grade';

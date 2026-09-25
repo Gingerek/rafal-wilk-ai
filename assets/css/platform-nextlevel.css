@@ -866,22 +866,6 @@ body.rw-v2-ready:not(.app-open) .rw-v2-window-reflection{
   filter:none!important;
 }
 
-/* A clean front edge replaces the second, image-baked brand inscription on the desk. */
-body.rw-v2-ready:not(.app-open) .rw-v2-desk-trim{
-  position:absolute!important;
-  left:12.2%!important;
-  bottom:15.2%!important;
-  width:43.5%!important;
-  height:5.7%!important;
-  z-index:16!important;
-  pointer-events:none!important;
-  border-top:1px solid rgba(141,226,255,.42)!important;
-  border-bottom:1px solid rgba(3,20,40,.78)!important;
-  background:linear-gradient(180deg,rgba(6,25,47,.52),rgba(2,13,29,.84) 58%,rgba(9,38,65,.56))!important;
-  box-shadow:inset 0 1px 0 rgba(219,249,255,.12),0 10px 18px rgba(0,4,14,.28)!important;
-  transform:perspective(900px) rotateX(8deg) skewX(-6deg)!important;
-}
-
 body.rw-v2-ready.rw-v2-visual-high.rw-v2-video-face-ready:not(.app-open) .rw-v2-assistant-face-video.is-active,
 body.rw-v2-ready.rw-v2-video-face-ready:not(.app-open) .rw-v2-assistant-face-video.is-active{
   opacity:1!important;
@@ -992,10 +976,6 @@ body.rw-v2-ready.rw-v2-video-face-ready:not(.app-open) .rw-v2-face-neural-link{
   body.rw-v2-ready:not(.app-open) .rw-v2-wall-clock{
     display:none!important;
   }
-}
-
-@media (max-width:760px){
-  body.rw-v2-ready:not(.app-open) .rw-v2-desk-trim{display:none!important}
 }
 
 @media (max-width:760px){
@@ -1200,105 +1180,4 @@ body.rw-v2-ready.rw-v2-video-face-ready:not(.app-open) .rw-v2-assistant-face-vid
 @keyframes rwCleanFaceZoom{
   0%,100%{--rw-clean-face-zoom:.976;}
   50%{--rw-clean-face-zoom:1.026;}
-}
-
-/* Home refresh: one brand marker, a sharper exterior and physical-looking wall holograms.
-   The face/video/blink selectors are intentionally not touched here. */
-body.rw-v2-ready:not(.app-open) .rw-v2-floor-signature,
-body.rw-v2-ready:not(.app-open) .rw-v2-console-signature{
-  display:none!important;
-}
-
-body.rw-v2-ready:not(.app-open) .rw-v2-hero-poster{
-  background-image:var(--rw-home-bg)!important;
-  background-size:cover!important;
-  background-position:center!important;
-  filter:contrast(1.045) saturate(1.08)!important;
-}
-
-body.rw-v2-ready:not(.app-open) .rw-v2-window-reflection{
-  display:block!important;
-  opacity:.16!important;
-  background:linear-gradient(112deg,transparent 35%,rgba(223,249,255,.12) 50%,transparent 65%)!important;
-}
-
-body.rw-v2-ready:not(.app-open) .rw-v2-native-wall-canvas{
-  display:block!important;
-  opacity:.52!important;
-  z-index:18!important;
-  filter:saturate(1.2) contrast(1.13) brightness(1.12) drop-shadow(0 0 15px rgba(90,220,255,.26))!important;
-  transform:perspective(1300px) rotateY(-6deg) rotateX(1.6deg) translateZ(20px)!important;
-}
-
-body.rw-v2-ready:not(.app-open) .rw-v2-hologram-array{
-  position:absolute!important;
-  left:clamp(285px,23vw,500px)!important;
-  top:clamp(58px,7.2vh,102px)!important;
-  width:clamp(390px,31vw,620px)!important;
-  aspect-ratio:1.58!important;
-  z-index:17!important;
-  pointer-events:none!important;
-  perspective:1250px!important;
-  transform:rotateY(-5deg) rotateX(1deg)!important;
-  transform-origin:center!important;
-}
-
-body.rw-v2-ready:not(.app-open) .rw-v2-hologram{
-  position:absolute!important;
-  display:block!important;
-  overflow:hidden!important;
-  border:1px solid rgba(160,241,255,.72)!important;
-  background:linear-gradient(145deg,rgba(190,247,255,.20),rgba(16,90,136,.12) 42%,rgba(8,25,56,.08))!important;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.14),inset 0 0 38px rgba(75,205,255,.18),0 0 0 7px rgba(56,189,248,.045),0 16px 26px rgba(0,20,52,.36),0 0 32px rgba(67,209,255,.32)!important;
-  transform-style:preserve-3d!important;
-}
-
-body.rw-v2-ready:not(.app-open) .rw-v2-hologram::before,
-body.rw-v2-ready:not(.app-open) .rw-v2-hologram::after{
-  content:""!important;
-  position:absolute!important;
-  pointer-events:none!important;
-}
-
-body.rw-v2-ready:not(.app-open) .rw-v2-hologram::before{
-  inset:8% 6%!important;
-  background:repeating-linear-gradient(0deg,rgba(200,248,255,.13) 0 1px,transparent 1px 19px),repeating-linear-gradient(90deg,rgba(178,242,255,.10) 0 1px,transparent 1px 28px)!important;
-  opacity:.78!important;
-}
-
-body.rw-v2-ready:not(.app-open) .rw-v2-hologram::after{
-  left:-15%!important;
-  top:42%!important;
-  width:130%!important;
-  height:2px!important;
-  background:linear-gradient(90deg,transparent,rgba(231,252,255,.96),transparent)!important;
-  box-shadow:0 0 16px rgba(129,232,255,.96)!important;
-  animation:rwHologramScan 4.8s ease-in-out infinite!important;
-}
-
-body.rw-v2-ready:not(.app-open) .rw-v2-hologram i,
-body.rw-v2-ready:not(.app-open) .rw-v2-hologram b{
-  position:absolute!important;
-  display:block!important;
-  height:2px!important;
-  border-radius:99px!important;
-  background:linear-gradient(90deg,rgba(109,222,255,.08),rgba(215,250,255,.82),rgba(109,222,255,.08))!important;
-  box-shadow:0 0 11px rgba(101,220,255,.58)!important;
-}
-body.rw-v2-ready:not(.app-open) .rw-v2-hologram i{left:13%;right:15%;top:27%!important}
-body.rw-v2-ready:not(.app-open) .rw-v2-hologram b{left:22%;right:10%;bottom:22%!important;opacity:.72!important}
-body.rw-v2-ready:not(.app-open) .rw-v2-hologram-main{left:6%;top:12%;width:50%;height:49%;transform:translateZ(38px)!important}
-body.rw-v2-ready:not(.app-open) .rw-v2-hologram-side{right:5%;top:19%;width:34%;height:35%;transform:translateZ(70px) rotateY(-8deg)!important}
-body.rw-v2-ready:not(.app-open) .rw-v2-hologram-data{left:29%;bottom:8%;width:43%;height:26%;transform:translateZ(96px) rotateX(4deg)!important;opacity:.9!important}
-
-@keyframes rwHologramScan{
-  0%,18%{transform:translateY(-130px);opacity:0}
-  30%{opacity:.92}
-  70%{opacity:.65}
-  88%,100%{transform:translateY(145px);opacity:0}
-}
-
-@media (max-width:1080px){
-  body.rw-v2-ready:not(.app-open) .rw-v2-hologram-array,
-  body.rw-v2-ready:not(.app-open) .rw-v2-native-wall-canvas{display:none!important}
 }
