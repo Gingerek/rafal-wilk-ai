@@ -404,8 +404,8 @@
   }
   function ensureShell(){
     const main = document.querySelector('main.wrap');
-    const grid = main?.querySelector('.grid');
-    if (!main || !grid) return;
+    const launcher = main?.querySelector('.rw-module-launcher');
+    if (!main || !launcher) return;
     let shell = main.querySelector('.rw-v2-shell');
     if (!shell) {
       shell = document.createElement('div');
@@ -414,8 +414,8 @@
       hero.className = 'rw-v2-hero';
       const toolbar = document.createElement('section');
       toolbar.className = 'rw-v2-toolbar';
-      main.insertBefore(shell, grid);
-      shell.append(hero, toolbar, grid);
+      main.insertBefore(shell, launcher);
+      shell.append(hero, toolbar, launcher);
     }
     if (!shell.querySelector('.rw-v2-contact')) {
       const contact = document.createElement('section');
@@ -1144,31 +1144,17 @@
     const hero = document.querySelector('.rw-v2-hero');
     if (!hero) return;
     const labels = {
-      pl:{eyebrow:'PRYWATNE CENTRUM OPERACYJNE', title:'Rafal Wilk AI', lead:'Jedno uporządkowane miejsce do pracy z kalkulatorami, procesami, trackerami i projektami.', choose:'Wybierz moduł', hint:'Wyszukaj moduł...', available:'modułów dostępnych', close:'Zamknij'},
-      en:{eyebrow:'PRIVATE OPERATIONS CENTER', title:'Rafal Wilk AI', lead:'One organized workspace for calculators, workflows, trackers and projects.', choose:'Choose a module', hint:'Search modules...', available:'modules available', close:'Close'},
-      nl:{eyebrow:'PRIVÉ OPERATIONEEL CENTRUM', title:'Rafal Wilk AI', lead:'Eén overzichtelijke werkplek voor calculators, processen, trackers en projecten.', choose:'Kies een module', hint:'Zoek een module...', available:'modules beschikbaar', close:'Sluiten'}
+      pl:{eyebrow:'PRYWATNE CENTRUM OPERACYJNE', title:'Rafal Wilk AI', lead:'Jedno uporządkowane miejsce do pracy z kalkulatorami, procesami, trackerami i projektami.'},
+      en:{eyebrow:'PRIVATE OPERATIONS CENTER', title:'Rafal Wilk AI', lead:'One organized workspace for calculators, workflows, trackers and projects.'},
+      nl:{eyebrow:'PRIVÉ OPERATIONEEL CENTRUM', title:'Rafal Wilk AI', lead:'Eén overzichtelijke werkplek voor calculators, processen, trackers en projecten.'}
     };
-    const l = labels[lang()] || labels.pl;
+    const l = labels[lang()] || labels.en;
     hero.innerHTML = `<div class="rw-v2-hero-poster rw-v3-hero-poster">
       <div class="rw-v3-home-panel">
         <div class="rw-v3-brand-copy">
           <span class="rw-v3-eyebrow">${l.eyebrow}</span>
           <h2>${l.title}</h2>
           <p>${l.lead}</p>
-        </div>
-        <div class="rw-v3-module-selector" data-rw-module-selector>
-          <button class="rw-v3-module-toggle" type="button" data-rw-module-menu-toggle aria-expanded="false">
-            <span class="rw-v3-module-toggle-copy"><small>${l.available}</small><strong>${l.choose}</strong></span>
-            <span class="rw-v3-module-chevron" aria-hidden="true"></span>
-          </button>
-          <div class="rw-v3-module-menu" data-rw-module-menu hidden>
-            <div class="rw-v3-module-search-wrap">
-              <span class="rw-v3-search-icon" aria-hidden="true"></span>
-              <input class="rw-v3-module-search" data-rw-module-search type="search" autocomplete="off" placeholder="${l.hint}" aria-label="${l.hint}">
-              <button type="button" class="rw-v3-module-close" data-rw-module-menu-close aria-label="${l.close}">×</button>
-            </div>
-            <div class="rw-v3-module-list" data-rw-module-list></div>
-          </div>
         </div>
       </div>
       <div class="rw-v2-home-lang" role="group" aria-label="Language">
@@ -1178,10 +1164,8 @@
       </div>
     </div>`;
     syncHomeLang();
-    renderModuleDropdown('');
     updateWallClock();
-    document.querySelector('.rw-v2-command-trigger')?.setAttribute('hidden','');
-    document.querySelector('.rw-v2-command-palette')?.setAttribute('hidden','');
+    try { window.__rwSyncModuleLauncher?.(); } catch (_e) {}
   }
   function renderToolbar(){
     const toolbar = document.querySelector('.rw-v2-toolbar');
@@ -2821,6 +2805,7 @@
     patchPinTexts();
     updateModuleBar();
     syncHomeLang();
+    try { window.__rwSyncModuleLauncher?.(); } catch (_e) {}
     updateWallClock();
   }
   function bindEvents(){
