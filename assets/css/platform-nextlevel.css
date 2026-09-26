@@ -1181,3 +1181,11 @@ body.rw-v2-ready.rw-v2-video-face-ready:not(.app-open) .rw-v2-assistant-face-vid
   0%,100%{--rw-clean-face-zoom:.976;}
   50%{--rw-clean-face-zoom:1.026;}
 }
+
+
+/* RW home trim: hide everything from 'Twoje narzedzia' downward */
+body:not(.app-open) .rw-workshop-catalog,
+body:not(.app-open) .privacy-footer{
+  display:none!important;
+  visibility:hidden!important;
+}
