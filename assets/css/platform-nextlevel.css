@@ -1189,3 +1189,88 @@ body:not(.app-open) .privacy-footer{
   display:none!important;
   visibility:hidden!important;
 }
+
+
+/* RW fullscreen home hero: fill viewport, no empty space */
+html,
+body{
+  margin:0;
+  padding:0;
+}
+
+body.rw-v2-ready:not(.app-open){
+  min-height:100dvh!important;
+  height:100dvh!important;
+  overflow:hidden!important;
+}
+
+body.rw-v2-ready:not(.app-open) main.wrap{
+  position:relative!important;
+  width:100vw!important;
+  max-width:none!important;
+  min-width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-height:100dvh!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+
+body.rw-v2-ready:not(.app-open) .rw-v2-shell{
+  width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-height:100dvh!important;
+  margin:0!important;
+  padding:0!important;
+  gap:0!important;
+  overflow:hidden!important;
+}
+
+body.rw-v2-ready:not(.app-open) .rw-v2-hero{
+  position:absolute!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-height:100dvh!important;
+  aspect-ratio:auto!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+  background-position:center center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+}
+
+body.rw-v2-ready:not(.app-open) .rw-v2-hero-poster{
+  position:absolute!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:100%!important;
+  margin:0!important;
+  border-radius:0!important;
+}
+
+body.rw-v2-ready:not(.app-open) .rw-v2-contact,
+body.rw-v2-ready:not(.app-open) .rw-workshop-catalog,
+body.rw-v2-ready:not(.app-open) .privacy-footer{
+  display:none!important;
+  visibility:hidden!important;
+}
+
+@supports not (height:100dvh){
+  body.rw-v2-ready:not(.app-open),
+  body.rw-v2-ready:not(.app-open) main.wrap,
+  body.rw-v2-ready:not(.app-open) .rw-v2-shell,
+  body.rw-v2-ready:not(.app-open) .rw-v2-hero{
+    height:100vh!important;
+    min-height:100vh!important;
+    max-height:100vh!important;
+  }
+}
