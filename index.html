@@ -46,7 +46,7 @@
 <link rel="preload" as="style" href="assets/css/platform-v2.min.css?v=20260806-cleanwall-2">
 <link rel="preload" as="style" href="assets/css/platform-nextlevel.css?v=20260926-dropdown-premium-2">
 <link rel="preload" as="style" href="assets/css/platform-face-clarity.css?v=20260923-preid-3">
-<link rel="preload" as="script" href="assets/js/platform-v2.js?v=20260926-dropdown-premium-1">
+<link rel="preload" as="script" href="assets/js/platform-v2.js?v=20260926-dropdown-premium-2">
 <title>Rafal Wilk AI ©</title>
 <style id="rw-critical-startup-guard">
   html{background:#05080d}
@@ -88,6 +88,23 @@
   body.app-open .viewport{display:block}
 
 .badge-copyright{background:#0b1220;color:#ffffff;border:1px solid #0b1220;font-weight:800;padding:2px 10px;border-radius:10px}
+</style>
+<!-- RW hard home grid lock -->
+<style id="rw-hard-home-grid-lock">
+  body:not(.app-open) main.wrap .grid,
+  body:not(.app-open) section.grid{
+    display:none!important;
+    visibility:hidden!important;
+    opacity:0!important;
+    pointer-events:none!important;
+    height:0!important;
+    min-height:0!important;
+    max-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:hidden!important;
+    border:0!important;
+  }
 </style>
 <link rel="stylesheet" href="assets/css/platform-v2.min.css?v=20260806-cleanwall-2">
 <link rel="stylesheet" href="assets/css/platform-nextlevel.css?v=20260926-dropdown-premium-2">
@@ -1079,4 +1096,4 @@ function openApp(id, title){
   render();
 })();
 </script>
-<script src="assets/js/platform-v2.js?v=20260926-dropdown-premium-1" defer></script>
+<script src="assets/js/platform-v2.js?v=20260926-dropdown-premium-2" defer></script>
