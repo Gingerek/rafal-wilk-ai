@@ -1669,3 +1669,21 @@ body.rw-v2-ready:not(.app-open) .rw-v2-contact{
     transition:none!important;
   }
 }
+
+
+/* RW hard lock: legacy module tiles never render on home */
+body:not(.app-open) main.wrap .grid,
+body:not(.app-open) .rw-v2-shell > .grid,
+body:not(.app-open) section.grid{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  height:0!important;
+  min-height:0!important;
+  max-height:0!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border:0!important;
+}
