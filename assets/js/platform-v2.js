@@ -2811,6 +2811,7 @@
       window.history.replaceState(null, '', window.location.pathname + window.location.search);
     }
     refreshHomeView();
+    window.requestAnimationFrame(() => window.scrollTo({ top:0, left:0, behavior:'auto' }));
   }
   function applyLanguage(){
     renderHero();
@@ -3556,6 +3557,10 @@
     scheduleNativeWallCanvasStart();
   }
   function init(){
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    if (!document.body.classList.contains('app-open')) {
+      window.requestAnimationFrame(() => window.scrollTo({ top:0, left:0, behavior:'auto' }));
+    }
     window.__rwPlatformV2RefreshHome = refreshHomeView;
     bindVisualPerformanceGovernor();
     ensureModulePinGate();
