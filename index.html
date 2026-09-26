@@ -44,9 +44,9 @@
 <link rel="preload" as="image" href="assets/images/private-command-center-hero-personal-bg-day-v18-cleanwall-mobile.webp?v=20260806-cleanwall-2" type="image/webp" media="(max-width: 760px)">
 <link rel="preload" as="image" href="assets/images/private-command-center-hero-personal-bg-day-v18-cleanwall.webp?v=20260806-cleanwall-2" type="image/webp" media="(min-width: 761px)">
 <link rel="preload" as="style" href="assets/css/platform-v2.min.css?v=20260806-cleanwall-2">
-<link rel="preload" as="style" href="assets/css/platform-nextlevel.css?v=20260926-dropdown-native-2">
+<link rel="preload" as="style" href="assets/css/platform-nextlevel.css?v=20260925-screen-fix-1">
 <link rel="preload" as="style" href="assets/css/platform-face-clarity.css?v=20260923-preid-3">
-<link rel="preload" as="script" href="assets/js/platform-v2.js?v=20260926-dropdown-native-2">
+<link rel="preload" as="script" href="assets/js/platform-v2.js?v=20260925-screen-fix-1">
 <title>Rafal Wilk AI ©</title>
 <style id="rw-critical-startup-guard">
   html{background:#05080d}
@@ -89,25 +89,8 @@
 
 .badge-copyright{background:#0b1220;color:#ffffff;border:1px solid #0b1220;font-weight:800;padding:2px 10px;border-radius:10px}
 </style>
-<!-- RW hard home grid lock -->
-<style id="rw-hard-home-grid-lock">
-  body:not(.app-open) main.wrap .grid,
-  body:not(.app-open) section.grid{
-    display:none!important;
-    visibility:hidden!important;
-    opacity:0!important;
-    pointer-events:none!important;
-    height:0!important;
-    min-height:0!important;
-    max-height:0!important;
-    margin:0!important;
-    padding:0!important;
-    overflow:hidden!important;
-    border:0!important;
-  }
-</style>
 <link rel="stylesheet" href="assets/css/platform-v2.min.css?v=20260806-cleanwall-2">
-<link rel="stylesheet" href="assets/css/platform-nextlevel.css?v=20260926-dropdown-native-2">
+<link rel="stylesheet" href="assets/css/platform-nextlevel.css?v=20260925-screen-fix-1">
 <link rel="stylesheet" href="assets/css/platform-face-clarity.css?v=20260923-preid-3">
 <script id="rw-module-pin-bootstrap">
 (function(){
@@ -523,53 +506,80 @@ body.rw-v2-ready.rw-v2-command-open:not(.app-open) .rw-v2-command-trigger::befor
 </div>
 </header>
 <main class="wrap">
-<section class="rw-module-launcher" aria-label="Module launcher">
-  <div class="rw-module-launcher-copy">
-    <span class="rw-module-launcher-kicker" data-rw-launcher-kicker>MODULES</span>
-    <strong data-rw-launcher-title>Choose a module</strong>
-    <small data-rw-launcher-subtitle>All tools in one list. No duplicate tiles.</small>
-  </div>
-  <div class="rw-module-launcher-controls">
-    <label class="rw-module-select-wrap">
-      <span class="sr-only">Choose module</span>
-      <select id="rw_module_select" aria-label="Choose module">
-        <option value="">Choose a module…</option>
-        <optgroup label="Finance" data-rw-group="finance">
-          <option value="legacy:0" data-pl="Kalkulator budżetu kontraktu" data-en="Contract Budget Calculator" data-nl="Contractbudget calculator">Contract Budget Calculator</option>
-          <option value="legacy:1" data-pl="Nowa stawka Bill Rate" data-en="New Bill Rate" data-nl="Nieuw bill rate">New Bill Rate</option>
-        </optgroup>
-        <optgroup label="RekenTool" data-rw-group="rekentool">
-          <option value="legacy:2" data-pl="RekenTool Master" data-en="RekenTool Master" data-nl="RekenTool Master">RekenTool Master</option>
-          <option value="app:rekentoolcombined" data-title="RekenTool Professional & General Staffing">RekenTool Professional & General Staffing</option>
-          <option value="app:rekentoolgeneralstaffing" data-title="RekenTool General Staffing">RekenTool General Staffing</option>
-          <option value="app:rekentoolprofessionalstaffing" data-title="RekenTool Professional Staffing">RekenTool Professional Staffing</option>
-          <option value="app:rekentoolpayroll" data-title="RekenTool Payroll">RekenTool Payroll</option>
-        </optgroup>
-        <optgroup label="Recruitment" data-rw-group="recruitment">
-          <option value="legacy:3" data-pl="Intake Call" data-en="Intake Call" data-nl="Intakegesprek">Intake Call</option>
-          <option value="app:preidcandidate" data-title="Pre ID">Pre ID</option>
-          <option value="legacy:4" data-pl="Ocena dopasowania CV" data-en="CV Match Review" data-nl="CV-match beoordeling">CV Match Review</option>
-        </optgroup>
-        <optgroup label="Documents" data-rw-group="documents">
-          <option value="legacy:6" data-title="Merit increase 2026">Merit increase 2026</option>
-          <option value="app:msdcaosalarycheck" data-title="MSD CAO Salary Check">MSD CAO Salary Check</option>
-          <option value="download:downloads/Merit_2026_Employee_Bulk_Calculator_350_exact.xlsx?v=authoritative-title-list-20260807-1" data-download="Merit_2026_Employee_Bulk_Calculator_350_correct_title_list_20260807.xlsx" data-title="Merit Excel 350">Merit Excel 350</option>
-          <option value="legacy:7" data-pl="Przegląd agencji" data-en="Agency Review" data-nl="Bureauoverzicht">Agency Review</option>
-        </optgroup>
-        <optgroup label="Tracking" data-rw-group="tracking">
-          <option value="app:managermeetingtracker" data-pl="Rejestr spotkań z managerami" data-en="Manager Meeting Tracker" data-nl="Managergesprekken register">Manager Meeting Tracker</option>
-          <option value="app:homeofficetracker" data-pl="Licznik pracy z domu" data-en="Home Office Tracker" data-nl="Thuiswerk tracker">Home Office Tracker</option>
-          <option value="app:redukcja" data-pl="Redukcja" data-en="Reduction" data-nl="Reductie">Reduction</option>
-        </optgroup>
-        <optgroup label="Projects" data-rw-group="projects">
-          <option value="myprojects" data-pl="Moje projekty" data-en="My Projects" data-nl="Mijn projecten">My Projects</option>
-        </optgroup>
-      </select>
-    </label>
-    <button id="rw_module_open" type="button" class="rw-module-open" disabled>Open</button>
-    <button id="rw_module_secondary" type="button" class="rw-module-secondary" hidden>Download</button>
-  </div>
-</section>
+<section class="grid"><article class="card">
+<div class="title" data-title-key="Contract Budget Calculator">Contract Budget Calculator</div>
+<button class="btn" data-idx="0" type="button">Open in platform</button>
+</article>
+<article class="card">
+<div class="title" data-title-key="New Bill Rate">New Bill Rate</div>
+<button class="btn" data-idx="1" type="button">Open in platform</button>
+</article>
+<article class="card">
+<div class="title" data-title-key="RekenTool Master">RekenTool Master</div>
+<button class="btn" data-idx="2" type="button">Open in platform</button>
+</article>
+<article class="card">
+<div class="title" data-title-key="RekenTool Professional & General Staffing">RekenTool Professional & General Staffing</div>
+<a class="btn" onclick="openApp('rekentoolcombined', this.parentElement.querySelector('.title').textContent)">Open</a>
+</article>
+<article class="card">
+<div class="title" data-title-key="RekenTool General Staffing">RekenTool General Staffing</div>
+<a class="btn" onclick="openApp('rekentoolgeneralstaffing', this.parentElement.querySelector('.title').textContent)">Open</a>
+</article>
+<article class="card">
+<div class="title" data-title-key="RekenTool Professional Staffing">RekenTool Professional Staffing</div>
+<a class="btn" onclick="openApp('rekentoolprofessionalstaffing', this.parentElement.querySelector('.title').textContent)">Open</a>
+</article>
+<article class="card">
+<div class="title" data-title-key="RekenTool Payroll">RekenTool Payroll</div>
+<a class="btn" onclick="openApp('rekentoolpayroll', this.parentElement.querySelector('.title').textContent)">Open</a>
+</article>
+<article class="card">
+<div class="title" data-title-key="Intake Call">Intake Call</div>
+<button class="btn" data-idx="3" type="button">Open in platform</button>
+</article>
+<article class="card rw-preid-card">
+<div class="title" data-title-key="Pre ID">Pre ID</div>
+<div class="rw-preid-actions">
+<a class="btn rw-preid-open" onclick="openApp('preidcandidate', this.closest('.card').querySelector('.title').textContent)">Open</a>
+<a class="btn rw-preid-download" href="modules/pre-id-candidate.html?v=20260923-preid-5" download="Pre ID.html">Download</a>
+</div>
+</article>
+<article class="card">
+<div class="title" data-title-key="Ocena dopasowania CV">Ocena dopasowania CV</div>
+<button class="btn" data-idx="4" type="button">Open in platform</button>
+</article>
+<article class="card">
+<div class="title" data-title-key="Merit increase 2026">Merit increase 2026</div>
+<button class="btn" data-idx="6" type="button">Open in platform</button>
+</article>
+<article class="card">
+<div class="title" data-title-key="MSD CAO Salary Check">MSD CAO Salary Check</div>
+<a class="btn" onclick="openApp('msdcaosalarycheck', this.parentElement.querySelector('.title').textContent)">Open</a>
+</article>
+<article class="card">
+<div class="title" data-title-key="Merit Excel 350">Merit Excel 350</div>
+<a class="btn" href="downloads/Merit_2026_Employee_Bulk_Calculator_350_exact.xlsx?v=authoritative-title-list-20260807-1" download="Merit_2026_Employee_Bulk_Calculator_350_correct_title_list_20260807.xlsx" data-excel-download type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">Download Excel</a>
+</article>
+
+<article class="card">
+<div class="title" data-title-key="Przegląd agencji">Przegląd agencji</div>
+<button class="btn" data-idx="7" type="button">Open in platform</button>
+</article>
+<article class="card">
+<div class="title" data-title-key="Rejestr spotkań z managerami">Rejestr spotkań z managerami</div>
+<a class="btn" onclick="openApp('managermeetingtracker', this.parentElement.querySelector('.title').textContent)">Open</a>
+</article>
+
+<article class="card">
+<div class="title" data-title-key="Home Office Tracker">Home Office Tracker</div>
+<a class="btn" onclick="openApp('homeofficetracker', this.parentElement.querySelector('.title').textContent)">Open</a>
+</article>
+<article class="card">
+<div class="title" data-title-key="Redukcja">Redukcja</div>
+<a class="btn" onclick="openApp('redukcja', this.parentElement.querySelector('.title').textContent)">Open</a>
+</article>
+<div class="card"><div class="title" data-title-key="My Projects">My Projects</div><a class="btn" onclick="openMc()">Open</a></div></section>
 <section class="viewport">
 <iframe id="appframe" title="Aplikacja" loading="lazy"></iframe>
 <iframe id="preidcandidate" title="Pre ID" data-src="modules/pre-id-candidate.html?v=20260923-preid-5" loading="lazy"></iframe>
@@ -585,129 +595,6 @@ body.rw-v2-ready.rw-v2-command-open:not(.app-open) .rw-v2-command-trigger::befor
 <iframe id="mycompany" data-src="modules/my-company.html" title="My Projects" loading="lazy"></iframe></section>
 </main>
 
-<script id="rw-module-launcher-controller">
-(function(){
-  if (window.__rwModuleLauncherController) return;
-  window.__rwModuleLauncherController = true;
-
-  var labels = {
-    pl:{kicker:'MODUŁY',title:'Wybierz moduł',subtitle:'Wszystkie narzędzia w jednej liście. Bez kafelków i duplikatów.',choose:'Wybierz moduł…',open:'Otwórz',download:'Pobierz',
-      groups:{finance:'Finanse',rekentool:'RekenTool',recruitment:'Rekrutacja',documents:'Dokumenty',tracking:'Trackery',projects:'Projekty'}},
-    en:{kicker:'MODULES',title:'Choose a module',subtitle:'All tools in one list. No tiles or duplicated navigation.',choose:'Choose a module…',open:'Open',download:'Download',
-      groups:{finance:'Finance',rekentool:'RekenTool',recruitment:'Recruitment',documents:'Documents',tracking:'Tracking',projects:'Projects'}},
-    nl:{kicker:'MODULES',title:'Kies een module',subtitle:'Alle tools in één lijst. Geen tegels of dubbele navigatie.',choose:'Kies een module…',open:'Openen',download:'Downloaden',
-      groups:{finance:'Finance',rekentool:'RekenTool',recruitment:'Recruitment',documents:'Documenten',tracking:'Tracking',projects:'Projecten'}}
-  };
-  function lang(){
-    var raw='en';
-    try{ raw=(localStorage.getItem('rw_lang') || document.documentElement.lang || 'en').toLowerCase(); }catch(_e){}
-    if(raw.indexOf('pl')===0) return 'pl';
-    if(raw.indexOf('nl')===0) return 'nl';
-    return 'en';
-  }
-  function parts(){
-    return {
-      select:document.getElementById('rw_module_select'),
-      open:document.getElementById('rw_module_open'),
-      secondary:document.getElementById('rw_module_secondary'),
-      kicker:document.querySelector('[data-rw-launcher-kicker]'),
-      title:document.querySelector('[data-rw-launcher-title]'),
-      subtitle:document.querySelector('[data-rw-launcher-subtitle]')
-    };
-  }
-  function selectedOption(){
-    var p=parts();
-    return p.select && p.select.selectedIndex>=0 ? p.select.options[p.select.selectedIndex] : null;
-  }
-  function selectedTitle(option){
-    if(!option) return 'Module';
-    return option.getAttribute('data-title') || option.textContent || 'Module';
-  }
-  function sync(){
-    var p=parts(), L=labels[lang()] || labels.en;
-    if(!p.select) return;
-    if(p.kicker) p.kicker.textContent=L.kicker;
-    if(p.title) p.title.textContent=L.title;
-    if(p.subtitle) p.subtitle.textContent=L.subtitle;
-    var placeholder=p.select.options[0];
-    if(placeholder) placeholder.textContent=L.choose;
-    Array.from(p.select.querySelectorAll('optgroup[data-rw-group]')).forEach(function(group){
-      var key=group.getAttribute('data-rw-group');
-      if(L.groups[key]) group.label=L.groups[key];
-    });
-    Array.from(p.select.options).forEach(function(option,index){
-      if(index===0) return;
-      var translated=option.getAttribute('data-'+lang());
-      if(translated) option.textContent=translated;
-    });
-    if(p.open) p.open.textContent=L.open;
-    if(p.secondary) p.secondary.textContent=L.download;
-    updateButtons();
-  }
-  function updateButtons(){
-    var p=parts(), option=selectedOption();
-    var value=option ? option.value : '';
-    if(p.open) p.open.disabled=!value;
-    var hasSecondary = value === 'app:preidcandidate';
-    if(p.secondary) p.secondary.hidden=!hasSecondary;
-  }
-  function triggerDownload(href, name){
-    var a=document.createElement('a');
-    a.href=href;
-    if(name) a.download=name;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  }
-  function launch(){
-    var option=selectedOption();
-    if(!option || !option.value) return;
-    var value=option.value, title=selectedTitle(option);
-    if(value.indexOf('legacy:')===0){
-      var idx=Number(value.split(':')[1]);
-      var open=function(){ if(typeof window.loadApp==='function') window.loadApp(idx); };
-      if(window.__rwRequestModulePin) window.__rwRequestModulePin(open,title); else open();
-      return;
-    }
-    if(value.indexOf('app:')===0){
-      var id=value.slice(4);
-      if(typeof window.openApp==='function') window.openApp(id,title);
-      return;
-    }
-    if(value.indexOf('download:')===0){
-      var downloadAction=function(){ triggerDownload(value.slice(9), option.getAttribute('data-download') || ''); };
-      if(window.__rwRequestModulePin) window.__rwRequestModulePin(downloadAction,title); else downloadAction();
-      return;
-    }
-    if(value==='myprojects'){
-      if(typeof window.openMc==='function') window.openMc();
-    }
-  }
-  function secondary(){
-    var option=selectedOption();
-    if(!option || option.value!=='app:preidcandidate') return;
-    var downloadAction=function(){ triggerDownload('modules/pre-id-candidate.html?v=20260923-preid-5','Pre ID.html'); };
-    if(window.__rwRequestModulePin) window.__rwRequestModulePin(downloadAction,'Pre ID'); else downloadAction();
-  }
-  function bind(){
-    var p=parts();
-    if(!p.select || p.select.dataset.rwBound==='true') return;
-    p.select.dataset.rwBound='true';
-    p.select.addEventListener('change',updateButtons);
-    p.select.addEventListener('keydown',function(event){
-      if(event.key==='Enter' && p.select.value){ event.preventDefault(); launch(); }
-    });
-    p.open && p.open.addEventListener('click',launch);
-    p.secondary && p.secondary.addEventListener('click',secondary);
-    sync();
-  }
-  window.__rwSyncModuleLauncher=sync;
-  document.addEventListener('DOMContentLoaded',bind);
-  window.addEventListener('rwLanguageChanged',sync);
-  window.addEventListener('storage',sync);
-  if(document.readyState!=='loading') bind();
-})();
-</script>
 <script id="rw-force-xlsx-download">
 (function(){
   document.addEventListener('click', async function(event){
@@ -1192,4 +1079,4 @@ function openApp(id, title){
   render();
 })();
 </script>
-<script src="assets/js/platform-v2.js?v=20260926-dropdown-native-2" defer></script>
+<script src="assets/js/platform-v2.js?v=20260925-screen-fix-1" defer></script>
