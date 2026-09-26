@@ -404,8 +404,8 @@
   }
   function ensureShell(){
     const main = document.querySelector('main.wrap');
-    const launcher = main?.querySelector('.rw-module-launcher');
-    if (!main || !launcher) return;
+    const grid = main?.querySelector('.grid');
+    if (!main || !grid) return;
     let shell = main.querySelector('.rw-v2-shell');
     if (!shell) {
       shell = document.createElement('div');
@@ -414,8 +414,8 @@
       hero.className = 'rw-v2-hero';
       const toolbar = document.createElement('section');
       toolbar.className = 'rw-v2-toolbar';
-      main.insertBefore(shell, launcher);
-      shell.append(hero, toolbar, launcher);
+      main.insertBefore(shell, grid);
+      shell.append(hero, toolbar, grid);
     }
     if (!shell.querySelector('.rw-v2-contact')) {
       const contact = document.createElement('section');
@@ -1143,20 +1143,7 @@
   function renderHero(){
     const hero = document.querySelector('.rw-v2-hero');
     if (!hero) return;
-    const labels = {
-      pl:{eyebrow:'PRYWATNE CENTRUM OPERACYJNE', title:'Rafal Wilk AI', lead:'Jedno uporządkowane miejsce do pracy z kalkulatorami, procesami, trackerami i projektami.'},
-      en:{eyebrow:'PRIVATE OPERATIONS CENTER', title:'Rafal Wilk AI', lead:'One organized workspace for calculators, workflows, trackers and projects.'},
-      nl:{eyebrow:'PRIVÉ OPERATIONEEL CENTRUM', title:'Rafal Wilk AI', lead:'Eén overzichtelijke werkplek voor calculators, processen, trackers en projecten.'}
-    };
-    const l = labels[lang()] || labels.en;
-    hero.innerHTML = `<div class="rw-v2-hero-poster rw-v3-hero-poster">
-      <div class="rw-v3-home-panel">
-        <div class="rw-v3-brand-copy">
-          <span class="rw-v3-eyebrow">${l.eyebrow}</span>
-          <h2>${l.title}</h2>
-          <p>${l.lead}</p>
-        </div>
-      </div>
+    hero.innerHTML = `<div class="rw-v2-hero-poster">
       <div class="rw-v2-home-lang" role="group" aria-label="Language">
         <button type="button" data-rw-home-lang="pl">PL</button>
         <button type="button" data-rw-home-lang="en">EN</button>
@@ -1165,7 +1152,7 @@
     </div>`;
     syncHomeLang();
     updateWallClock();
-    try { window.__rwSyncModuleLauncher?.(); } catch (_e) {}
+    renderCommandUi();
   }
   function renderToolbar(){
     const toolbar = document.querySelector('.rw-v2-toolbar');
@@ -1173,79 +1160,10 @@
     activeFilter = 'all';
     toolbar.hidden = true;
     toolbar.innerHTML = '';
+    renderCommandUi();
   }
   function moduleCards(){
     return Array.from(document.querySelectorAll('main.wrap .grid .card'));
-  }
-  function renderModuleDropdown(query = ''){
-    const list = document.querySelector('[data-rw-module-list]');
-    const toggle = document.querySelector('[data-rw-module-menu-toggle]');
-    if (!list || !toggle) return;
-    const q = String(query || '').trim().toLowerCase();
-    const cards = moduleCards();
-    const rows = cards.map((card, index) => {
-      const meta = findMeta(card);
-      const title = moduleTitle(meta) || card.querySelector('.title')?.textContent?.trim() || `Module ${index + 1}`;
-      const desc = meta?.desc?.[lang()] || meta?.desc?.pl || '';
-      const category = meta?.category || 'other';
-      const searchable = searchText(meta, title);
-      return {card,index,meta,title,desc,category,searchable};
-    }).filter(item => !q || item.searchable.includes(q));
-    const categoryOrder = ['finance','recruitment','documents','tracking','projects','other'];
-    const grouped = new Map();
-    rows.forEach(item => {
-      if (!grouped.has(item.category)) grouped.set(item.category, []);
-      grouped.get(item.category).push(item);
-    });
-    const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-    const empty = {pl:'Brak pasujących modułów',en:'No matching modules',nl:'Geen passende modules'}[lang()] || 'Brak pasujących modułów';
-    list.innerHTML = categoryOrder.filter(category => grouped.has(category)).map(category => {
-      const items = grouped.get(category);
-      const heading = category === 'other' ? '' : categoryLabel(category);
-      return `<section class="rw-v3-module-group">
-        ${heading ? `<div class="rw-v3-module-group-label">${esc(heading)}</div>` : ''}
-        ${items.map(item => {
-          const preIdDownload = item.card.querySelector('.rw-preid-download');
-          const status = moduleStatus(item.meta);
-          return `<div class="rw-v3-module-row" data-rw-module-index="${item.index}" role="button" tabindex="0">
-            <span class="rw-v3-module-icon">${icons[item.meta?.icon] || icons.project}</span>
-            <span class="rw-v3-module-copy"><strong>${esc(item.title)}</strong><small>${esc(item.desc)}</small></span>
-            <span class="rw-v3-module-status">${esc(status)}</span>
-            ${preIdDownload ? '<button class="rw-v3-module-subaction" type="button" data-rw-module-download title="Download">Excel</button>' : ''}
-            <span class="rw-v3-module-arrow" aria-hidden="true">↗</span>
-          </div>`;
-        }).join('')}
-      </section>`;
-    }).join('') || `<div class="rw-v3-module-empty">${esc(empty)}</div>`;
-    const countLabels = {
-      pl:`${cards.length} modułów dostępnych`,
-      en:`${cards.length} modules available`,
-      nl:`${cards.length} modules beschikbaar`
-    };
-    const small = toggle.querySelector('small');
-    if (small) small.textContent = countLabels[lang()] || countLabels.pl;
-  }
-  function setModuleMenu(open){
-    const selector = document.querySelector('[data-rw-module-selector]');
-    const toggle = document.querySelector('[data-rw-module-menu-toggle]');
-    const menu = document.querySelector('[data-rw-module-menu]');
-    if (!selector || !toggle || !menu) return;
-    const next = Boolean(open);
-    selector.classList.toggle('is-open', next);
-    toggle.setAttribute('aria-expanded', next ? 'true' : 'false');
-    menu.hidden = !next;
-    if (next) {
-      const input = menu.querySelector('[data-rw-module-search]');
-      renderModuleDropdown(input?.value || '');
-      setTimeout(() => input?.focus(), 20);
-    }
-  }
-  function launchModuleFromDropdown(index, download = false){
-    const card = moduleCards()[Number(index)];
-    if (!card) return;
-    setModuleMenu(false);
-    const target = download ? card.querySelector('.rw-preid-download') : (card.querySelector('.rw-preid-open') || card.querySelector('.btn'));
-    target?.click();
   }
   function renderSystemStrip(){
     const strip = document.querySelector('.rw-v2-system-strip');
@@ -2795,7 +2713,6 @@
       window.history.replaceState(null, '', window.location.pathname + window.location.search);
     }
     refreshHomeView();
-    window.requestAnimationFrame(() => window.scrollTo({ top:0, left:0, behavior:'auto' }));
   }
   function applyLanguage(){
     renderHero();
@@ -2805,7 +2722,6 @@
     patchPinTexts();
     updateModuleBar();
     syncHomeLang();
-    try { window.__rwSyncModuleLauncher?.(); } catch (_e) {}
     updateWallClock();
   }
   function bindEvents(){
@@ -2831,34 +2747,6 @@
         setTimeout(applyLanguage, 700);
         setTimeout(applyLanguage, 1700);
         return;
-      }
-      const moduleToggle = event.target.closest('[data-rw-module-menu-toggle]');
-      if (moduleToggle) {
-        event.preventDefault();
-        setModuleMenu(moduleToggle.getAttribute('aria-expanded') !== 'true');
-        return;
-      }
-      if (event.target.closest('[data-rw-module-menu-close]')) {
-        event.preventDefault();
-        setModuleMenu(false);
-        return;
-      }
-      const moduleDownload = event.target.closest('[data-rw-module-download]');
-      if (moduleDownload) {
-        event.preventDefault();
-        event.stopPropagation();
-        const row = moduleDownload.closest('[data-rw-module-index]');
-        launchModuleFromDropdown(row?.dataset.rwModuleIndex, true);
-        return;
-      }
-      const moduleRow = event.target.closest('[data-rw-module-index]');
-      if (moduleRow) {
-        event.preventDefault();
-        launchModuleFromDropdown(moduleRow.dataset.rwModuleIndex, false);
-        return;
-      }
-      if (!event.target.closest('[data-rw-module-selector]')) {
-        setModuleMenu(false);
       }
       if (event.target.closest('[data-rw-command-open]')) {
         event.preventDefault();
@@ -2987,25 +2875,10 @@
       btn.click();
     });
     document.addEventListener('input', (event) => {
-      if (event.target.matches?.('[data-rw-module-search]')) {
-        renderModuleDropdown(event.target.value || '');
-        return;
-      }
       if (!event.target.matches?.('.rw-v2-command-input')) return;
       renderCommandList(event.target.value || '');
     });
     document.addEventListener('keydown', (event) => {
-      const moduleRow = event.target.closest?.('[data-rw-module-index]');
-      if (moduleRow && (event.key === 'Enter' || event.key === ' ')) {
-        event.preventDefault();
-        launchModuleFromDropdown(moduleRow.dataset.rwModuleIndex, false);
-        return;
-      }
-      if (event.key === 'Escape' && document.querySelector('[data-rw-module-selector].is-open')) {
-        setModuleMenu(false);
-        document.querySelector('[data-rw-module-menu-toggle]')?.focus();
-        return;
-      }
       const palette = document.querySelector('.rw-v2-command-palette.is-open');
       if (palette && event.target.matches?.('.rw-v2-command-input')) {
         const items = Array.from(palette.querySelectorAll('.rw-v2-command-item'));
@@ -3542,10 +3415,6 @@
     scheduleNativeWallCanvasStart();
   }
   function init(){
-    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-    if (!document.body.classList.contains('app-open')) {
-      window.requestAnimationFrame(() => window.scrollTo({ top:0, left:0, behavior:'auto' }));
-    }
     window.__rwPlatformV2RefreshHome = refreshHomeView;
     bindVisualPerformanceGovernor();
     ensureModulePinGate();
