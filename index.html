@@ -675,7 +675,8 @@ body.rw-v2-ready.rw-v2-command-open:not(.app-open) .rw-v2-command-trigger::befor
       return;
     }
     if(value.indexOf('download:')===0){
-      triggerDownload(value.slice(9), option.getAttribute('data-download') || '');
+      var downloadAction=function(){ triggerDownload(value.slice(9), option.getAttribute('data-download') || ''); };
+      if(window.__rwRequestModulePin) window.__rwRequestModulePin(downloadAction,title); else downloadAction();
       return;
     }
     if(value==='myprojects'){
@@ -685,7 +686,8 @@ body.rw-v2-ready.rw-v2-command-open:not(.app-open) .rw-v2-command-trigger::befor
   function secondary(){
     var option=selectedOption();
     if(!option || option.value!=='app:preidcandidate') return;
-    triggerDownload('modules/pre-id-candidate.html?v=20260923-preid-5','Pre ID.html');
+    var downloadAction=function(){ triggerDownload('modules/pre-id-candidate.html?v=20260923-preid-5','Pre ID.html'); };
+    if(window.__rwRequestModulePin) window.__rwRequestModulePin(downloadAction,'Pre ID'); else downloadAction();
   }
   function bind(){
     var p=parts();
