@@ -312,6 +312,30 @@
     input::placeholder, textarea::placeholder { color: #9aa4b2; }
 
     .required { color: var(--red); }
+    .provider-hidden { display: none !important; }
+
+    .provider-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 6px 4px 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .provider-switch select {
+      width: auto;
+      min-height: 34px;
+      margin: 0;
+      padding: 6px 30px 6px 9px;
+      border-radius: 9px;
+      font-weight: 850;
+      color: var(--navy);
+      background: #f8fafc;
+    }
 
     .rate-note {
       grid-column: 1 / -1;
@@ -609,7 +633,13 @@
       </div>
 
       <div class="top-actions">
-        <div class="chip"><span class="dot"></span><span data-i18n="markupChip">Pre-ID markup</span> <strong>2.325</strong></div>
+        <label class="provider-switch"><span data-i18n="provider">Provider</span>
+          <select id="providerSelect" aria-label="Provider">
+            <option value="gi">Gi Group</option>
+            <option value="jw">Jefferson Wells</option>
+          </select>
+        </label>
+        <div class="chip"><span class="dot"></span><span id="ruleChipLabel">Pre-ID markup</span> <strong id="ruleChipValue">2.325</strong></div>
         <div class="chip warn" id="completeChip"><span class="dot"></span><span id="completeText"></span></div>
         <div class="lang-switch" aria-label="Language">
           <button class="lang-btn active" type="button" data-lang="en">EN</button>
@@ -655,6 +685,13 @@
               <label><span data-i18n="candidatePhone">Phone</span>
                 <input data-field="employeePhone" data-ph="candidatePhonePh" />
               </label>
+              <label class="wide"><span data-i18n="staffingType">Staffing type</span> <span class="required">*</span>
+                <select data-field="staffingType">
+                  <option value="" selected disabled data-i18n-option="staffingTypeChoose">Select PS or GS</option>
+                  <option value="PS">PS</option>
+                  <option value="GS">GS</option>
+                </select>
+              </label>
             </div>
           </div>
 
@@ -666,6 +703,13 @@
               </label>
               <label><span data-i18n="supplier">Supplier</span> <span class="required">*</span>
                 <input data-field="supplierName" value="Gi Group" readonly />
+              </label>
+              <label class="wide" data-gi-only><span data-i18n="contractType">Contract type</span> <span class="required">*</span>
+                <select data-field="contractType">
+                  <option value="" selected disabled data-i18n-option="contractTypeChoose">Select contract type</option>
+                  <option value="Payroll">Payroll</option>
+                  <option value="Fase A">Fase A</option>
+                </select>
               </label>
               <label><span data-i18n="position">Position</span> <span class="required">*</span>
                 <input data-field="position" data-ph="positionPh" />
@@ -735,16 +779,16 @@
           <div class="section-card">
             <div class="section-title"><span class="num">4</span><span data-i18n="secCommercial">Commercial</span></div>
             <div class="grid">
-              <label><span data-i18n="payRate">Pay rate per hour</span> <span class="required">*</span>
+              <label><span id="payRateLabel" data-i18n="payRate">Pay rate per hour</span> <span class="required">*</span>
                 <input data-field="payRate" inputmode="decimal" data-ph="payRatePh" />
               </label>
-              <label><span data-i18n="billRate">Bill rate per hour</span>
+              <label><span id="billRateLabel" data-i18n="billRate">Bill rate per hour</span>
                 <input data-field="billRate" readonly />
               </label>
 
               <div class="rate-note">
                 <span data-i18n="formulaText">Automatic formula</span>
-                <strong>Pay rate × 2.325</strong>
+                <strong id="formulaValue">Pay rate × 2.325</strong>
               </div>
 <label class="wide"><span data-i18n="notes">Notes</span>
                 <textarea data-field="notes" data-ph="notesPh"></textarea>
@@ -781,7 +825,7 @@
                   </div>
                   <div class="pdf-markup">
                     <span id="pdfMarkupLabel"></span>
-                    <strong>2.325</strong>
+                    <strong id="pdfRuleValue">2.325</strong>
                   </div>
                 </div>
 
@@ -798,6 +842,7 @@
                       <div class="pdf-field wide"><span id="l-candidateName"></span><strong id="p-employeeName"></strong></div>
                       <div class="pdf-field"><span id="l-candidateEmail"></span><strong id="p-employeeEmail"></strong></div>
                       <div class="pdf-field"><span id="l-candidatePhone"></span><strong id="p-employeePhone"></strong></div>
+                      <div class="pdf-field"><span id="l-staffingType"></span><strong id="p-staffingType"></strong></div>
                     </div>
                   </section>
 
@@ -806,6 +851,7 @@
                     <div class="pdf-grid">
                       <div class="pdf-field"><span id="l-manager"></span><strong id="p-managerName"></strong></div>
                       <div class="pdf-field"><span id="l-supplier"></span><strong id="p-supplierName"></strong></div>
+                      <div class="pdf-field"><span id="l-contractDisplay"></span><strong id="p-contractDisplay"></strong></div>
                       <div class="pdf-field wide"><span id="l-position"></span><strong id="p-position"></strong></div>
                       <div class="pdf-field"><span id="l-caoPathway"></span><strong id="p-caoPathway"></strong></div>
                       <div class="pdf-field"><span id="l-salaryScale"></span><strong id="p-salaryScale"></strong></div>
@@ -847,6 +893,7 @@
 
 <script>
   const MARKUP = 2.325;
+  const JW_FEE = 2.20;
   let currentLang = "en";
   let pickers = [];
 
@@ -878,16 +925,29 @@
     "M2": ["K", "L"]
   };
 
-  const requiredFields = [
-    "requesterName", "employeeName", "employeeEmail", "managerName",
+  const baseRequiredFields = [
+    "requesterName", "employeeName", "employeeEmail", "staffingType", "managerName",
     "supplierName", "position", "jobNumber", "caoPathway", "salaryScale", "startDate", "endDate",
     "hoursPerWeek", "payRate"
   ];
+
+  function activeRequiredFields() {
+    return providerMode() === "gi" ? [...baseRequiredFields, "contractType"] : [...baseRequiredFields];
+  }
 
   const i18n = {
     en: {
       brandSub: "Candidate intake and rate calculation",
       markupChip: "Pre-ID markup",
+      provider: "Provider",
+      staffingType: "Staffing type",
+      staffingTypeChoose: "Select PS or GS",
+      contractType: "Contract type",
+      contractTypeChoose: "Select contract type",
+      engagementType: "Engagement",
+      payRateExcl: "Pay rate excl. fee",
+      payRateIncl: "Pay rate incl. fee",
+      jwFee: "Jefferson Wells fee",
       eyebrow: "Pre-ID form",
       formTitle: "Create a candidate Pre-ID",
       formSub: "Enter only the essential details. The bill rate and PDF are generated automatically.",
@@ -960,6 +1020,15 @@
     nl: {
       brandSub: "Kandidaatintake en tariefberekening",
       markupChip: "Pre-ID markup",
+      provider: "Leverancier",
+      staffingType: "Staffing type",
+      staffingTypeChoose: "Kies PS of GS",
+      contractType: "Contracttype",
+      contractTypeChoose: "Kies contracttype",
+      engagementType: "Inhuurvorm",
+      payRateExcl: "Pay rate excl. fee",
+      payRateIncl: "Pay rate incl. fee",
+      jwFee: "Jefferson Wells fee",
       eyebrow: "Pre-ID formulier",
       formTitle: "Maak een kandidaat Pre-ID",
       formSub: "Vul alleen de noodzakelijke gegevens in. Het bill rate en de PDF worden automatisch gegenereerd.",
@@ -1036,6 +1105,11 @@
   const downloadBtn = document.getElementById("downloadBtn");
   const completeChip = document.getElementById("completeChip");
   const completeText = document.getElementById("completeText");
+  const providerSelect = document.getElementById("providerSelect");
+
+  function providerMode() {
+    return providerSelect?.value === "jw" ? "jw" : "gi";
+  }
 
   function tr(key) {
     return i18n[currentLang][key] ?? key;
@@ -1167,8 +1241,9 @@
     const hoursMax = hoursRange ? hoursRange.max : null;
     const pay = parseDecimal(value("payRate"));
 
-    // Required business rule: every entered pay rate is multiplied by 2.325.
-    const bill = pay !== null ? roundTo(pay * MARKUP, 2) : null;
+    const isJW = providerMode() === "jw";
+    // Gi Group: pay rate × 2.325. Jefferson Wells ZZP: excl. rate + €2.20 fee = incl. rate.
+    const bill = pay !== null ? roundTo(isJW ? pay + JW_FEE : pay * MARKUP, 2) : null;
 
     const totalHoursMin = hoursMin !== null && weeks !== null ? roundTo(hoursMin * weeks, 2) : null;
     const totalHoursMax = hoursMax !== null && weeks !== null ? roundTo(hoursMax * weeks, 2) : null;
@@ -1183,10 +1258,11 @@
     if (el) el.textContent = text ?? "";
   }
 function missingRequired() {
-    return requiredFields.filter(name => !value(name));
+    return activeRequiredFields().filter(name => !value(name));
   }
 
   function updateCompleteness() {
+    const requiredFields = activeRequiredFields();
     const missing = missingRequired();
     const count = requiredFields.length - missing.length;
     const ready = missing.length === 0;
@@ -1201,15 +1277,17 @@ function missingRequired() {
     const c = calculations();
     const t = today();
 
+    const isJW = providerMode() === "jw";
     setText("todayPreview", `${tr("today")}: ${formatDate(t)}`);
-    setText("billPreview", `${tr("billPreview")}: ${c.bill === null ? "-" : money(c.bill)}`);
+    setText("billPreview", `${isJW ? tr("payRateIncl") : tr("billPreview")}: ${c.bill === null ? "-" : money(c.bill)}`);
 
     const billInput = field("billRate");
     if (billInput) billInput.value = c.bill === null ? "" : money(c.bill);
 
     setText("p-date", formatDate(t));
-    ["requesterName","employeeName","employeeEmail","employeePhone","managerName","supplierName","position","jobNumber","caoPathway","salaryScale","notes"]
+    ["requesterName","employeeName","employeeEmail","employeePhone","staffingType","managerName","supplierName","position","jobNumber","caoPathway","salaryScale","notes"]
       .forEach(name => setText(`p-${name}`, value(name)));
+    setText("p-contractDisplay", isJW ? "ZZP" : value("contractType"));
 
     setText("p-startDate", formatDate(c.start));
     setText("p-endDate", formatDate(c.end));
@@ -1251,9 +1329,11 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
     setText("l-candidateName", tr("candidateName"));
     setText("l-candidateEmail", tr("candidateEmail"));
     setText("l-candidatePhone", tr("candidatePhone"));
+    setText("l-staffingType", tr("staffingType"));
     setText("pdfSecAssignment", tr("pdfSecAssignment"));
     setText("l-manager", tr("manager"));
     setText("l-supplier", tr("supplier"));
+    setText("l-contractDisplay", providerMode() === "jw" ? tr("engagementType") : tr("contractType"));
     setText("l-position", tr("position"));
     setText("l-caoPathway", tr("caoPathway"));
     setText("l-salaryScale", tr("salaryScale"));
@@ -1262,16 +1342,37 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
     setText("l-hours", tr("hours"));
     setText("l-duration", tr("duration"));
     setText("pdfSecCommercial", tr("pdfSecCommercial"));
-    setText("l-payRate", tr("payRate"));
-    setText("l-billRate", tr("billRate"));
+    setText("l-payRate", providerMode() === "jw" ? tr("payRateExcl") : tr("payRate"));
+    setText("l-billRate", providerMode() === "jw" ? tr("payRateIncl") : tr("billRate"));
     setText("l-totalHours", tr("estimatedHours"));
     setText("l-estimatedValue", tr("estimatedValue"));
     setText("pdfSecNotes", tr("pdfSecNotes"));
     setText("l-notes", tr("notes"));
 
     updateSalaryScaleOptions();
+    applyProviderMode(false);
     initCalendars();
     updatePreview();
+  }
+
+  function applyProviderMode(refresh = true) {
+    const isJW = providerMode() === "jw";
+    field("supplierName").value = isJW ? "Jefferson Wells" : "Gi Group";
+    document.querySelectorAll("[data-gi-only]").forEach(el => el.classList.toggle("provider-hidden", isJW));
+    if (isJW && field("contractType")) field("contractType").value = "";
+
+    setText("ruleChipLabel", isJW ? tr("jwFee") : tr("markupChip"));
+    setText("ruleChipValue", isJW ? money(JW_FEE) : String(MARKUP));
+    setText("pdfMarkupLabel", isJW ? tr("jwFee") : tr("pdfMarkup"));
+    setText("pdfRuleValue", isJW ? money(JW_FEE) : String(MARKUP));
+    setText("payRateLabel", isJW ? tr("payRateExcl") : tr("payRate"));
+    setText("billRateLabel", isJW ? tr("payRateIncl") : tr("billRate"));
+    setText("formulaValue", isJW ? `Excl. + ${money(JW_FEE)}` : `Pay rate × ${MARKUP}`);
+    setText("l-contractDisplay", isJW ? tr("engagementType") : tr("contractType"));
+    setText("l-payRate", isJW ? tr("payRateExcl") : tr("payRate"));
+    setText("l-billRate", isJW ? tr("payRateIncl") : tr("billRate"));
+
+    if (refresh) updatePreview();
   }
 
   function showMessage(text, ok = false) {
@@ -1401,8 +1502,9 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
       pdf.setFillColor(...pdfColor("#243a57"));
       pdf.setDrawColor(...pdfColor("#3f5572"));
       pdf.roundedRect(164, 7, 35, 17, 2, 2, "FD");
-      pdfText(pdf, tr("pdfMarkup"), 181.5, 12, { size: 6.5, style: "bold", color: "#cfd8e6", align: "center" });
-      pdfText(pdf, "2.325", 181.5, 19, { size: 12.5, style: "bold", color: "#ffffff", align: "center" });
+      const isJW = providerMode() === "jw";
+      pdfText(pdf, isJW ? tr("jwFee") : tr("pdfMarkup"), 181.5, 12, { size: 6.5, style: "bold", color: "#cfd8e6", align: "center" });
+      pdfText(pdf, isJW ? money(JW_FEE) : String(MARKUP), 181.5, 19, { size: 12.5, style: "bold", color: "#ffffff", align: "center" });
 
       const colGap = 3;
       const left = 11;
@@ -1420,14 +1522,16 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
       y += 4;
       pdfField(pdf, left, y, contentW, 15, tr("candidateName"), value("employeeName"));
       y += 18;
-      pdfField(pdf, left, y, half, 15, tr("candidateEmail"), value("employeeEmail"));
-      pdfField(pdf, left + half + colGap, y, half, 15, tr("candidatePhone"), value("employeePhone"));
+      pdfField(pdf, left, y, third, 15, tr("candidateEmail"), value("employeeEmail"));
+      pdfField(pdf, left + third + colGap, y, third, 15, tr("candidatePhone"), value("employeePhone"));
+      pdfField(pdf, left + (third + colGap) * 2, y, third, 15, tr("staffingType"), value("staffingType"));
 
       y += 22;
       pdfSectionTitle(pdf, tr("pdfSecAssignment"), y);
       y += 4;
-      pdfField(pdf, left, y, half, 15, tr("manager"), value("managerName"));
-      pdfField(pdf, left + half + colGap, y, half, 15, tr("supplier"), value("supplierName"));
+      pdfField(pdf, left, y, third, 15, tr("manager"), value("managerName"));
+      pdfField(pdf, left + third + colGap, y, third, 15, tr("supplier"), value("supplierName"));
+      pdfField(pdf, left + (third + colGap) * 2, y, third, 15, isJW ? tr("engagementType") : tr("contractType"), isJW ? "ZZP" : value("contractType"));
       y += 18;
       pdfField(pdf, left, y, third, 15, tr("position"), value("position"));
       pdfField(pdf, left + third + colGap, y, third, 15, tr("caoPathway"), value("caoPathway"));
@@ -1442,8 +1546,8 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
       y += 22;
       pdfSectionTitle(pdf, tr("pdfSecCommercial"), y);
       y += 4;
-      pdfField(pdf, left, y, half, 16, tr("payRate"), c.pay === null ? "" : money(c.pay), { fill: "#eef4ff", border: "#cad8ff" });
-      pdfField(pdf, left + half + colGap, y, half, 16, tr("billRate"), c.bill === null ? "" : money(c.bill), { fill: "#eef4ff", border: "#cad8ff" });
+      pdfField(pdf, left, y, half, 16, isJW ? tr("payRateExcl") : tr("payRate"), c.pay === null ? "" : money(c.pay), { fill: "#eef4ff", border: "#cad8ff" });
+      pdfField(pdf, left + half + colGap, y, half, 16, isJW ? tr("payRateIncl") : tr("billRate"), c.bill === null ? "" : money(c.bill), { fill: "#eef4ff", border: "#cad8ff" });
       y += 19;
       pdfField(pdf, left, y, half, 16, tr("estimatedHours"), c.totalHoursMin === null ? "" : rangeText(c.totalHoursMin, c.totalHoursMax), { fill: "#edf8f3", border: "#cfe9dc" });
       pdfField(pdf, left + half + colGap, y, half, 16, tr("estimatedValue"), c.totalCostMin === null ? "" : moneyRange(c.totalCostMin, c.totalCostMax), { fill: "#edf8f3", border: "#cfe9dc" });
@@ -1473,8 +1577,10 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
 
   function resetForm() {
     form.reset();
+    providerSelect.value = "gi";
     field("supplierName").value = "Gi Group";
     updateSalaryScaleOptions();
+    applyProviderMode(false);
     hideMessage();
     updatePreview();
   }
@@ -1511,9 +1617,11 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
     updateSalaryScaleOptions();
     updatePreview();
   });
+  providerSelect.addEventListener("change", () => applyProviderMode(true));
   downloadBtn.addEventListener("click", downloadPDF);
   document.getElementById("resetBtn").addEventListener("click", resetForm);
 
+  providerSelect.value = "gi";
   field("supplierName").value = "Gi Group";
   applyLanguage("en");
 
