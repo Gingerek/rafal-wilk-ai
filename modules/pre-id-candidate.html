@@ -633,12 +633,6 @@
       </div>
 
       <div class="top-actions">
-        <label class="provider-switch"><span data-i18n="provider">Provider</span>
-          <select id="providerSelect" aria-label="Provider">
-            <option value="gi">Gi Group</option>
-            <option value="jw">Jefferson Wells</option>
-          </select>
-        </label>
         <div class="chip"><span class="dot"></span><span id="ruleChipLabel">Pre-ID markup</span> <strong id="ruleChipValue">2.325</strong></div>
         <div class="chip warn" id="completeChip"><span class="dot"></span><span id="completeText"></span></div>
         <div class="lang-switch" aria-label="Language">
@@ -660,6 +654,12 @@
           <div class="section-card">
             <div class="section-title"><span class="num">1</span><span data-i18n="secRequest">Request</span></div>
             <div class="grid">
+              <label class="wide"><span data-i18n="provider">Provider</span> <span class="required">*</span>
+                <select id="providerSelect" aria-label="Provider">
+                  <option value="gi">Gi Group</option>
+                  <option value="jw">Jefferson Wells</option>
+                </select>
+              </label>
               <label class="wide"><span data-i18n="requester">Requester name</span> <span class="required">*</span>
                 <select data-field="requesterName">
                   <option value="" selected disabled data-i18n-option="requesterChoose">Select requester</option>
