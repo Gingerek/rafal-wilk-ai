@@ -685,7 +685,7 @@
               <label><span data-i18n="candidatePhone">Phone</span>
                 <input data-field="employeePhone" data-ph="candidatePhonePh" />
               </label>
-              <label class="wide"><span data-i18n="staffingType">Staffing type</span> <span class="required">*</span>
+              <label class="wide" data-gi-only><span data-i18n="staffingType">Staffing type</span> <span class="required">*</span>
                 <select data-field="staffingType">
                   <option value="" selected disabled data-i18n-option="staffingTypeChoose">Select PS or GS</option>
                   <option value="PS">PS</option>
@@ -842,7 +842,7 @@
                       <div class="pdf-field wide"><span id="l-candidateName"></span><strong id="p-employeeName"></strong></div>
                       <div class="pdf-field"><span id="l-candidateEmail"></span><strong id="p-employeeEmail"></strong></div>
                       <div class="pdf-field"><span id="l-candidatePhone"></span><strong id="p-employeePhone"></strong></div>
-                      <div class="pdf-field"><span id="l-staffingType"></span><strong id="p-staffingType"></strong></div>
+                      <div class="pdf-field" data-gi-only><span id="l-staffingType"></span><strong id="p-staffingType"></strong></div>
                     </div>
                   </section>
 
@@ -926,14 +926,14 @@
   };
 
   const baseRequiredFields = [
-    "requesterName", "employeeName", "employeeEmail", "staffingType", "managerName",
+    "requesterName", "employeeName", "employeeEmail", "managerName",
     "supplierName", "position", "jobNumber", "startDate", "endDate",
     "hoursPerWeek", "payRate"
   ];
 
   function activeRequiredFields() {
     return providerMode() === "gi"
-      ? [...baseRequiredFields, "contractType", "caoPathway", "salaryScale"]
+      ? [...baseRequiredFields, "staffingType", "contractType", "caoPathway", "salaryScale"]
       : [...baseRequiredFields];
   }
 
@@ -1362,6 +1362,7 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
     field("supplierName").value = isJW ? "Jefferson Wells" : "Gi Group";
     document.querySelectorAll("[data-gi-only]").forEach(el => el.classList.toggle("provider-hidden", isJW));
     if (isJW) {
+      if (field("staffingType")) field("staffingType").value = "";
       if (field("contractType")) field("contractType").value = "";
       if (field("caoPathway")) field("caoPathway").value = "";
       if (field("salaryScale")) {
@@ -1535,9 +1536,14 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
       y += 4;
       pdfField(pdf, left, y, contentW, 15, tr("candidateName"), value("employeeName"));
       y += 18;
-      pdfField(pdf, left, y, third, 15, tr("candidateEmail"), value("employeeEmail"));
-      pdfField(pdf, left + third + colGap, y, third, 15, tr("candidatePhone"), value("employeePhone"));
-      pdfField(pdf, left + (third + colGap) * 2, y, third, 15, tr("staffingType"), value("staffingType"));
+      if (isJW) {
+        pdfField(pdf, left, y, half, 15, tr("candidateEmail"), value("employeeEmail"));
+        pdfField(pdf, left + half + colGap, y, half, 15, tr("candidatePhone"), value("employeePhone"));
+      } else {
+        pdfField(pdf, left, y, third, 15, tr("candidateEmail"), value("employeeEmail"));
+        pdfField(pdf, left + third + colGap, y, third, 15, tr("candidatePhone"), value("employeePhone"));
+        pdfField(pdf, left + (third + colGap) * 2, y, third, 15, tr("staffingType"), value("staffingType"));
+      }
 
       y += 22;
       pdfSectionTitle(pdf, tr("pdfSecAssignment"), y);
