@@ -717,7 +717,7 @@
               <label><span data-i18n="jobNumber">Job number</span> <span class="required">*</span>
                 <input data-field="jobNumber" data-ph="jobNumberPh" />
               </label>
-              <label><span data-i18n="caoPathway">MSD CAO pathway</span> <span class="required">*</span>
+              <label data-gi-only><span data-i18n="caoPathway">MSD CAO pathway</span> <span class="required">*</span>
                 <select data-field="caoPathway">
                   <option value="" selected disabled data-i18n-option="caoPathwayChoose">Select pathway</option>
                   <optgroup label="Business Support">
@@ -759,7 +759,7 @@
                   </optgroup>
                 </select>
               </label>
-              <label><span data-i18n="salaryScale">Salary scale</span> <span class="required">*</span>
+              <label data-gi-only><span data-i18n="salaryScale">Salary scale</span> <span class="required">*</span>
                 <select data-field="salaryScale" disabled>
                   <option value="" selected disabled data-i18n-option="salaryScaleChoose">Select salary scale</option>
                 </select>
@@ -853,8 +853,8 @@
                       <div class="pdf-field"><span id="l-supplier"></span><strong id="p-supplierName"></strong></div>
                       <div class="pdf-field"><span id="l-contractDisplay"></span><strong id="p-contractDisplay"></strong></div>
                       <div class="pdf-field wide"><span id="l-position"></span><strong id="p-position"></strong></div>
-                      <div class="pdf-field"><span id="l-caoPathway"></span><strong id="p-caoPathway"></strong></div>
-                      <div class="pdf-field"><span id="l-salaryScale"></span><strong id="p-salaryScale"></strong></div>
+                      <div class="pdf-field" data-gi-only><span id="l-caoPathway"></span><strong id="p-caoPathway"></strong></div>
+                      <div class="pdf-field" data-gi-only><span id="l-salaryScale"></span><strong id="p-salaryScale"></strong></div>
                       <div class="pdf-field"><span id="l-startDate"></span><strong id="p-startDate"></strong></div>
                       <div class="pdf-field"><span id="l-endDate"></span><strong id="p-endDate"></strong></div>
                       <div class="pdf-field"><span id="l-hours"></span><strong id="p-hours"></strong></div>
@@ -927,12 +927,14 @@
 
   const baseRequiredFields = [
     "requesterName", "employeeName", "employeeEmail", "staffingType", "managerName",
-    "supplierName", "position", "jobNumber", "caoPathway", "salaryScale", "startDate", "endDate",
+    "supplierName", "position", "jobNumber", "startDate", "endDate",
     "hoursPerWeek", "payRate"
   ];
 
   function activeRequiredFields() {
-    return providerMode() === "gi" ? [...baseRequiredFields, "contractType"] : [...baseRequiredFields];
+    return providerMode() === "gi"
+      ? [...baseRequiredFields, "contractType", "caoPathway", "salaryScale"]
+      : [...baseRequiredFields];
   }
 
   const i18n = {
@@ -1359,7 +1361,16 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
     const isJW = providerMode() === "jw";
     field("supplierName").value = isJW ? "Jefferson Wells" : "Gi Group";
     document.querySelectorAll("[data-gi-only]").forEach(el => el.classList.toggle("provider-hidden", isJW));
-    if (isJW && field("contractType")) field("contractType").value = "";
+    if (isJW) {
+      if (field("contractType")) field("contractType").value = "";
+      if (field("caoPathway")) field("caoPathway").value = "";
+      if (field("salaryScale")) {
+        field("salaryScale").value = "";
+        field("salaryScale").disabled = true;
+      }
+    } else {
+      updateSalaryScaleOptions();
+    }
 
     setText("ruleChipLabel", isJW ? tr("jwFee") : tr("markupChip"));
     setText("ruleChipValue", isJW ? money(JW_FEE) : String(MARKUP));
@@ -1533,9 +1544,13 @@ setText("pdfSubtitle", tr("pdfSubtitle"));
       pdfField(pdf, left + third + colGap, y, third, 15, tr("supplier"), value("supplierName"));
       pdfField(pdf, left + (third + colGap) * 2, y, third, 15, isJW ? tr("engagementType") : tr("contractType"), isJW ? "ZZP" : value("contractType"));
       y += 18;
-      pdfField(pdf, left, y, third, 15, tr("position"), value("position"));
-      pdfField(pdf, left + third + colGap, y, third, 15, tr("caoPathway"), value("caoPathway"));
-      pdfField(pdf, left + (third + colGap) * 2, y, third, 15, tr("salaryScale"), value("salaryScale"));
+      if (isJW) {
+        pdfField(pdf, left, y, contentW, 15, tr("position"), value("position"));
+      } else {
+        pdfField(pdf, left, y, third, 15, tr("position"), value("position"));
+        pdfField(pdf, left + third + colGap, y, third, 15, tr("caoPathway"), value("caoPathway"));
+        pdfField(pdf, left + (third + colGap) * 2, y, third, 15, tr("salaryScale"), value("salaryScale"));
+      }
       y += 18;
       pdfField(pdf, left, y, third, 15, tr("startDate"), formatDate(c.start));
       pdfField(pdf, left + third + colGap, y, third, 15, tr("endDate"), formatDate(c.end));
