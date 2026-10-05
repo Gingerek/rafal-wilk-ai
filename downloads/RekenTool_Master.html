@@ -765,7 +765,7 @@ const sel = document.getElementById('bureauSelect');
           frame.contentWindow.setLanguage(lang);
         }
       } catch (_) {}
-      try { injectConsignatieIntoFrame(); } catch (_) {}
+      
     });
     function loadBureau(name) {
       const b64 = BUREAU_HTML_B64[name] || BUREAU_HTML_B64['Master'];
@@ -795,17 +795,6 @@ const sel = document.getElementById('bureauSelect');
       return value;
     }
 
-    function resetConsignatieDefaults(forceRender = true){
-      try{
-        const win = frame && frame.contentWindow;
-        const doc = win && win.document;
-        if(!doc) return;
-        const multiplierField = doc.getElementById('consignMultiplierValue');
-        if(multiplierField) multiplierField.textContent = formatTrimmedNL(FIXED_CONSIGN_MULTIPLIER, 2);
-        if(forceRender) updateConsignatiePanel();
-      }catch(_){ }
-    }
-
     function parseNlNumber(value){
       const normalized = String(value || '').replace(/\s+/g,'').replace(',', '.');
       const parsed = Number(normalized);
@@ -833,196 +822,6 @@ const sel = document.getElementById('bureauSelect');
       }).format(value);
     }
 
-    function consignText(lang){
-      const l = (lang || 'nl').toLowerCase().slice(0,2);
-      if(l === 'pl'){
-        return {
-          title:'Dyżury / consignatie',
-          tableTitle:'Stawki dyżurowe według CAO',
-          fixedMultiplier:'Stały mnożnik',
-          period:'Okres',
-          base:'Podstawa CAO',
-          result:'Stawka dostawców',
-        };
-      }
-      if(l === 'en'){
-        return {
-          title:'On-call allowances',
-          tableTitle:'On-call rates according to CLA',
-          fixedMultiplier:'Fixed multiplier',
-          period:'Period',
-          base:'Base CLA',
-          result:'Supplier',
-        };
-      }
-      return {
-        title:'Consignatiediensten',
-        tableTitle:'Consignatietarieven volgens CAO',
-        fixedMultiplier:'Vaste multiplier',
-        period:'Periode',
-        base:'Basis CAO',
-        result:'Leverancier',
-      };
-    }
-
-    function injectConsignatieIntoFrame(){
-      try{
-        const win = frame && frame.contentWindow;
-        const doc = win && win.document;
-        if(!doc) return;
-        if (currentAgencyCfg && currentAgencyCfg.bureau !== 'Master') return;
-
-        if(!doc.getElementById('consignatie-inline-style')){
-          const style = doc.createElement('style');
-          style.id = 'consignatie-inline-style';
-          style.textContent = `
-            .consign-panel{ margin-top:18px; }
-            .consign-toolbar{
-              display:grid;
-              grid-template-columns:minmax(220px, 320px);
-              gap:14px;
-              align-items:stretch;
-              margin: 0 0 14px 0;
-            }
-            .consign-metric-card{
-              background: var(--surface-strong);
-              border: 1px solid var(--border-subtle);
-              border-radius: var(--radius-lg);
-              box-shadow: var(--shadow-1);
-              padding: 14px 16px;
-            }
-            .consign-metric-label{
-              display:block;
-              font-size:12px;
-              font-weight:800;
-              color: var(--text-secondary);
-              margin-bottom:10px;
-            }
-            .consign-metric-card{
-              display:flex;
-              flex-direction:column;
-              justify-content:center;
-              background: linear-gradient(180deg, rgba(22,163,74,0.09), rgba(22,163,74,0.04));
-              border-color: rgba(22,163,74,0.20);
-            }
-            .consign-metric-value{
-              font-size:34px;
-              font-weight:900;
-              letter-spacing:-0.9px;
-              color:#15803d;
-              line-height:1;
-            }
-            .consign-table td:last-child,
-            .consign-table th:last-child,
-            .consign-table td:nth-child(2),
-            .consign-table th:nth-child(2),
-            .consign-table td:nth-child(3),
-            .consign-table th:nth-child(3){ text-align:right; }
-            .consign-table td:last-child strong{ font-weight:900; }
-            @media (max-width:980px){
-              .consign-toolbar{ grid-template-columns:1fr; }
-            }
-          `;
-          doc.head.appendChild(style);
-        }
-
-        const allowances = doc.querySelector('section.allowances-panel');
-        if(!allowances) return;
-        const getConsignatieAnchor = () => doc.getElementById('overnameFeePanel') || doc.querySelector('section.merit-panel') || doc.querySelector('section.salary-panel') || allowances;
-
-        let panel = doc.getElementById('consignatieInlinePanel');
-        if(!panel){
-          panel = doc.createElement('section');
-          panel.className = 'panel consign-panel';
-          panel.id = 'consignatieInlinePanel';
-          panel.innerHTML = `
-            <div class="panel-header">
-              <h2 id="consignTitle"></h2>
-            </div>
-            <div class="consign-toolbar">
-              <div class="consign-metric-card">
-                <span class="consign-metric-label" id="consignMultiplierLabel"></span>
-                <strong class="consign-metric-value" id="consignMultiplierValue">2.55</strong>
-              </div>
-            </div>
-            <div class="allowance-tables-container">
-              <article class="table-card">
-                <h3 id="consignTableTitle"></h3>
-                <table class="allowance-table consign-table">
-                  <thead>
-                    <tr>
-                      <th id="consignHeadPeriod"></th>
-                      <th id="consignHeadBase"></th>
-                      <th id="consignHeadMultiplier"></th>
-                      <th id="consignHeadResult"></th>
-                    </tr>
-                  </thead>
-                  <tbody id="consignRows"></tbody>
-                </table>
-              </article>
-            </div>
-          `;
-          getConsignatieAnchor().insertAdjacentElement('afterend', panel);
-
-        }
-
-        const anchor = getConsignatieAnchor();
-        if(anchor && anchor.nextElementSibling !== panel){
-          anchor.insertAdjacentElement('afterend', panel);
-        }
-
-        if(win.setLanguage && !win.__consignLangWrapped){
-          const originalSetLanguage = win.setLanguage.bind(win);
-          win.setLanguage = function(lang){
-            const result = originalSetLanguage(lang);
-            try{ setConsignatieLanguage(doc, lang); }catch(_){ }
-            return result;
-          };
-          win.__consignLangWrapped = true;
-        }
-
-        setConsignatieLanguage(doc, win.currentLang || getCurrentLang() || 'nl');
-        resetConsignatieDefaults(true);
-      }catch(_){ }
-    }
-
-    function setConsignatieLanguage(doc, lang){
-      const copy = consignText(lang);
-      const q = (id) => doc.getElementById(id);
-      if(q('consignTitle')) q('consignTitle').textContent = copy.title;
-      if(q('consignMultiplierLabel')) q('consignMultiplierLabel').textContent = copy.fixedMultiplier;
-      if(q('consignTableTitle')) q('consignTableTitle').textContent = copy.tableTitle;
-      if(q('consignHeadPeriod')) q('consignHeadPeriod').textContent = copy.period;
-      if(q('consignHeadBase')) q('consignHeadBase').textContent = copy.base;
-      if(q('consignHeadMultiplier')) q('consignHeadMultiplier').textContent = copy.fixedMultiplier;
-      if(q('consignHeadResult')) q('consignHeadResult').textContent = copy.result;
-    }
-
-    function updateConsignatiePanel(){
-      try{
-        const win = frame && frame.contentWindow;
-        const doc = win && win.document;
-        if(!doc) return;
-        const rows = doc.getElementById('consignRows');
-        const multiplierField = doc.getElementById('consignMultiplierValue');
-        if(!rows || !multiplierField) return;
-
-        const multiplier = FIXED_CONSIGN_MULTIPLIER;
-        multiplierField.textContent = formatTrimmedNL(multiplier, 2);
-
-        rows.innerHTML = CONSIGN_DATA.map(item => {
-          const activeLang = (win.currentLang || getCurrentLang() || 'nl').toLowerCase().slice(0,2);
-          let label = activeLang === 'en' ? item.label_en : item.label_nl;
-          if(activeLang === 'pl') label = item.label_pl || item.label_nl;
-          return `<tr>
-            <td><strong>${label}</strong></td>
-            <td>${formatEuroNL(item.base)}</td>
-            <td>${formatTrimmedNL(multiplier, 2)}x</td>
-            <td><strong>${formatEuroNL(item.base * multiplier)}</strong></td>
-          </tr>`;
-        }).join('');
-      }catch(_){ }
-    }
     const AGENCY_CONFIG = {
       ps:     { bureau: 'Master', staffingType: 'professional', markupPct: 143.5 },
       gs:     { bureau: 'Master', staffingType: 'general',      markupPct: 142.0 },
@@ -1053,12 +852,12 @@ const sel = document.getElementById('bureauSelect');
         if(currentAgencyCfg.bureau === 'Master' && staffing){
           staffing.value = currentAgencyCfg.staffingType || 'professional';
           if(typeof win.resetToZeroDefaults === 'function') win.resetToZeroDefaults({ preserveStaffing: true });
-          resetConsignatieDefaults(false);
+
           if(typeof win.syncStaffingUI === 'function') win.syncStaffingUI();
           if(typeof win.calculate === 'function') win.calculate();
-          resetConsignatieDefaults(true);
+
         } else {
-          resetConsignatieDefaults(false);
+
         }
 
         const pctToApply = currentAgencyCfg.customMarkup ? getEffectiveCustomMarkupPct() : currentAgencyCfg.markupPct;
@@ -1074,7 +873,7 @@ const sel = document.getElementById('bureauSelect');
     }
 
     // Apply agency selection after each iframe (re)load
-    frame.addEventListener('load', () => { applyAgencyCfgToFrame(); try { injectConsignatieIntoFrame(); } catch (_) {} try { resetConsignatieDefaults(true); } catch (_) {} });
+    frame.addEventListener('load', () => { applyAgencyCfgToFrame();   });
 
     function loadAgency(key) {
       const cfg = AGENCY_CONFIG[key] || AGENCY_CONFIG.gs;
@@ -1093,7 +892,7 @@ const sel = document.getElementById('bureauSelect');
 
     selectEl.addEventListener('change', () => {
       toggleCustomMarkupField();
-      try { resetConsignatieDefaults(false); } catch (_) {}
+      
       selectEl.value = "noname"; loadAgency("noname");
     });
 
@@ -1143,7 +942,7 @@ const sel = document.getElementById('bureauSelect');
 
     // Default
     toggleCustomMarkupField();
-    try { resetConsignatieDefaults(false); } catch (_) {}
+    
     selectEl.value = "noname"; loadAgency("noname");
   </script>
 
