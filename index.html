@@ -1092,3 +1092,112 @@ function openApp(id, title){
 })();
 </script>
 <script src="assets/js/platform-v2.js?v=20261005-download-2" defer></script>
+
+
+<script id="rw-intake-clear-document-script">
+(function(){
+  if (window.__rwIntakeClearDocumentInstalled) return;
+  window.__rwIntakeClearDocumentInstalled = true;
+
+  var INTAKE_MODULE_IDX = '3';
+  var ACTIVE_MODULE_KEY = 'rw_active_module_idx';
+  var STATE_KEY = 'rw_module_state_v1:module:3';
+
+  function clearSavedState(frameWindow){
+    try { localStorage.removeItem(STATE_KEY); } catch(_e) {}
+    try { sessionStorage.removeItem(STATE_KEY); } catch(_e) {}
+    try { if (frameWindow && frameWindow.localStorage) frameWindow.localStorage.removeItem(STATE_KEY); } catch(_e) {}
+    try { if (frameWindow && frameWindow.sessionStorage) frameWindow.sessionStorage.removeItem(STATE_KEY); } catch(_e) {}
+  }
+
+  function clearDocument(frameDocument, frameWindow){
+    if (!frameDocument) return;
+
+    frameDocument.querySelectorAll('form').forEach(function(form){
+      try { form.reset(); } catch(_e) {}
+    });
+
+    frameDocument.querySelectorAll('input, textarea, select, [contenteditable="true"]').forEach(function(el){
+      var tag = String(el.tagName || '').toLowerCase();
+
+      if (tag === 'input') {
+        var type = String(el.type || 'text').toLowerCase();
+        if (type === 'button' || type === 'submit' || type === 'reset' || type === 'hidden') return;
+        if (type === 'checkbox' || type === 'radio') el.checked = false;
+        else el.value = '';
+      } else if (tag === 'textarea') {
+        el.value = '';
+      } else if (tag === 'select') {
+        el.selectedIndex = 0;
+      } else if (el.isContentEditable) {
+        el.innerHTML = '';
+      }
+
+      try { el.dispatchEvent(new Event('input', { bubbles:true })); } catch(_e) {}
+      try { el.dispatchEvent(new Event('change', { bubbles:true })); } catch(_e) {}
+    });
+
+    frameDocument.querySelectorAll('output').forEach(function(el){
+      el.textContent = '';
+    });
+
+    clearSavedState(frameWindow);
+    setTimeout(function(){ clearSavedState(frameWindow); }, 80);
+  }
+
+  function injectClearButton(){
+    var frame = document.getElementById('appframe');
+    if (!frame || !frame.classList.contains('show')) return;
+
+    var active = null;
+    try { active = localStorage.getItem(ACTIVE_MODULE_KEY); } catch(_e) {}
+    if (String(active) !== INTAKE_MODULE_IDX) return;
+
+    var frameDocument, frameWindow;
+    try {
+      frameDocument = frame.contentDocument;
+      frameWindow = frame.contentWindow;
+    } catch(_e) {
+      return;
+    }
+    if (!frameDocument || !frameDocument.body) return;
+    if (frameDocument.getElementById('rwIntakeClearDocument')) return;
+
+    var button = frameDocument.createElement('button');
+    button.id = 'rwIntakeClearDocument';
+    button.type = 'button';
+    button.textContent = 'Wyczyść dokument';
+    button.setAttribute('aria-label', 'Wyczyść dokument');
+    button.style.cssText = [
+      'position:fixed',
+      'top:18px',
+      'right:18px',
+      'z-index:2147483647',
+      'padding:10px 16px',
+      'border-radius:10px',
+      'border:1px solid rgba(255,255,255,.28)',
+      'background:#151515',
+      'color:#fff',
+      'font:600 14px/1.2 system-ui,-apple-system,Segoe UI,Roboto,sans-serif',
+      'cursor:pointer',
+      'box-shadow:0 8px 24px rgba(0,0,0,.28)'
+    ].join(';');
+
+    button.addEventListener('click', function(){
+      clearDocument(frameDocument, frameWindow);
+    });
+
+    frameDocument.body.appendChild(button);
+  }
+
+  var frame = document.getElementById('appframe');
+  if (frame) {
+    frame.addEventListener('load', function(){
+      setTimeout(injectClearButton, 0);
+      setTimeout(injectClearButton, 120);
+    });
+  }
+
+  setInterval(injectClearButton, 350);
+})();
+</script>
