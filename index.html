@@ -50,6 +50,8 @@
 <title>Rafal Wilk AI ©</title>
 <style id="rw-critical-startup-guard">
   html{background:#05080d}
+  /* Keep the lazy-loaded voice assistant from rendering as raw content on the homepage. */
+  #rwAgentOverlay:not(.open){display:none!important}
   body:not(.rw-v2-ready):not(.app-open){
     background:#05080d!important;
     overflow:hidden!important;
