@@ -1,0 +1,63 @@
+name: Homepage layout diagnostic
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/homepage-diagnostic.yml']
+  workflow_dispatch:
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser driver
+        run: npm install --no-save playwright-core
+      - name: Run Chromium diagnostic of local and published homepage
+        run: |
+          export CHROME_BIN="$(which google-chrome-stable || which google-chrome || which chromium || which chromium-browser)"
+          python3 -m http.server 4173 > /tmp/rw-server.log 2>&1 &
+          node <<'NODE'
+          const {chromium}=require('playwright-core');
+          (async()=>{
+            const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_BIN,args:['--no-sandbox','--disable-dev-shm-usage']});
+            const urls=['http://127.0.0.1:4173/index.html','https://www.rafalwilkai.com/'];
+            for(const url of urls){
+              const page=await browser.newPage({viewport:{width:1600,height:950},deviceScaleFactor:1});
+              const failures=[];
+              page.on('pageerror',e=>failures.push('JS '+String(e).slice(0,350)));
+              page.on('requestfailed',req=>failures.push('NETWORK '+req.url()+' '+req.failure()?.errorText));
+              page.on('response',res=>{if(res.status()>=400) failures.push('HTTP '+res.status()+' '+res.url())});
+              try {
+                const response=await page.goto(url,{waitUntil:'domcontentloaded',timeout:45000});
+                await page.waitForTimeout(2000);
+                const state=await page.evaluate(()=>{
+                  function s(q){
+                    const el=document.querySelector(q);
+                    if(!el)return null;
+                    const rect=el.getBoundingClientRect();
+                    const st=getComputedStyle(el);
+                    return {x:rect.x,y:rect.y,w:rect.width,h:rect.height,display:st.display,visibility:st.visibility,position:st.position,overflow:st.overflow,opacity:st.opacity,background:st.backgroundImage?.slice(0,160),zIndex:st.zIndex};
+                  }
+                  const files=[...document.styleSheets].map(x=>({url:x.href||'inline',disabled:x.disabled})).slice(0,20);
+                  return {viewport:[innerWidth,innerHeight],documentHeight:document.documentElement.scrollHeight,bodyClass:document.body.className,main:s('main.wrap'),shell:s('.rw-v2-shell'),hero:s('.rw-v2-hero'),poster:s('.rw-v2-hero-poster'),agent:s('#rwAgentOverlay'),panel:s('#rwAgentPanel'),launcher:s('#rwVoiceLauncher'),stylePatch:!![...document.styleSheets].find(x=>x.ownerNode?.id==='rw-critical-startup-guard') && !!document.querySelector('#rw-critical-startup-guard')?.textContent.includes('#rwAgentOverlay:not(.open)'),files};
+                });
+                console.log('AUDIT '+JSON.stringify({url,status:response.status(),state,failures}));
+                await page.screenshot({path:url.includes('127.0.0.1')?'local-homepage.png':'live-homepage.png',fullPage:true});
+              }catch(e){console.log('AUDIT_ERROR '+url+' '+String(e)+' '+JSON.stringify(failures));}
+              await page.close();
+            }
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: homepage-diagnostic
+          path: |
+            local-homepage.png
+            live-homepage.png
+          if-no-files-found: ignore
