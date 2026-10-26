@@ -107,6 +107,9 @@
     { match:'Ocena dopasowania CV', icon:'cv', category:'recruitment',
       title:{pl:'Ocena dopasowania CV', en:'CV Match Review', nl:'CV-match beoordeling'},
       desc:{pl:'Porównanie CV z opisem stanowiska i wymaganiami.', en:'Compare a CV against role requirements.', nl:'Vergelijk een CV met functie-eisen.'}},
+    { match:'Role & Range', icon:'rate', category:'recruitment',
+      title:{pl:'Role & Range', en:'Role & Range', nl:'Role & Range'},
+      desc:{pl:'Znajdź stanowisko, poziom, skalę CAO i widełki wynagrodzenia CGP.', en:'Find job titles, levels, CAO scales and CGP salary ranges.', nl:'Vind functies, niveaus, CAO-schalen en CGP-salarisbanden.'}},
     { match:['MSD CAO Salary Check', 'CAO Salary Check'], icon:'document', category:'documents',
       title:{pl:'MSD CAO Salary Check', en:'MSD CAO Salary Check', nl:'MSD CAO Salary Check'},
       desc:{pl:'Kalkulator skali CAO, midpoint, merit matrix i minimum wage z dodatkowym kalkulatorem standardowym.', en:'CAO scale, midpoint, merit matrix, and minimum wage calculator with an additional standard calculator.', nl:'CAO-schaal, midpoint, merit matrix en minimumlooncalculator met een extra standaardrekenmachine.'}},
@@ -1959,7 +1962,7 @@
     const rows = commandRows(query);
     list.innerHTML = rows.length ? rows.map((item, index) => {
       const isPreId = item.card?.classList?.contains('rw-preid-card') || item.title === 'Pre ID';
-      if (isPreId || item.card?.querySelector('.rw-rekentool-download')) {
+      if (isPreId || item.card?.querySelector('.rw-rekentool-download, .rw-tool-download')) {
         return `
           <div class="rw-v2-command-item rw-v2-command-item-preid${index === 0 ? ' is-active' : ''}" data-rw-command-index="${index}" role="group" aria-label="${item.title}">
             <span class="rw-v2-command-icon">${icons[item.meta.icon] || icons.project}</span>
@@ -2009,7 +2012,7 @@
         const row = button.closest('[data-rw-command-index]');
         const item = rows[Number(row?.dataset.rwCommandIndex || 0)];
         closeCommandPalette();
-        item?.card?.querySelector('.rw-preid-download, .rw-rekentool-download')?.click();
+        item?.card?.querySelector('.rw-preid-download, .rw-rekentool-download, .rw-tool-download')?.click();
       });
     });
   }
@@ -3308,7 +3311,7 @@
 
   function applyPremiumModuleTheme(frame){
     try {
-      if (frame?.id === 'redukcja') return;
+      if (frame?.id === 'redukcja' || frame?.id === 'rolerange') return;
       const doc = frame?.contentDocument;
       if (!doc || !doc.documentElement) return;
       const srcdoc = frame.getAttribute('srcdoc') || '';

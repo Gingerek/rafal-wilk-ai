@@ -46,7 +46,7 @@
 <link rel="preload" as="style" href="assets/css/platform-v2.min.css?v=20260806-cleanwall-2">
 <link rel="preload" as="style" href="assets/css/platform-nextlevel.css?v=20260926-fullscreen-home-1">
 <link rel="preload" as="style" href="assets/css/platform-face-clarity.css?v=20260923-preid-3">
-<link rel="preload" as="script" href="assets/js/platform-v2.js?v=20261005-download-2">
+<link rel="preload" as="script" href="assets/js/platform-v2.js?v=20261026-role-range-1">
 <title>Rafal Wilk AI ©</title>
 <style id="rw-critical-startup-guard">
   html{background:#05080d}
@@ -568,6 +568,13 @@ body.rw-v2-ready.rw-v2-command-open:not(.app-open) .rw-v2-command-trigger::befor
 <button class="btn" data-idx="6" type="button">Open in platform</button>
 </article>
 <article class="card">
+<div class="title" data-title-key="Role &amp; Range">Role &amp; Range</div>
+<div class="rw-preid-actions">
+<a class="btn" onclick="openApp('rolerange', this.closest('.card').querySelector('.title').textContent)">Open</a>
+<a class="btn rw-tool-download" href="modules/role-range.html?v=20261026-1" download="Role_Range.html">Download</a>
+</div>
+</article>
+<article class="card">
 <div class="title" data-title-key="MSD CAO Salary Check">MSD CAO Salary Check</div>
 <a class="btn" onclick="openApp('msdcaosalarycheck', this.parentElement.querySelector('.title').textContent)">Open</a>
 </article>
@@ -605,6 +612,7 @@ body.rw-v2-ready.rw-v2-command-open:not(.app-open) .rw-v2-command-trigger::befor
 <iframe id="rekentoolgeneralstaffing" title="RekenTool General Staffing" data-src="modules/rekentool-general-staffing.html" loading="lazy"></iframe>
 <iframe id="rekentoolprofessionalstaffing" title="RekenTool Professional Staffing" data-src="modules/rekentool-professional-staffing.html" loading="lazy"></iframe>
 <iframe id="rekentoolpayroll" title="RekenTool Payroll" data-src="modules/rekentool-pay-roll.html" loading="lazy"></iframe>
+<iframe id="rolerange" title="Role &amp; Range" data-src="modules/role-range.html?v=20261026-1" loading="lazy"></iframe>
 <iframe id="msdcaosalarycheck" title="MSD CAO Salary Check" data-src="modules/msd-cao-salary-check.html?v=20260817-v19-calculator-impact-v1" loading="lazy"></iframe>
 <iframe id="mycompany" data-src="modules/my-company.html" title="My Projects" loading="lazy"></iframe></section>
 </main>
@@ -1093,7 +1101,7 @@ function openApp(id, title){
   render();
 })();
 </script>
-<script src="assets/js/platform-v2.js?v=20261005-download-2" defer></script>
+<script src="assets/js/platform-v2.js?v=20261026-role-range-1" defer></script>
 
 
 <script id="rw-intake-clear-document-script">
