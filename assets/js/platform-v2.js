@@ -89,6 +89,9 @@
     else motionQuery?.addListener?.(queueVisualPerformanceProfile);
   }
   const modules = [
+    { match:'Recruitment Hub', icon:'cv', category:'recruitment',
+      title:{pl:'Recruitment Hub',en:'Recruitment Hub',nl:'Recruitment Hub'},
+      desc:{pl:'Tracker rekrutacji CSP i raporty dostawców PDF.',en:'CSP recruitment tracker and supplier PDF reporting.',nl:'CSP-recruitmenttracker en PDF-rapportages voor leveranciers.'}},
     { match:'Contract Budget Calculator', icon:'calculator', category:'finance',
       title:{pl:'Kalkulator budżetu kontraktu', en:'Contract Budget Calculator', nl:'Contractbudget calculator'},
       desc:{pl:'Szybka estymacja budżetu i kosztów kontraktu.', en:'Fast contract budget and cost estimation.', nl:'Snelle raming van contractbudget en kosten.'}},
