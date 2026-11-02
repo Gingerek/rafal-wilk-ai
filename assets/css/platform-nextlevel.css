@@ -1274,3 +1274,44 @@ body.rw-v2-ready:not(.app-open) .privacy-footer{
     max-height:100vh!important;
   }
 }
+
+
+/* Recruitment Hub platform: responsive, native module-list scrolling */
+body.rw-v2-ready .rw-v2-command-palette{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  animation:none!important;
+  padding:clamp(12px,7vh,72px) 12px 12px!important;
+  align-items:start!important;
+}
+body.rw-v2-ready .rw-v2-command-dialog{
+  max-height:calc(100dvh - clamp(24px,14vh,144px))!important;
+  display:flex!important;
+  flex-direction:column!important;
+  min-height:0!important;
+}
+body.rw-v2-ready .rw-v2-command-list{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch;
+  scroll-behavior:auto!important;
+  touch-action:pan-y!important;
+  scrollbar-gutter:stable;
+  contain:layout style;
+}
+body.rw-v2-ready .rw-v2-command-item{
+  transition:background-color .12s ease,border-color .12s ease!important;
+  animation:none!important;
+  transform:none!important;
+}
+body.rw-v2-ready .rw-v2-command-item:hover{
+  transform:none!important;
+}
+@media(max-width:650px){
+ body.rw-v2-ready .rw-v2-command-palette{padding:12px!important;}
+ body.rw-v2-ready .rw-v2-command-dialog{max-height:calc(100dvh - 24px)!important;}
+}
