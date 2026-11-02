@@ -14,7 +14,7 @@
   const remoteVersions=new Map();
   const savedJobs=new Map();
   let client=null,sessionUser=null,member=null,ready=false,syncing=false,saveQueued=false;
-  let refreshTimer=0,subscription=null,authSubscription=null,blocked=false;
+  let refreshTimer=0,subscription=null,authSubscription=null,blocked=false,recoveryMode=false;
   const originals=['connectDisk','saveDiskNow','importJsonBtn','importCsvBtn','resetDemo'];
   const equals=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
   function status(value,isError){
@@ -24,7 +24,7 @@
     if(message){message.textContent=value;message.style.color=isError?'#b3261e':'#5f6368'}
   }
   function access(mode){
-    const isReady=mode==='ready';
+    const isReady=mode==='ready'&&!recoveryMode;
     document.documentElement.classList.toggle('rh-cloud-ready',isReady);
     if(gate)gate.hidden=isReady;
     if(badge)badge.textContent=isReady?'Shared database · '+member.csp_name:'Shared database · sign in';
@@ -58,9 +58,6 @@
     actor.disabled=false;actor.value='';
     bridge.replaceState({jobs:[],history:[]});
     if($('rhCloudError'))$('rhCloudError').hidden=true;
-  }
-  function owned(){
-    if(!ready||blocked||!member)throw new Error('Not signed in as an active CSP');
   }
   async function loadServerData(force=false){
     if(!member)return;
@@ -213,11 +210,19 @@
       client=window.supabase.createClient(config.url,config.anonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
       client.auth.onAuthStateChange((event)=>{
         if(event==='SIGNED_OUT'){clearTeam();access('locked');loginMessage('Signed out.')}
+        if(event==='PASSWORD_RECOVERY'){
+          recoveryMode=true;ready=false;
+          $('rhCloudLoginForm').hidden=true;
+          $('rhCloudRecoveryForm').hidden=false;
+          $('rhCloudRequestReset').hidden=true;
+          access('locked');
+          loginMessage('Set your new password to activate this invitation or recovery session.');
+        }
       });
       const {data,error}=await client.auth.getUser();
       if(error&&!/session missing/i.test(error.message||''))throw error;
-      if(data?.user){await signedIn(data.user)}
-      else loginMessage('Sign in with your invited CSP email and password.');
+      if(data?.user&&!recoveryMode){await signedIn(data.user)}
+      else if(!recoveryMode)loginMessage('Sign in with your invited CSP email and password.');
     }catch(error){loginMessage('Login unavailable: '+error.message,true)}
   }
   form?.addEventListener('submit',async(event)=>{
@@ -234,6 +239,39 @@
     }catch(error){loginMessage(error.message||'Authentication failed',true)}
     finally{submit.disabled=false}
   });
+  
+  $('rhCloudRequestReset')?.addEventListener('click',async()=>{
+    if(!client){loginMessage('Database connection is not ready',true);return}
+    const email=$('rhCloudEmail')?.value.trim();
+    if(!email){loginMessage('Enter your invited email first.',true);$('rhCloudEmail')?.focus();return}
+    try{
+      const redirectTo=window.location.origin+window.location.pathname;
+      const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo});
+      if(error)throw error;
+      loginMessage('If this account exists, a password setup/reset link has been sent. Check your email.');
+    }catch(error){loginMessage(error.message,true)}
+  });
+  $('rhCloudRecoveryForm')?.addEventListener('submit',async(event)=>{
+    event.preventDefault();
+    if(!client)return;
+    const password=$('rhCloudNewPassword')?.value||'';
+    if(password.length<12){loginMessage('Use at least 12 characters.',true);return}
+    const button=$('rhCloudUpdatePassword');button.disabled=true;
+    try{
+      const {data,error}=await client.auth.updateUser({password});
+      if(error)throw error;
+      recoveryMode=false;
+      $('rhCloudNewPassword').value='';
+      $('rhCloudRecoveryForm').hidden=true;
+      $('rhCloudLoginForm').hidden=false;
+      $('rhCloudRequestReset').hidden=false;
+      const user=data?.user||(await client.auth.getUser()).data?.user;
+      if(user)await signedIn(user);
+      else loginMessage('Password saved. Sign in using your email.');
+    }catch(error){loginMessage(error.message,true)}
+    finally{button.disabled=false}
+  });
+
   $('rhCloudSignOut')?.addEventListener('click',()=>void api.logout());
   $('rhCloudImportLocal')?.addEventListener('click',()=>void importLocal());
   $('rhCloudBackup')?.addEventListener('click',exportEmergency);
