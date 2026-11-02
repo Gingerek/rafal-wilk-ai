@@ -95,6 +95,52 @@ tbody tr:has(.st-canceled)>td:first-child,tbody tr:has(.st-rejected)>td:first-ch
 
 /* Recruitment Hub operations release */
 :root{--navy:#172b4d;--blue:#2563eb;--bg:#f5f7fb;--line:#d8e1eb}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}.panel{box-shadow:0 5px 22px rgba(31,49,82,.045)}.tablewrap{border:1px solid #d8e1eb;border-radius:10px}tbody tr:hover{background:#eff6ff}.qa-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:12px 0}.qa-card{border:1px solid #dae3ed;background:#fff;border-radius:10px;padding:12px}.qa-card strong{font-size:24px;color:#172b4d;display:block}.qa-card small{color:#64748b}.qa-warn{background:#fff8e5;border-color:#f4db9c}.qa-warn strong{color:#8a5800}.qa-alert{padding:10px 14px;border:1px solid #f0d598;background:#fffaeb;border-radius:9px;margin:12px 0;color:#805300}.draft-info{display:block;font-size:12px;color:#64748b;margin:8px 0}.draft-info.saved{color:#067647}.supplier-group{break-inside:avoid}@media(max-width:720px){.qa-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:14px}}
+
+/* Recruitment Hub readability overhaul 2026-11-02 */
+:root{--bg:#f1f5fb;--text:#192c42;--muted:#52647b;--line:#cfdbe9;--blue:#1765c1}
+body{font-size:14px!important;line-height:1.52!important;color:var(--text)!important;-webkit-font-smoothing:antialiased}
+.main{min-width:0!important;padding:clamp(16px,2vw,32px)!important}
+.panel{border:1px solid #d5e0ed!important;box-shadow:0 5px 18px rgba(31,55,86,.06)!important;padding:clamp(15px,1.5vw,24px)!important}
+.panel h2{font-size:19px!important;font-weight:750!important;line-height:1.35!important}
+.muted,.small{line-height:1.5!important}
+.tablewrap{width:100%;max-width:100%;overflow-x:auto!important;overflow-y:auto!important;scrollbar-gutter:stable;overscroll-behavior-x:contain;border:1px solid #cedbeb!important;background:#fff}
+.tablewrap table{border-collapse:separate!important;border-spacing:0!important;width:100%!important;font-size:13px!important;line-height:1.42!important;table-layout:auto!important}
+.tablewrap th{background:#e4edfa!important;color:#1b426e!important;font-size:12px!important;text-transform:none!important;letter-spacing:.01em!important;font-weight:800!important;white-space:normal!important;min-width:80px;position:sticky;top:0;z-index:2;border-bottom:2px solid #b8cde5!important;padding:13px 12px!important}
+.tablewrap td{padding:13px 12px!important;border-bottom:1px solid #e2e9f3!important;border-top:0!important;vertical-align:middle!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;hyphens:none!important;max-width:340px}
+.tablewrap tbody tr:nth-child(even) td{background:#f5f8fc!important}
+.tablewrap tbody tr:nth-child(odd) td{background:#fff!important}
+.tablewrap tbody tr:hover td{background:#e9f2ff!important}
+.tablewrap td b,.tablewrap td strong{font-weight:750!important;color:#1d3754!important;line-height:1.43!important}
+.tablewrap td .link{white-space:normal!important;overflow-wrap:anywhere!important;text-align:left!important;font-weight:800!important;color:#145ca9!important}
+.tablewrap td .mini{white-space:normal!important;min-height:32px;padding:7px 10px!important}
+.tablewrap .pill{display:inline-flex!important;align-items:center!important;justify-content:center!important;white-space:normal!important;text-align:center!important;line-height:1.3!important;max-width:100%;font-weight:800!important;padding:6px 10px!important}
+.tablewrap .nowrap{white-space:normal!important}
+.jobtable{min-width:1550px!important}
+.jobtable td:nth-child(3){min-width:270px;max-width:440px!important}
+.jobtable td:nth-child(10){min-width:155px;max-width:230px!important}
+.jobtable td:nth-child(11){min-width:215px;max-width:350px!important}
+.jobtable td:nth-child(4),.jobtable td:nth-child(5){min-width:128px}
+#personal .tablewrap table{min-width:1300px!important}
+#personal .tablewrap td:nth-child(2){min-width:275px;max-width:420px!important}
+#personal .tablewrap td:nth-child(9){min-width:225px;max-width:350px!important}
+#supplier .tablewrap table,#supplierContent table{min-width:850px!important}
+#supplier .tablewrap td,#supplierContent td{line-height:1.48!important;padding:12px!important}
+#supplier .supplier-group td{background:#e1ebf7!important;color:#1d426e!important;font-size:14px!important;font-weight:800!important;border-top:2px solid #b9cfe7!important}
+#supplier .supplier-location{font-weight:800!important}
+.status-legend{display:flex!important;flex-wrap:wrap!important;gap:8px!important;padding:10px 0 16px!important}
+.status-legend .pill{white-space:normal!important}
+.cv-pill,.cv-quick{white-space:normal!important;min-width:105px;max-width:180px;line-height:1.32!important;overflow:visible!important;text-overflow:clip!important}
+.toolbar{gap:10px!important}
+.toolbar input,.toolbar select{min-height:40px!important;max-width:100%!important}
+.dialog{width:min(1040px,calc(100vw - 28px))!important;max-height:calc(100dvh - 28px)!important;padding:clamp(16px,2vw,28px)!important}
+.formgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px!important}
+.formgrid label.wide{grid-column:1/-1!important}
+.formgrid label{font-size:13px!important;color:#334c69!important;line-height:1.45!important}
+.formgrid input,.formgrid select,.formgrid textarea{font-size:14px!important;line-height:1.5!important;min-height:42px!important}
+.note-item{white-space:normal!important;overflow-wrap:anywhere!important;line-height:1.55!important}
+.teamcard,.tile,.personalstats .stat{border:1px solid #ceddeb!important;background:#fff!important}
+@media(max-width:750px){.formgrid{grid-template-columns:1fr!important}.jobtable{min-width:1400px!important}.main{padding:14px!important}.tablewrap th,.tablewrap td{padding:10px!important}.top h1{font-size:24px!important}}
+
 </style></head><body><div class="app"><aside class="sidebar"><div class="brand"><span class="brandmark">R</span> Recruitment Hub<small>Team recruitment workspace</small></div><nav class="nav" id="nav"><button data-view="dashboard" class="active">Dashboard</button><button data-view="jobs">All Jobs</button><button data-view="actions">Action List</button><button data-view="notes">Quick Notes</button><div class="navlabel">PERSONAL WORKSPACES</div><button data-view="rafal">Rafal · My Jobs</button><button data-view="tanja">Tanja · My Jobs</button><button data-view="daim">Daim · My Jobs</button><button data-view="ivana">Ivana · My Jobs</button><div class="navlabel">REPORTING</div><button data-view="team">Team Views</button><button data-view="supplier">Supplier Update</button><button data-view="closed">Closed / Filled</button><button data-view="data">Data & Backup</button></nav></aside><main class="main"><header class="top"><div><h1 id="pageTitle">Recruitment Dashboard</h1><div class="muted small" id="weekLabel"></div></div><div class="actions-top"><label class="actor-control">Editing as <select id="actorSelect" aria-label="Current editor"><option>Rafal</option><option>Tanja</option><option>Daim</option><option>Ivana</option></select></label><button class="btn" id="exportCsv">Export CSV</button><button class="btn" id="backupBtn">Backup JSON</button><button class="btn primary" id="addBtn">+ New job</button></div></header><div class="notice"><b>Local workspace</b> · Each CSP works on their individual job cards. Supplier Update is a read-only combined report. Changes are saved only in this browser, not shared between devices. Export a JSON backup regularly. The “Editing as” selector records a name for change history; it is not user authentication.</div>
 <section class="view active" id="dashboard"><div class="grid kpis" id="kpis"></div><div class="grid two"><article class="panel"><h2>Jobs by location</h2><div id="locationChart"></div></article><article class="panel"><h2>Jobs by owner</h2><div id="ownerChart"></div></article></div><article class="panel"><h2>Status overview</h2><div class="tablewrap"><table><thead><tr><th>Group</th><th>Jobs</th><th>Positions</th></tr></thead><tbody id="statusTable"></tbody></table></div></article><article class="panel"><div class="split"><h2>Needs attention</h2><button class="btn" data-go="actions">View action list</button></div><div id="dashboardAlerts"></div></article></section>
 <section class="view" id="jobs"><div class="panel"><div class="split"><h2>All Jobs</h2><span class="muted small" id="matchingCount"></span></div><div class="toolbar"><input id="search" aria-label="Search jobs" placeholder="Search job, manager, candidate, supplier..."><select id="ownerFilter" aria-label="Filter by CSP"></select><select id="locationFilter" aria-label="Filter by location"></select><select id="statusFilter" aria-label="Filter by exact job status"></select><select id="priorityFilter" aria-label="Priority"></select><button class="btn" id="clearFilters">Clear filters</button></div><div class="status-legend"><span class="legend-label">STATUS KEY</span><span class="pill status-pill st-open">Open</span><span class="pill status-pill st-progress">In Progress</span><span class="pill status-pill st-interview">Interview</span><span class="pill status-pill st-offer">Offer</span><span class="pill status-pill st-onboarding">Onboarding</span><span class="pill status-pill st-hold">On hold</span><span class="pill status-pill st-preid">Pre-ID</span><span class="pill status-pill st-filled">Filled</span></div><div class="tablewrap"><table class="jobtable"><thead><tr><th>Location</th><th>Job #</th><th>Job title</th><th>Status</th><th>More CVs?</th><th>Owner</th><th>Priority</th><th>Positions</th><th>Days open</th><th>Hiring manager</th><th>Next action</th><th>Due</th><th>Notes</th><th>Edit</th></tr></thead><tbody id="jobsTable"></tbody></table></div></div></section>
