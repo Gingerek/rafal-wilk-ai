@@ -1348,3 +1348,46 @@ body.rw-v2-ready .rw-v2-command-item.is-active{
  transform:none!important;
  transition:none!important;
 }
+
+
+/* Native module picker 2026-11-02: rebuilt scrolling surface */
+html body.rw-v2-ready .rw-v2-command-palette:not([hidden]){
+ position:fixed!important;inset:0!important;display:flex!important;align-items:flex-start!important;justify-content:center!important;
+ padding:clamp(12px,6vh,64px) 12px 12px!important;background:rgba(5,13,25,.92)!important;
+ backdrop-filter:none!important;-webkit-backdrop-filter:none!important;animation:none!important;
+ overflow:hidden!important;overscroll-behavior:contain!important;
+}
+html body.rw-v2-ready .rw-v2-command-dialog{
+ position:relative!important;display:flex!important;flex-direction:column!important;
+ width:min(640px,100%)!important;height:min(740px,88dvh)!important;max-height:calc(100dvh - 24px)!important;
+ min-height:0!important;overflow:hidden!important;padding:0!important;border-radius:14px!important;
+ background:#102237!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+ transform:none!important;animation:none!important;transition:none!important;
+ box-shadow:0 18px 42px rgba(0,0,0,.28)!important;
+}
+html body.rw-v2-ready .rw-v2-command-head,html body.rw-v2-ready .rw-v2-command-input{
+ flex:0 0 auto!important;position:relative!important;
+}
+html body.rw-v2-ready .rw-v2-command-list{
+ display:block!important;flex:1 1 0!important;min-height:0!important;height:auto!important;max-height:none!important;
+ overflow-y:scroll!important;overflow-x:hidden!important;scroll-behavior:auto!important;scroll-snap-type:none!important;
+ overscroll-behavior:contain!important;touch-action:pan-y!important;
+ -webkit-overflow-scrolling:touch!important;
+ contain:layout paint style!important;padding:8px 12px 18px!important;scrollbar-width:thin!important;
+}
+html body.rw-v2-ready .rw-v2-command-item{
+ display:flex!important;width:100%!important;min-height:60px!important;margin:0 0 6px!important;
+ border-radius:9px!important;padding:10px 12px!important;
+ transform:none!important;transition:none!important;animation:none!important;filter:none!important;
+ box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+}
+html body.rw-v2-ready .rw-v2-command-item:hover,
+html body.rw-v2-ready .rw-v2-command-item:focus-visible{
+ transform:none!important;box-shadow:none!important;
+}
+html body.rw-v2-ready .rw-v2-command-text{min-width:0!important;flex:1!important;}
+html body.rw-v2-ready .rw-v2-command-actions{flex:0 0 auto!important;}
+@media(max-width:620px){
+ html body.rw-v2-ready .rw-v2-command-palette:not([hidden]){padding:8px!important;}
+ html body.rw-v2-ready .rw-v2-command-dialog{height:calc(100dvh - 16px)!important;max-height:calc(100dvh - 16px)!important;}
+}
