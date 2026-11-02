@@ -1315,3 +1315,36 @@ body.rw-v2-ready .rw-v2-command-item:hover{
  body.rw-v2-ready .rw-v2-command-palette{padding:12px!important;}
  body.rw-v2-ready .rw-v2-command-dialog{max-height:calc(100dvh - 24px)!important;}
 }
+
+
+/* Native instant module-scroll v2 */
+body.rw-v2-ready .rw-v2-command-palette,
+body.rw-v2-ready .rw-v2-command-dialog,
+body.rw-v2-ready .rw-v2-command-list,
+body.rw-v2-ready .rw-v2-command-item {
+ animation:none!important;
+ scroll-behavior:auto!important;
+}
+body.rw-v2-ready .rw-v2-command-dialog {
+ transform:none!important;
+ transition:none!important;
+ box-shadow:0 10px 30px rgba(0,0,0,.25)!important;
+ contain:layout style!important;
+}
+body.rw-v2-ready .rw-v2-command-list{
+ overflow-y:auto!important;
+ overflow-x:hidden!important;
+ overscroll-behavior-y:contain!important;
+ scroll-snap-type:none!important;
+ touch-action:pan-y!important;
+}
+body.rw-v2-ready .rw-v2-command-item,
+body.rw-v2-ready .rw-v2-command-item:hover,
+body.rw-v2-ready .rw-v2-command-item.is-active{
+ box-shadow:none!important;
+ filter:none!important;
+ backdrop-filter:none!important;
+ -webkit-backdrop-filter:none!important;
+ transform:none!important;
+ transition:none!important;
+}
