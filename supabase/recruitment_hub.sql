@@ -96,7 +96,7 @@ begin
   if p_data is not null then
     if jsonb_typeof(p_data) <> 'object'
        or p_data->>'id' is distinct from p_job_id
-       or p_data->>'owner' not in ('Rafal','Tanja','Daim','Ivana')
+       or coalesce(p_data->>'owner','') not in ('Rafal','Tanja','Daim','Ivana')
        or coalesce(char_length(p_data->>'number'),0) = 0
        or coalesce(char_length(p_data->>'title'),0) = 0
        or pg_catalog.octet_length(p_data::text) > 1000000 then
@@ -155,6 +155,16 @@ revoke all on function public.rh_apply_change(text,jsonb,bigint,text,text)
   from public, anon, authenticated;
 grant execute on function public.rh_apply_change(text,jsonb,bigint,text,text)
   to authenticated;
+
+-- Enable team refresh events; repeat-safe if already in the publication.
+do $
+begin
+  alter publication supabase_realtime add table public.rh_jobs;
+exception
+  when duplicate_object then null;
+  when undefined_object then null;
+end;
+$;
 
 -- After inviting each colleague and creating their Auth user in the Dashboard,
 -- assign the real auth.users UUID (not an email or a name from JavaScript):
