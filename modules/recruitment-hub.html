@@ -563,6 +563,34 @@ function renderJobNotes(job){
  list.innerHTML=entries.length?entries.slice().sort((a,b)=>String(b.at||'').localeCompare(String(a.at||''))).map(n=>internalNoteCard(job,n,false)).join(''):
   '<p class="note-hint">No updates yet. Add the first internal note below.</p>';
 }
+
+// Add internal note to the active job. Keep this handler next to the note timeline
+// so editing existing notes cannot remove the new-note functionality.
+$('addJobNote').addEventListener('click',function(event){
+ event.preventDefault();
+ const job=state.jobs.find(item=>item.id===editing);
+ const editor=$('jobNoteText');
+ const value=editor.value.trim();
+ if(!job){alert('Save this job first before adding notes.');return;}
+ if(!value){editor.focus();notify('Enter a note before saving');return;}
+ if(!Array.isArray(job.noteEntries))job.noteEntries=[];
+ const author=$('actorSelect')?.value||'Unspecified';
+ const timestamp=new Date().toISOString();
+ const note={
+  id:'note-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),
+  at:timestamp,
+  author:author,
+  text:value
+ };
+ job.noteEntries.push(note);
+ job.updatedAt=timestamp;
+ log('Added job note',job,'Internal note by '+author);
+ persist();
+ editor.value='';
+ renderJobNotes(job);
+ render();
+ notify('Internal note saved');
+});
 function openEditor(id){editing=id||null;const j=id?state.jobs.find(x=>x.id===id):null;if(j&&current!=='personal'){navigate(j.owner.toLowerCase());}if(!j&&current!=='personal'){navigate(($('actorSelect').value||'Rafal').toLowerCase());}formSelect('location',[...new Set([...locations,...state.jobs.map(j=>j.location)])]);formSelect('owner',[...new Set([...owners,...state.jobs.map(j=>j.owner)])]);formSelect('status',statuses);$('jobForm').reset();const fields=['number','location','owner','title','status','cvNeeded','priority','positions','openDate','dueDate','closedDate','manager','supplier','candidate','next','notes'];for(const f of fields){const el=$('jobForm').elements.namedItem(f);el.value=j?(f==='cvNeeded'?cvValue(j):(j[f]??'')):(f==='positions'?'1':f==='openDate'?iso():f==='status'?'Open':f==='cvNeeded'?'Not set':f==='priority'?'Normal':'')}if(j&&!statuses.includes(j.status)){const opt=document.createElement('option');opt.value=j.status;opt.textContent=j.status;$('jobForm').elements.namedItem('status').appendChild(opt);$('jobForm').elements.namedItem('status').value=j.status} $('jobForm').elements.namedItem('hidden').checked=!!j?.hidden;if(current==='personal'){$('actorSelect').value=personalOwner;localStorage.setItem('recruitment-editor',personalOwner);if(!j)$('jobForm').elements.namedItem('owner').value=personalOwner;}$('jobForm').elements.namedItem('owner').disabled=false;$('dialogTitle').textContent=j?`Edit job #${j.number}`:'New recruitment';$('deleteJob').classList.toggle('hide',!j);$('jobNoteText').value='';renderJobNotes(j);$('addJobNote').disabled=!j;$('modal').classList.add('open');$('jobForm').elements.namedItem('title').focus()}
 function closeEditor(){$('modal').classList.remove('open');editing=null}
 $('jobForm').addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.currentTarget);const j={};for(const [k,v] of f.entries())j[k]=String(v).trim();j.hidden=$('jobForm').elements.namedItem('hidden').checked;j.positions=Number(j.positions);if(!j.number||!j.title||!j.owner||!j.location||!Number.isInteger(j.positions)||j.positions<1){alert('Complete required fields. Positions must be a positive whole number.');return}if(j.openDate&&j.closedDate&&j.closedDate<j.openDate){alert('Closed date cannot precede opening date.');return}if(state.jobs.some(x=>String(x.number)===String(j.number)&&x.id!==editing)){alert('Job number already exists.');return}const prior=state.jobs.find(x=>x.id===editing);j.id=editing||('job-'+Date.now()+'-'+Math.random().toString(36).slice(2,7));j.noteEntries=Array.isArray(prior?.noteEntries)?prior.noteEntries:[];j.createdAt=prior?.createdAt||new Date().toISOString();j.updatedAt=new Date().toISOString();if(archiveStatuses.includes(j.status)&&!j.closedDate)j.closedDate=iso();if(!archiveStatuses.includes(j.status))j.closedDate='';if(prior){state.jobs[state.jobs.findIndex(x=>x.id===editing)]=j;log('Updated',j,Object.keys(j).filter(k=>!['updatedAt','createdAt','id'].includes(k)&&String(prior[k]??'')!==String(j[k]??'')).map(k=>`${k}: ${String(prior[k]??'-').slice(0,65)} → ${String(j[k]??'-').slice(0,65)}`).join('; ')||'Saved without field changes')}else{state.jobs.push(j);log('Created',j,j.title)}persist();closeEditor();render();notify('Job saved')});
