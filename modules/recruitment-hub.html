@@ -470,6 +470,22 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media(max-width:800px){.sidebar{background:#fff!important;border-bottom:1px solid #dadce0!important}}
 @media print{.sidebar,.notice{display:none!important}.panel,.tile{box-shadow:none!important}}
 
+
+/* Editable internal notes with revision history */
+.rw-internal-note .rw-note-content{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6;color:#202124}
+.rw-internal-note .rw-note-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+.rw-note-edited{font-size:12px;color:#5f6368;font-weight:650}
+.rw-internal-note .rw-note-edit{border-radius:8px!important;background:#e8f0fe!important;color:#174ea6!important;border:1px solid #aecbfa!important}
+.rw-note-editor{margin-top:12px;padding:14px;background:#f8fafd;border:1px solid #aecbfa;border-radius:10px}
+.rw-note-editor label{display:block;color:#3c4043;font-size:12px;font-weight:700;margin-bottom:7px}
+.rw-note-editor textarea{width:100%;display:block;min-height:110px;background:#fff!important;color:#202124!important;resize:vertical;line-height:1.55}
+.rw-note-editor-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:10px}
+.rw-note-revisions{margin-top:10px;font-size:12px;color:#3c4043}
+.rw-note-revisions summary{cursor:pointer;color:#174ea6;font-weight:750;padding:4px 0}
+.rw-note-version{border-left:3px solid #bdc1c6;padding:7px 10px;margin:8px 0;background:#f8fafd;border-radius:4px}
+.rw-note-version b{display:block;color:#5f6368;font-size:11px;margin-bottom:5px}
+.rw-note-version p{white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+
 </style></head><body><div class="app"><aside class="sidebar"><div class="brand"><span class="brandmark">R</span> Recruitment Hub<small>Team recruitment workspace</small></div><nav class="nav" id="nav"><button data-view="dashboard" class="active">Dashboard</button><button data-view="jobs">All Jobs</button><button data-view="actions">Action List</button><button data-view="notes">Quick Notes</button><div class="navlabel">PERSONAL WORKSPACES</div><button data-view="rafal">Rafal · My Jobs</button><button data-view="tanja">Tanja · My Jobs</button><button data-view="daim">Daim · My Jobs</button><button data-view="ivana">Ivana · My Jobs</button><div class="navlabel">REPORTING</div><button data-view="team">Team Views</button><button data-view="supplier">Supplier Update</button><button data-view="closed">Closed / Filled</button><button data-view="data">Data & Backup</button></nav></aside><main class="main"><header class="top"><div><h1 id="pageTitle">Recruitment Dashboard</h1><div class="muted small" id="weekLabel"></div></div><div class="actions-top"><label class="actor-control">Editing as <select id="actorSelect" aria-label="Current editor"><option>Rafal</option><option>Tanja</option><option>Daim</option><option>Ivana</option></select></label><button class="btn" id="exportCsv">Export CSV</button><button class="btn" id="backupBtn">Backup JSON</button><button class="btn primary" id="addBtn">+ New job</button></div></header><div class="notice"><b>Local workspace</b> · Each CSP works on their individual job cards. Supplier Update is a read-only combined report. Changes are saved only in this browser, not shared between devices. Export a JSON backup regularly. The “Editing as” selector records a name for change history; it is not user authentication.</div>
 <section class="view active" id="dashboard"><div class="grid kpis" id="kpis"></div><div class="grid two"><article class="panel"><h2>Jobs by location</h2><div id="locationChart"></div></article><article class="panel"><h2>Jobs by owner</h2><div id="ownerChart"></div></article></div><article class="panel"><h2>Status overview</h2><div class="tablewrap"><table><thead><tr><th>Group</th><th>Jobs</th><th>Positions</th></tr></thead><tbody id="statusTable"></tbody></table></div></article><article class="panel"><div class="split"><h2>Needs attention</h2><button class="btn" data-go="actions">View action list</button></div><div id="dashboardAlerts"></div></article></section>
 <section class="view" id="jobs"><div class="panel"><div class="split"><h2>All Jobs</h2><span class="muted small" id="matchingCount"></span></div><div class="toolbar"><input id="search" aria-label="Search jobs" placeholder="Search job, manager, candidate, supplier..."><select id="ownerFilter" aria-label="Filter by CSP"></select><select id="locationFilter" aria-label="Filter by location"></select><select id="statusFilter" aria-label="Filter by exact job status"></select><select id="priorityFilter" aria-label="Priority"></select><button class="btn" id="clearFilters">Clear filters</button></div><div class="status-legend"><span class="legend-label">STATUS KEY</span><span class="pill status-pill st-open">Open</span><span class="pill status-pill st-progress">In Progress</span><span class="pill status-pill st-interview">Interview</span><span class="pill status-pill st-offer">Offer</span><span class="pill status-pill st-onboarding">Onboarding</span><span class="pill status-pill st-hold">On hold</span><span class="pill status-pill st-preid">Pre-ID</span><span class="pill status-pill st-filled">Filled</span></div><div class="tablewrap"><table class="jobtable"><thead><tr><th>Location</th><th>Job #</th><th>Job title</th><th>Status</th><th>More CVs?</th><th>Owner</th><th>Priority</th><th>Positions</th><th>Days open</th><th>Hiring manager</th><th>Next action</th><th>Due</th><th>Notes</th><th>Edit</th></tr></thead><tbody id="jobsTable"></tbody></table></div></div></section>
@@ -522,8 +538,31 @@ function renderData(){$('dataStats').innerHTML=`<span><b>${state.jobs.length}</b
 function render(){refreshFilters();renderQuickNotes();renderPersonal();renderDashboard();renderJobs();renderActions();renderTeam();renderSupplier();renderClosed();renderData();$('weekLabel').textContent=isoWeek(new Date())+' · '+state.jobs.length+' records'}
 function navigate(v){if(['rafal','tanja','daim','ivana'].includes(v)){personalOwner=v[0].toUpperCase()+v.slice(1);if($('actorSelect')){$('actorSelect').value=personalOwner;localStorage.setItem('recruitment-editor',personalOwner)}v='personal'}current=v;document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===v));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',(v==='personal'?x.dataset.view.toLowerCase()===personalOwner.toLowerCase():x.dataset.view===v)));$('pageTitle').textContent=({dashboard:'Recruitment Dashboard',jobs:'All Jobs',actions:'Action List',team:'Team Views',personal:personalOwner+' · My Jobs',supplier:'Weekly Supplier Update',closed:'Closed / Filled',data:'Data & Backup',notes:'Quick Notes'})[v];render()}
 function formSelect(name,arr){const el=document.querySelector(`#jobForm [name="${name}"]`);el.innerHTML=arr.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('')}
-function renderJobNotes(job){const list=$('jobNoteList');if(!job){list.innerHTML='<p class="note-hint">Save the job to start its activity timeline.</p>';return}const entries=Array.isArray(job.noteEntries)?job.noteEntries:[];list.innerHTML=entries.length?entries.slice().sort((a,b)=>String(b.at).localeCompare(String(a.at))).map(n=>`<article class="note-item"><div class="note-meta"><b>${esc(n.author||'Unknown')}</b><time>${esc(new Date(n.at).toLocaleString('en-GB'))}</time></div><div>${esc(n.text)}</div></article>`).join(''):'<p class="note-hint">No updates yet. Add the first note below.</p>'}
-$('addJobNote').onclick=()=>{const job=state.jobs.find(x=>x.id===editing),value=$('jobNoteText').value.trim();if(!job){alert('Save this job first.');return}if(!value){$('jobNoteText').focus();return}job.noteEntries=Array.isArray(job.noteEntries)?job.noteEntries:[];const author=$('actorSelect')?.value||'Unspecified';job.noteEntries.push({id:'note-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),at:new Date().toISOString(),author,text:value});job.updatedAt=new Date().toISOString();log('Added job note',job,`Internal note by ${author}`);persist();$('jobNoteText').value='';renderJobNotes(job);render();notify('Note added')};
+
+function internalNoteDate(value){
+ const date=new Date(value||'');
+ return Number.isNaN(date.getTime())?'Date unavailable':date.toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function internalNoteCard(job,n,includeJob){
+ const index=Array.isArray(job.noteEntries)?job.noteEntries.indexOf(n):-1;
+ const versions=Array.isArray(n.revisions)?n.revisions:[];
+ const editText=n.editedAt?'Edited '+internalNoteDate(n.editedAt)+' by '+(n.editedBy||'Unknown editor'):'';
+ const revisions=versions.length?'<details class="rw-note-revisions"><summary>Previous versions ('+versions.length+')</summary>'+
+  versions.slice().reverse().map(r=>'<div class="rw-note-version"><b>Replaced '+esc(internalNoteDate(r.replacedAt))+' by '+esc(r.replacedBy||'Unknown editor')+'</b><p>'+esc(r.text||'')+'</p></div>').join('')+'</details>':'';
+ return '<article class="note-item rw-internal-note" data-rw-job="'+esc(job.id)+'" data-rw-note-index="'+index+'">'+
+  '<div class="note-meta"><b>'+esc(n.author||'Unknown editor')+'</b><time>'+esc(internalNoteDate(n.at))+'</time></div>'+
+  (includeJob?'<button type="button" class="link" data-quicknotes="'+esc(job.id)+'"><b>#'+esc(job.number)+' · '+esc(job.title)+'</b></button><div class="muted small">'+esc(job.owner)+' · '+esc(job.location)+' · '+esc(job.status)+'</div>':'')+
+  '<div class="rw-note-content">'+esc(n.text||'')+'</div>'+
+  '<div class="rw-note-toolbar">'+(editText?'<span class="rw-note-edited">'+esc(editText)+'</span>':'')+
+  '<button type="button" class="mini rw-note-edit" data-rw-edit-note>Edit note</button></div>'+revisions+'</article>';
+}
+function renderJobNotes(job){
+ const list=$('jobNoteList');
+ if(!job){list.innerHTML='<p class="note-hint">Save the job to start its activity timeline.</p>';return}
+ const entries=Array.isArray(job.noteEntries)?job.noteEntries:[];
+ list.innerHTML=entries.length?entries.slice().sort((a,b)=>String(b.at||'').localeCompare(String(a.at||''))).map(n=>internalNoteCard(job,n,false)).join(''):
+  '<p class="note-hint">No updates yet. Add the first internal note below.</p>';
+}
 function openEditor(id){editing=id||null;const j=id?state.jobs.find(x=>x.id===id):null;if(j&&current!=='personal'){navigate(j.owner.toLowerCase());}if(!j&&current!=='personal'){navigate(($('actorSelect').value||'Rafal').toLowerCase());}formSelect('location',[...new Set([...locations,...state.jobs.map(j=>j.location)])]);formSelect('owner',[...new Set([...owners,...state.jobs.map(j=>j.owner)])]);formSelect('status',statuses);$('jobForm').reset();const fields=['number','location','owner','title','status','cvNeeded','priority','positions','openDate','dueDate','closedDate','manager','supplier','candidate','next','notes'];for(const f of fields){const el=$('jobForm').elements.namedItem(f);el.value=j?(f==='cvNeeded'?cvValue(j):(j[f]??'')):(f==='positions'?'1':f==='openDate'?iso():f==='status'?'Open':f==='cvNeeded'?'Not set':f==='priority'?'Normal':'')}if(j&&!statuses.includes(j.status)){const opt=document.createElement('option');opt.value=j.status;opt.textContent=j.status;$('jobForm').elements.namedItem('status').appendChild(opt);$('jobForm').elements.namedItem('status').value=j.status} $('jobForm').elements.namedItem('hidden').checked=!!j?.hidden;if(current==='personal'){$('actorSelect').value=personalOwner;localStorage.setItem('recruitment-editor',personalOwner);if(!j)$('jobForm').elements.namedItem('owner').value=personalOwner;}$('jobForm').elements.namedItem('owner').disabled=false;$('dialogTitle').textContent=j?`Edit job #${j.number}`:'New recruitment';$('deleteJob').classList.toggle('hide',!j);$('jobNoteText').value='';renderJobNotes(j);$('addJobNote').disabled=!j;$('modal').classList.add('open');$('jobForm').elements.namedItem('title').focus()}
 function closeEditor(){$('modal').classList.remove('open');editing=null}
 $('jobForm').addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.currentTarget);const j={};for(const [k,v] of f.entries())j[k]=String(v).trim();j.hidden=$('jobForm').elements.namedItem('hidden').checked;j.positions=Number(j.positions);if(!j.number||!j.title||!j.owner||!j.location||!Number.isInteger(j.positions)||j.positions<1){alert('Complete required fields. Positions must be a positive whole number.');return}if(j.openDate&&j.closedDate&&j.closedDate<j.openDate){alert('Closed date cannot precede opening date.');return}if(state.jobs.some(x=>String(x.number)===String(j.number)&&x.id!==editing)){alert('Job number already exists.');return}const prior=state.jobs.find(x=>x.id===editing);j.id=editing||('job-'+Date.now()+'-'+Math.random().toString(36).slice(2,7));j.noteEntries=Array.isArray(prior?.noteEntries)?prior.noteEntries:[];j.createdAt=prior?.createdAt||new Date().toISOString();j.updatedAt=new Date().toISOString();if(archiveStatuses.includes(j.status)&&!j.closedDate)j.closedDate=iso();if(!archiveStatuses.includes(j.status))j.closedDate='';if(prior){state.jobs[state.jobs.findIndex(x=>x.id===editing)]=j;log('Updated',j,Object.keys(j).filter(k=>!['updatedAt','createdAt','id'].includes(k)&&String(prior[k]??'')!==String(j[k]??'')).map(k=>`${k}: ${String(prior[k]??'-').slice(0,65)} → ${String(j[k]??'-').slice(0,65)}`).join('; ')||'Saved without field changes')}else{state.jobs.push(j);log('Created',j,j.title)}persist();closeEditor();render();notify('Job saved')});
@@ -637,10 +676,64 @@ function renderQuickNotes(){
  for(const [id,field,label] of [['notesOwner','owner','All CSPs'],['notesLocation','location','All locations'],['notesStatus','status','All statuses']]){const el=$(id);const old=el.value;const vals=[...new Set(state.jobs.map(j=>j[field]).filter(Boolean))].sort();el.innerHTML='<option value="">'+label+'</option>'+vals.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');if(vals.includes(old))el.value=old}
  const jobEl=$('quickJob'),previous=jobEl.value;jobEl.innerHTML='<option value="">Select a job...</option>'+state.jobs.slice().sort((a,b)=>String(a.number).localeCompare(String(b.number))).map(j=>`<option value="${esc(j.id)}">#${esc(j.number)} · ${esc(j.title)} (${esc(j.owner)})</option>`).join('');if(state.jobs.some(j=>j.id===previous))jobEl.value=previous;
  const q=$('noteSearch').value.trim().toLowerCase();const items=[];for(const j of state.jobs){if($('notesOwner').value&&j.owner!==$('notesOwner').value)continue;if($('notesLocation').value&&j.location!==$('notesLocation').value)continue;if($('notesStatus').value&&j.status!==$('notesStatus').value)continue;for(const n of j.noteEntries||[]){if(q&&![j.number,j.title,j.owner,j.location,j.status,n.text,n.author].some(v=>String(v||'').toLowerCase().includes(q)))continue;items.push({j,n})}}
- items.sort((a,b)=>String(b.n.at).localeCompare(String(a.n.at)));$('notesCount').textContent=items.length+' notes';$('notesFeed').innerHTML=items.map(({j,n})=>`<article class="note-item"><div class="note-meta"><b>${esc(n.author||'Unknown')} · ${esc(new Date(n.at).toLocaleString('en-GB'))}</b><span>${badge(j.status)}</span></div><button class="link" data-quicknotes="${esc(j.id)}"><b>#${esc(j.number)} · ${esc(j.title)}</b></button><div class="muted small">${esc(j.owner)} · ${esc(j.location)}</div><div style="margin-top:9px">${esc(n.text)}</div></article>`).join('')||'<p class="empty">No notes match the selected filters.</p>';
+ items.sort((a,b)=>String(b.n.at).localeCompare(String(a.n.at)));$('notesCount').textContent=items.length+' notes';$('notesFeed').innerHTML=items.map(({j,n})=>internalNoteCard(j,n,true)).join('')||'<p class="empty">No notes match the selected filters.</p>';
 }
 $('quickSave').onclick=()=>{const j=state.jobs.find(x=>x.id===$('quickJob').value),text=$('quickNote').value.trim();if(!j){alert('Choose a job first.');return}if(!text){$('quickNote').focus();return}j.noteEntries=Array.isArray(j.noteEntries)?j.noteEntries:[];const author=$('actorSelect').value;j.noteEntries.push({id:'note-'+Date.now(),at:new Date().toISOString(),author,text});j.updatedAt=new Date().toISOString();log('Added quick note',j,'Internal note by '+author);persist();$('quickNote').value='';render();notify('Note saved automatically')};
 $('quickOpen').onclick=()=>{if($('quickJob').value)openEditor($('quickJob').value)};
+
+/* Edit a job note while preserving its original timestamp, author and previous versions. */
+document.addEventListener('click',function(event){
+ const editButton=event.target.closest('[data-rw-edit-note]');
+ const saveButton=event.target.closest('[data-rw-save-note]');
+ const cancelButton=event.target.closest('[data-rw-cancel-note]');
+ if(!editButton&&!saveButton&&!cancelButton)return;
+ const card=event.target.closest('[data-rw-job][data-rw-note-index]');
+ if(!card)return;
+ const job=state.jobs.find(j=>j.id===card.dataset.rwJob);
+ const index=Number(card.dataset.rwNoteIndex);
+ if(!job||!Number.isInteger(index)||index<0||!Array.isArray(job.noteEntries)||!job.noteEntries[index]){
+  notify('This note could not be found. Refresh the job history.');return;
+ }
+ const note=job.noteEntries[index];
+ if(editButton){
+  event.preventDefault();
+  document.querySelectorAll('.rw-note-editor').forEach(element=>element.remove());
+  const editor=document.createElement('div');
+  editor.className='rw-note-editor';
+  editor.innerHTML='<label>Edit internal note (original date and author remain unchanged)</label>'+
+   '<textarea maxlength="12000" aria-label="Edit internal note"></textarea>'+
+   '<div class="rw-note-editor-actions"><button type="button" class="btn" data-rw-cancel-note>Cancel</button>'+
+   '<button type="button" class="btn primary" data-rw-save-note>Save changes</button></div>';
+  card.appendChild(editor);
+  const input=editor.querySelector('textarea');
+  input.value=String(note.text||'');
+  try{input.focus({preventScroll:true})}catch(_){input.focus()}
+  return;
+ }
+ if(cancelButton){event.preventDefault();card.querySelector('.rw-note-editor')?.remove();return;}
+ if(saveButton){
+  event.preventDefault();
+  const input=card.querySelector('.rw-note-editor textarea');
+  if(!input)return;
+  const next=input.value.trim();
+  if(!next){alert('Note cannot be empty.');input.focus();return;}
+  if(next===String(note.text||'')){card.querySelector('.rw-note-editor')?.remove();return;}
+  const changedAt=new Date().toISOString();
+  const actor=$('actorSelect')?.value||'Unspecified';
+  note.revisions=Array.isArray(note.revisions)?note.revisions:[];
+  note.revisions.push({text:String(note.text||''),replacedAt:changedAt,replacedBy:actor});
+  note.text=next;
+  note.editedAt=changedAt;
+  note.editedBy=actor;
+  job.updatedAt=changedAt;
+  log('Edited internal note',job,'Note originally created '+String(note.at||'unknown')+'; revised by '+actor);
+  persist();
+  render();
+  if($('modal').classList.contains('open')&&editing===job.id)renderJobNotes(job);
+  notify('Internal note updated; previous version retained');
+ }
+});
+
 for(const id of ['noteSearch','notesOwner','notesLocation','notesStatus'])$(id).addEventListener(id==='noteSearch'?'input':'change',renderQuickNotes);
 $('notesClear').onclick=()=>{for(const id of ['noteSearch','notesOwner','notesLocation','notesStatus'])$(id).value='';renderQuickNotes()};
 restoreHandle();setStorageStatus('Automatically saved in this browser');
