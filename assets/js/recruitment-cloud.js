@@ -1,0 +1,251 @@
+/* Recruitment Hub Supabase cloud adapter.
+   Enabled only with a configured public project URL and publishable/anon key.
+   Never pass service_role secrets to the browser.
+*/
+(function(){
+  'use strict';
+  const config=window.RW_RECRUITMENT_CLOUD||{};
+  if(!config.url||!config.anonKey)return;
+  const bridge=window.RHRecruitmentBridge;
+  const $=id=>document.getElementById(id);
+  const gate=$('rhCloudGate'),form=$('rhCloudLoginForm'),message=$('rhCloudMessage');
+  const badge=$('rhCloudBadge'),syncLabel=$('rhCloudSyncStatus');
+  const actor=$('actorSelect');
+  const remoteVersions=new Map();
+  const savedJobs=new Map();
+  let client=null,sessionUser=null,member=null,ready=false,syncing=false,saveQueued=false;
+  let refreshTimer=0,subscription=null,authSubscription=null,blocked=false;
+  const originals=['connectDisk','saveDiskNow','importJsonBtn','importCsvBtn','resetDemo'];
+  const equals=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+  function status(value,isError){
+    if(syncLabel){syncLabel.textContent=value;syncLabel.style.color=isError?'#b3261e':'#137333'}
+  }
+  function loginMessage(value,isError=false){
+    if(message){message.textContent=value;message.style.color=isError?'#b3261e':'#5f6368'}
+  }
+  function access(mode){
+    const isReady=mode==='ready';
+    document.documentElement.classList.toggle('rh-cloud-ready',isReady);
+    if(gate)gate.hidden=isReady;
+    if(badge)badge.textContent=isReady?'Shared database · '+member.csp_name:'Shared database · sign in';
+  }
+  function exportEmergency(){
+    const data=bridge.getState();
+    const blob=new Blob([JSON.stringify({version:6,exportedAt:new Date().toISOString(),reason:'Unsynced cloud changes',...data},null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const link=document.createElement('a');link.href=url;link.download='recruitment-unsynced-backup.json';
+    document.body.appendChild(link);link.click();link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+  }
+  function setBlocked(error){
+    blocked=true;ready=false;
+    status('NOT SAVED to cloud: '+String(error?.message||error),true);
+    const panel=$('rhCloudError');
+    if(panel){panel.hidden=false;$('rhCloudErrorText').textContent='Cloud write failed: '+String(error?.message||error)+'. Export your unsynced changes before reloading.'}
+    console.error('Recruitment Cloud error:',error);
+  }
+  const api={
+    get ready(){return ready&&!blocked},
+    get identity(){return member?.csp_name||''},
+    persist(){queueSave()},
+    logout:async()=>{ready=false;await client?.auth.signOut();clearTeam();access('locked');loginMessage('Signed out.');}
+  };
+  window.RHCloud=api;
+  function clearTeam(){
+    if(subscription){client?.removeChannel(subscription);subscription=null}
+    member=null;sessionUser=null;ready=false;syncing=false;saveQueued=false;blocked=false;
+    savedJobs.clear();remoteVersions.clear();
+    actor.disabled=false;actor.value='';
+    bridge.replaceState({jobs:[],history:[]});
+    if($('rhCloudError'))$('rhCloudError').hidden=true;
+  }
+  function owned(){
+    if(!ready||blocked||!member)throw new Error('Not signed in as an active CSP');
+  }
+  async function loadServerData(force=false){
+    if(!member)return;
+    if((syncing||saveQueued||$('modal')?.classList.contains('open'))&&!force){
+      scheduleRefresh();return;
+    }
+    const [jobsResult,historyResult]=await Promise.all([
+      client.from('rh_jobs').select('job_id,data,version').order('updated_at',{ascending:false}).limit(10000),
+      client.from('rh_history').select('job_id,job_number,owner_name,actor_name,action,details,created_at').order('created_at',{ascending:false}).limit(10000)
+    ]);
+    if(jobsResult.error)throw jobsResult.error;
+    if(historyResult.error)throw historyResult.error;
+    const jobs=(jobsResult.data||[]).map(x=>x.data);
+    const history=(historyResult.data||[]).map(row=>({
+      jobId:row.job_id,number:row.job_number,owner:row.owner_name,
+      actor:row.actor_name,action:row.action,detail:row.details,at:row.created_at
+    }));
+    savedJobs.clear();remoteVersions.clear();
+    for(const row of jobsResult.data||[]){
+      savedJobs.set(row.job_id,JSON.stringify(row.data));
+      remoteVersions.set(row.job_id,row.version);
+    }
+    bridge.replaceState({jobs,history});
+    status('Synced · '+new Date().toLocaleTimeString('en-GB'));
+  }
+  function lastActionFor(id,state){
+    return (state.history||[]).find(h=>String(h.jobId||'')===String(id))
+      ||(state.history||[]).find(h=>state.jobs.some(j=>j.id===id&&j.number===h.number))
+      ||{action:'Updated',detail:'CSP updated job data'};
+  }
+  async function saveOne(id,data,history){
+    const expected=remoteVersions.get(id)||0;
+    const act=lastActionFor(id,history);
+    const result=await client.rpc('rh_apply_change',{
+      p_job_id:id,p_data:data,p_expected_version:expected,
+      p_action:act.action||'Updated',p_details:act.detail||''
+    });
+    if(result.error)throw result.error;
+    const version=Number(result.data);
+    if(data===null){remoteVersions.delete(id);savedJobs.delete(id)}
+    else{remoteVersions.set(id,version);savedJobs.set(id,JSON.stringify(data))}
+  }
+  function diff(snapshot){
+    const changes=[];
+    const live=new Map((snapshot.jobs||[]).map(j=>[String(j.id),j]));
+    for(const [id,j] of live){
+      if(!savedJobs.has(id)||savedJobs.get(id)!==JSON.stringify(j))changes.push({id,data:j});
+    }
+    for(const id of savedJobs.keys()){
+      if(!live.has(id))changes.push({id,data:null});
+    }
+    return changes;
+  }
+  function queueSave(){
+    if(!ready||blocked){status('Not signed in. Cloud save blocked.',true);return;}
+    saveQueued=true;
+    status('Syncing changes with shared database...');
+    if(!syncing)void flush();
+  }
+  async function flush(){
+    if(syncing||blocked||!ready)return;
+    syncing=true;
+    try{
+      while(saveQueued&&!blocked){
+        saveQueued=false;
+        const snapshot=bridge.getState();
+        const changes=diff(snapshot);
+        for(const change of changes){
+          await saveOne(change.id,change.data,snapshot);
+        }
+      }
+      // All writes confirmed, now read server-canonical actor IDs/timestamps.
+      syncing=false;
+      await loadServerData();
+    }catch(error){
+      syncing=false;
+      setBlocked(error);
+    }
+  }
+  function scheduleRefresh(){
+    if(refreshTimer)clearTimeout(refreshTimer);
+    refreshTimer=setTimeout(async()=>{
+      refreshTimer=0;
+      if(!ready||blocked)return;
+      if(syncing||saveQueued||$('modal')?.classList.contains('open')){scheduleRefresh();return;}
+      try{await loadServerData()}catch(error){status('Connection error: '+error.message,true)}
+    },1100);
+  }
+  function disableDangerousLocalOperations(){
+    for(const id of originals){
+      const item=$(id);if(item){item.disabled=true;item.title='Disabled in authenticated shared mode to protect team data'}
+    }
+    const storage=$('storageStatus');
+    if(storage)storage.textContent='Shared Supabase database · local disk writes and destructive imports disabled';
+    const note=$('rhCloudImportHelp');
+    if(note)note.hidden=member?.role!=='admin';
+    const importButton=$('rhCloudImportLocal');
+    if(importButton)importButton.hidden=member?.role!=='admin';
+  }
+  async function importLocal(){
+    if(!ready||member.role!=='admin')return;
+    if(savedJobs.size){alert('The shared database is not empty. Import is disabled to prevent overwriting colleagues’ work.');return;}
+    let local;
+    try{local=JSON.parse(localStorage.getItem('recruitment-hub-v3')||'null')}
+    catch(_){}
+    if(!local||!Array.isArray(local.jobs)||!local.jobs.length){
+      alert('No local jobs found in this browser. Use the browser where your old recruitment data was saved.');return;
+    }
+    if(!confirm('Import '+local.jobs.length+' locally saved jobs into the EMPTY shared database? This copies existing notes and does not erase your local backup.'))return;
+    $('rhCloudImportLocal').disabled=true;
+    try{
+      for(const job of local.jobs){
+        if(!job?.id||!job.owner||!job.number||!job.title)throw new Error('Invalid job in local backup');
+        await saveOne(String(job.id),job,{history:[{jobId:job.id,action:'Imported',detail:'Admin imported local job and notes'}],jobs:[job]});
+      }
+      await loadServerData(true);status('Imported '+local.jobs.length+' jobs to the shared database');
+      alert('Imported '+local.jobs.length+' jobs. Verify the notes and download a JSON backup.');
+    }catch(error){setBlocked(error)}
+    finally{$('rhCloudImportLocal').disabled=false}
+  }
+  async function signedIn(user){
+    if(!user){clearTeam();access('locked');return;}
+    const membership=await client.from('rh_members').select('csp_name,role,active').eq('user_id',user.id).maybeSingle();
+    if(membership.error)throw membership.error;
+    if(!membership.data?.active||!['Rafal','Tanja','Daim','Ivana'].includes(membership.data.csp_name)){
+      clearTeam();access('locked');loginMessage('This account is not an active CSP member. Ask the administrator to invite/assign you.',true);return;
+    }
+    member=membership.data;sessionUser=user;
+    actor.value=member.csp_name;actor.disabled=true;
+    await loadServerData(true);
+    ready=true;
+    disableDangerousLocalOperations();
+    access('ready');
+    if(!subscription){
+      subscription=client.channel('rh-shared-jobs').on('postgres_changes',
+        {event:'*',schema:'public',table:'rh_jobs'},()=>scheduleRefresh()).subscribe();
+    }
+  }
+  async function begin(){
+    loginMessage('Connecting to secure login...');
+    try{
+      if(!window.supabase?.createClient){
+        await new Promise((resolve,reject)=>{
+          const tag=document.createElement('script');
+          tag.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+          tag.onload=resolve;tag.onerror=()=>reject(new Error('Unable to load Supabase client'));
+          document.head.appendChild(tag);
+        });
+      }
+      client=window.supabase.createClient(config.url,config.anonKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+      client.auth.onAuthStateChange((event)=>{
+        if(event==='SIGNED_OUT'){clearTeam();access('locked');loginMessage('Signed out.')}
+      });
+      const {data,error}=await client.auth.getUser();
+      if(error&&!/session missing/i.test(error.message||''))throw error;
+      if(data?.user){await signedIn(data.user)}
+      else loginMessage('Sign in with your invited CSP email and password.');
+    }catch(error){loginMessage('Login unavailable: '+error.message,true)}
+  }
+  form?.addEventListener('submit',async(event)=>{
+    event.preventDefault();
+    if(!client){loginMessage('Supabase client not loaded',true);return;}
+    const submit=$('rhCloudSignIn');submit.disabled=true;
+    loginMessage('Authenticating...');
+    try{
+      const email=$('rhCloudEmail').value.trim(),password=$('rhCloudPassword').value;
+      const {data,error}=await client.auth.signInWithPassword({email,password});
+      if(error)throw error;
+      $('rhCloudPassword').value='';
+      await signedIn(data.user);
+    }catch(error){loginMessage(error.message||'Authentication failed',true)}
+    finally{submit.disabled=false}
+  });
+  $('rhCloudSignOut')?.addEventListener('click',()=>void api.logout());
+  $('rhCloudImportLocal')?.addEventListener('click',()=>void importLocal());
+  $('rhCloudBackup')?.addEventListener('click',exportEmergency);
+  $('rhCloudReload')?.addEventListener('click',async()=>{
+    if(!confirm('Discard UNSAVED local changes and reload the latest team data from the server? Download a backup first.'))return;
+    blocked=false;ready=true;
+    $('rhCloudError').hidden=true;
+    try{await loadServerData(true)}catch(error){setBlocked(error)}
+  });
+  // If an editor leaves a modal, process any incoming remote edits.
+  new MutationObserver(()=>{if(!$('modal').classList.contains('open'))scheduleRefresh()})
+    .observe($('modal'),{attributes:true,attributeFilter:['class']});
+  access('locked');
+  void begin();
+})();
