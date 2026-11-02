@@ -53,7 +53,10 @@
   window.RHCloud=api;
   function clearTeam(){
     if(subscription){client?.removeChannel(subscription);subscription=null}
-    member=null;sessionUser=null;ready=false;syncing=false;saveQueued=false;blocked=false;
+    member=null;sessionUser=null;ready=false;syncing=false;saveQueued=false;blocked=false;recoveryMode=false;
+    if($('rhCloudLoginForm'))$('rhCloudLoginForm').hidden=false;
+    if($('rhCloudRecoveryForm'))$('rhCloudRecoveryForm').hidden=true;
+    if($('rhCloudRequestReset'))$('rhCloudRequestReset').hidden=false;
     savedJobs.clear();remoteVersions.clear();
     actor.disabled=false;actor.value='';
     bridge.replaceState({jobs:[],history:[]});
@@ -156,17 +159,19 @@
     if(note)note.hidden=member?.role!=='admin';
     const importButton=$('rhCloudImportLocal');
     if(importButton)importButton.hidden=member?.role!=='admin';
+    const importBackup=$('rhCloudImportBackup');
+    if(importBackup)importBackup.hidden=member?.role!=='admin';
   }
-  async function importLocal(){
+  async function importLocal(sourceJobs){
     if(!ready||member.role!=='admin')return;
     if(savedJobs.size){alert('The shared database is not empty. Import is disabled to prevent overwriting colleagues’ work.');return;}
     let local;
-    try{local=JSON.parse(localStorage.getItem('recruitment-hub-v3')||'null')}
+    try{local=sourceJobs?{jobs:sourceJobs}:JSON.parse(localStorage.getItem('recruitment-hub-v3')||'null')}
     catch(_){}
     if(!local||!Array.isArray(local.jobs)||!local.jobs.length){
-      alert('No local jobs found in this browser. Use the browser where your old recruitment data was saved.');return;
+      alert('No jobs found. Use the original browser or choose a saved Recruitment Hub JSON backup.');return;
     }
-    if(!confirm('Import '+local.jobs.length+' locally saved jobs into the EMPTY shared database? This copies existing notes and does not erase your local backup.'))return;
+    if(!confirm('Import '+local.jobs.length+' saved jobs into the EMPTY shared database? Existing notes are preserved. Your local/JSON backup will NOT be deleted.'))return;
     $('rhCloudImportLocal').disabled=true;
     try{
       for(const job of local.jobs){
@@ -274,6 +279,17 @@
 
   $('rhCloudSignOut')?.addEventListener('click',()=>void api.logout());
   $('rhCloudImportLocal')?.addEventListener('click',()=>void importLocal());
+  $('rhCloudImportBackup')?.addEventListener('click',()=>$('rhCloudImportInput')?.click());
+  $('rhCloudImportInput')?.addEventListener('change',async(event)=>{
+    const file=event.target.files?.[0];
+    event.target.value='';
+    if(!file)return;
+    try{
+      const backup=JSON.parse(await file.text());
+      if(!backup||!Array.isArray(backup.jobs))throw new Error('JSON backup must contain a jobs array.');
+      await importLocal(backup.jobs);
+    }catch(error){alert('Import could not start: '+error.message)}
+  });
   $('rhCloudBackup')?.addEventListener('click',exportEmergency);
   $('rhCloudReload')?.addEventListener('click',async()=>{
     if(!confirm('Discard UNSAVED local changes and reload the latest team data from the server? Download a backup first.'))return;
