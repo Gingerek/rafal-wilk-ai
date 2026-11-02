@@ -1889,7 +1889,7 @@
     }
     function loop(time){
       const profile = currentVisualPerformanceProfile();
-      if (document.hidden || document.body.classList.contains('app-open') || !nativeWallVisible || profile.wallCanvas === false) {
+      if (document.hidden || document.body.classList.contains('app-open') || document.body.classList.contains('rw-v2-command-open') || !nativeWallVisible || profile.wallCanvas === false) {
         nativeWallFrame = window.setTimeout(() => {
           nativeWallFrame = window.requestAnimationFrame(loop);
         }, profile.wallIdleMs || 720);
@@ -1962,6 +1962,7 @@
   function renderCommandList(query = ''){
     const list = document.querySelector('.rw-v2-command-list');
     if (!list) return;
+    const previousScroll = list.scrollTop;
     const rows = commandRows(query);
     list.innerHTML = rows.length ? rows.map((item, index) => {
       const isPreId = item.card?.classList?.contains('rw-preid-card') || item.title === 'Pre ID';
@@ -1983,6 +1984,7 @@
           <span class="rw-v2-command-arrow">&nearr;</span>
         </button>`;
     }).join('') : `<div class="rw-v2-command-empty">${uiText('commandEmpty')}</div>`;
+    list.scrollTop = query.trim() ? 0 : previousScroll;
 
     list.querySelectorAll('[data-rw-command-index]').forEach((row, index) => {
       row.addEventListener('click', (event) => {
@@ -2251,8 +2253,9 @@
     document.body.classList.add('rw-v2-command-open');
     renderCommandUi();
     renderCommandList('');
+    document.querySelector('.rw-v2-command-list')?.scrollTo(0,0);
     input.value = '';
-    setTimeout(() => input.focus(), 30);
+    setTimeout(() => { try { input.focus({ preventScroll:true }); } catch (_) { input.focus(); } }, 30);
   }
   function closeCommandPalette(){
     const palette = document.querySelector('.rw-v2-command-palette');
@@ -3316,7 +3319,7 @@
 
   function applyPremiumModuleTheme(frame){
     try {
-      if (frame?.id === 'redukcja' || frame?.id === 'rolerange') return;
+      if (frame?.id === 'redukcja' || frame?.id === 'rolerange' || frame?.id === 'recruitmenthub') return;
       const doc = frame?.contentDocument;
       if (!doc || !doc.documentElement) return;
       const srcdoc = frame.getAttribute('srcdoc') || '';
