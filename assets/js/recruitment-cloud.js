@@ -19,6 +19,7 @@
   const equals=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
   function status(value,isError){
     if(syncLabel){syncLabel.textContent=value;syncLabel.style.color=isError?'#b3261e':'#137333'}
+    const dataStatus=$('storageStatus');if(dataStatus)dataStatus.textContent=value;
   }
   function loginMessage(value,isError=false){
     if(message){message.textContent=value;message.style.color=isError?'#b3261e':'#5f6368'}
@@ -154,7 +155,11 @@
       const item=$(id);if(item){item.disabled=true;item.title='Disabled in authenticated shared mode to protect team data'}
     }
     const storage=$('storageStatus');
-    if(storage)storage.textContent='Shared Supabase database · local disk writes and destructive imports disabled';
+    if(storage)storage.textContent='Shared database connected · edits are saved to Supabase, not to local disk';
+    const title=storage?.closest('.panel')?.querySelector('h3');
+    if(title)title.textContent='Shared database and backups';
+    const paragraphs=storage?.closest('.panel')?.querySelectorAll('p.muted.small')||[];
+    if(paragraphs.length>1)paragraphs[paragraphs.length-1].textContent='All CSP changes are written to the shared database. Local restore, CSV import and disk synchronisation are disabled in cloud mode. Use JSON backups for recovery.';
     const note=$('rhCloudImportHelp');
     if(note)note.hidden=member?.role!=='admin';
     const importButton=$('rhCloudImportLocal');
