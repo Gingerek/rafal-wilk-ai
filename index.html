@@ -1208,16 +1208,12 @@ function openApp(id, title){
       var style = doc.createElement('style');
       style.id = 'rwIntakeActionsLayout20261103';
       style.textContent =
-        '.rw-top-actions{position:relative!important;top:auto!important;right:auto!important;left:auto!important;transform:none!important;' +
-        'display:flex!important;flex-direction:row!important;flex-wrap:wrap!important;justify-content:flex-end!important;' +
-        'align-items:center!important;gap:10px!important;width:100%!important;max-width:100%!important;' +
-        'padding:12px 18px!important;margin:0!important;box-sizing:border-box!important;z-index:99999!important}' +
-        '.rw-top-actions .rw-tool-lang-ui{position:static!important;top:auto!important;right:auto!important;' +
-        'left:auto!important;transform:none!important;margin:0!important}' +
-        '.rw-top-actions #rwIntakeClearDocument,.rw-top-actions #downloadPdfBtn{position:static!important;' +
-        'top:auto!important;right:auto!important;left:auto!important;transform:none!important;margin:0!important;' +
-        'max-width:100%!important;box-sizing:border-box!important;white-space:normal!important}' +
-        '@media(max-width:520px){.rw-top-actions{padding:10px!important;justify-content:center!important}}';
+        '#rwIntakeActionButtons20261103{display:flex;align-items:center;justify-content:flex-end;gap:10px;' +
+        'flex-wrap:wrap;max-width:calc(100vw - 36px);box-sizing:border-box}' +
+        '#rwIntakeActionButtons20261103 button{position:static!important;top:auto!important;right:auto!important;' +
+        'left:auto!important;transform:none!important;margin:0!important;box-sizing:border-box!important}' +
+        '@media(max-width:520px){#rwIntakeActionButtons20261103{max-width:calc(100vw - 24px);gap:6px}' +
+        '#rwIntakeActionButtons20261103 button{padding:8px 10px!important;font-size:12px!important}}';
       doc.head.appendChild(style);
     }
 
@@ -1233,7 +1229,21 @@ function openApp(id, title){
         'cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.28)';
       clear.addEventListener('click', function(){ clearDocument(doc, frameWindow); });
     }
-    if (clear.parentNode !== bar || clear.nextSibling !== download) bar.insertBefore(clear, download);
+    // Keep the original fixed positioning of .rw-top-actions intact.
+    // Group only the two PDF actions inside that already fixed toolbar.
+    var actions = doc.getElementById('rwIntakeActionButtons20261103');
+    if (!actions) {
+      actions = doc.createElement('div');
+      actions.id = 'rwIntakeActionButtons20261103';
+      bar.insertBefore(actions, download);
+    }
+    if (download.parentNode !== actions) actions.appendChild(download);
+    if (clear.parentNode !== actions || clear.nextSibling !== download) actions.insertBefore(clear, download);
+    var lang = doc.querySelector('.rw-tool-lang-ui');
+    if (lang && actions) {
+      var top = Math.max(72, Math.ceil(actions.getBoundingClientRect().bottom + 8));
+      lang.style.setProperty('top', top + 'px', 'important');
+    }
   }
 
   var frame = document.getElementById('appframe');
