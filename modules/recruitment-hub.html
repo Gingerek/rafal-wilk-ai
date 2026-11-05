@@ -577,6 +577,7 @@ html.rh-cloud-configured:not(.rh-cloud-ready) #modal{display:none!important}
 #personal .pj-people b{color:#344d6b}
 #personal .pj-footer{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:11px 16px;margin-top:auto;padding-top:11px;border-top:1px solid #e5ebf3}
 #personal .pj-cv{display:flex;flex-direction:column;gap:6px;flex:1 1 150px;max-width:260px}
+#personal .pj-cv label{display:flex;flex-direction:column;gap:6px;cursor:pointer}
 #personal .pj-cv select{min-width:0!important;width:100%!important;max-width:100%!important;padding:9px 10px!important;border-radius:8px!important;font-size:12px!important;min-height:40px}
 #personal .pj-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 #personal .pj-actions .btn,#personal .pj-actions .mini{font-size:12.5px!important;min-height:38px;padding:8px 12px!important;border-radius:8px!important}
@@ -724,7 +725,7 @@ function personalCard(j){
   </div>
   ${(j.candidate||j.supplier)?`<div class="pj-people">${j.candidate?`<span><b>Candidate:</b> ${esc(j.candidate)}</span>`:''}${j.supplier?`<span><b>Supplier:</b> ${esc(j.supplier)}</span>`:''}</div>`:''}
   <div class="pj-footer">
-    <div class="pj-cv"><label for="personal-cv-${esc(j.id)}">More CVs needed?</label>${cvQuickSelect(j)}</div>
+    <div class="pj-cv"><label>More CVs needed? ${cvQuickSelect(j)}</label></div>
     <div class="pj-actions"><button type="button" class="mini" data-quicknotes="${esc(j.id)}">Notes (${notesCount})</button><button type="button" class="btn primary pj-edit" data-edit="${esc(j.id)}">Open / Edit</button></div>
   </div>
   ${lastEditorHtml(j)}
