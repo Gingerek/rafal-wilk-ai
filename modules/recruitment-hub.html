@@ -1071,7 +1071,7 @@ function renderSupplier(){
     return `<tr class="supplier-group"><td colspan="6"><span class="supplier-location">${esc(loc)}</span><span class="supplier-group-count">${rows.length} jobs · ${qty} positions</span></td></tr>`+
     rows.map(j=>`<tr class="supplier-job"><td class="supplier-number">${esc(j.number)}</td><td class="supplier-title">${esc(j.title)}</td><td>${badge(j.status)}</td><td class="supplier-qty">${Number(j.positions)||1}</td><td>${cvBadge(j)}</td><td>${esc(j.owner)}</td></tr>`).join('');
   }).join('');
-  $('supplierContent').innerHTML=list.length?`<div class="supplier-tablewrap"><table class="supplier-table"><colgroup><col style="width:11%"><col style="width:31%"><col style="width:16%"><col style="width:8%"><col style="width:23%"><col style="width:11%"></colgroup><thead><tr><th>Job #</th><th>Job title</th><th>Status</th><th>Positions</th><th>Supplier CV instruction</th><th>CSP</th></tr></thead><tbody>${body}</tbody></table></div>`:'<div class="empty">No supplier-visible jobs</div>';
+  $('supplierContent').innerHTML=list.length?`<div class="supplier-tablewrap"><table class="supplier-table"><colgroup><col style="width:11%"><col style="width:31%"><col style="width:16%"><col style="width:8%"><col style="width:23%"><col style="width:11%"></colgroup><thead><tr><th>Job #</th><th>Job title</th><th>Status</th><th>Positions</th><th>Next Step</th><th>CSP</th></tr></thead><tbody>${body}</tbody></table></div>`:'<div class="empty">No supplier-visible jobs</div>';
 }
 function renderClosed(){$('closedTable').innerHTML=state.jobs.filter(j=>group(j)==='Closed').map(j=>`<tr><td><button class="link" data-edit="${esc(j.id)}">#${esc(j.number)} ${esc(j.title)}</button></td><td>${esc(j.location)}</td><td>${esc(j.owner)}</td><td>${badge(j.status)}</td><td>${dateFmt(j.closedDate)}</td><td><button class="mini" data-reopen="${esc(j.id)}">Reopen</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">No archived jobs</td></tr>'}
 function renderData(){
@@ -1247,7 +1247,7 @@ const csvFields=['number','title','location','owner','status','priority','positi
 const supplierCsvFields=['number','title','location','status','positions','cvNeeded','owner'];
 function supplierCsvSafe(rows){
  const quote=value=>'"'+String(value??'').replace(/"/g,'""')+'"';
- const headers=supplierCsvFields.map(key=>key==='cvNeeded'?'Supplier CV instruction':key);
+ const headers=supplierCsvFields.map(key=>key==='cvNeeded'?'Next Step':key);
  return '\ufeff'+headers.join(',')+'\r\n'+rows.map(job=>supplierCsvFields.map(key=>quote(key==='cvNeeded'?cvSupplierLabel(cvValue(job)):job[key])).join(',')).join('\r\n');
 }
 $('exportCsv').onclick=$('fullCsv').onclick=()=>csvExport('recruitment-all-jobs-'+iso()+'.csv',state.jobs);$('supplierCsv').onclick=()=>download('supplier-update-'+iso()+'.csv',supplierCsvSafe(supplierJobs()),'text/csv;charset=utf-8');$('backupBtn').onclick=()=>rhDataRequest(()=>download('recruitment-backup-'+iso()+'.json',JSON.stringify({version:3,exportedAt:new Date().toISOString(),jobs:state.jobs,history:state.history},null,2),'application/json'));$('importJsonBtn').onclick=()=>$('jsonFile').click();$('importCsvBtn').onclick=()=>$('csvFile').click();
@@ -1265,7 +1265,7 @@ function supplierPdfDownload(){
   {name:'JOB TITLE',width:385,key:'title'},
   {name:'STATUS',width:160,key:'status'},
   {name:'QTY',width:67,key:'positions'},
-  {name:'CV INSTRUCTION',width:220,key:'cv'},
+  {name:'NEXT STEP',width:220,key:'cv'},
   {name:'CSP',width:100,key:'owner'},
   {name:'PRIORITY',width:82,key:'priority'}
  ];
@@ -1305,7 +1305,7 @@ function supplierPdfDownload(){
   for(const col of columns){
    line(x,top,x,top+34,'#456789',.55);
    const words=col.name.split(' ');
-   const two=col.name.length>13||(['CV INSTRUCTION','JOB TITLE'].includes(col.name));
+   const two=col.name.length>13||(['NEXT STEP','JOB TITLE'].includes(col.name));
    if(two&&words.length>1){
     const pivot=Math.ceil(words.length/2);
     text(words.slice(0,pivot).join(' '),x+6,top+13,7.2,true,'#ffffff');
