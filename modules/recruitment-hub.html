@@ -718,7 +718,55 @@ html.rh-cloud-configured:not(.rh-cloud-ready) #modal{display:none!important}
 #supplierContent .supplier-table td:nth-child(5){overflow-wrap:normal;word-break:normal}
 #supplierContent .supplier-table{min-width:760px}
 #personal .rh-cv select,#jobs .rh-cv select{white-space:normal!important;text-overflow:ellipsis!important;max-width:100%!important}
-</style></head><body><div id="rhCloudGate" hidden><div class="rh-cloud-login"><h1>Recruitment Hub</h1><p>Secure team login. Sign in with your invited CSP account to access jobs and internal notes.</p><form id="rhCloudLoginForm"><label>Email<input id="rhCloudEmail" type="email" autocomplete="username" required></label><label>Password<input id="rhCloudPassword" type="password" autocomplete="current-password" required></label><button id="rhCloudSignIn" type="submit">Sign in</button></form><button type="button" id="rhCloudRequestReset">Set or reset account password</button><form id="rhCloudRecoveryForm" hidden><label>New password (12+ characters)<input id="rhCloudNewPassword" type="password" autocomplete="new-password" minlength="12" required></label><button id="rhCloudUpdatePassword" type="submit">Save new password</button></form><p id="rhCloudMessage" role="status">Connecting...</p><p>Only accounts assigned by the administrator can access shared recruitment data.</p></div></div><div class="app"><aside class="sidebar"><div class="brand"><span class="brandmark">R</span> Recruitment Hub<small>Team recruitment workspace</small></div><nav class="nav" id="nav"><button data-view="dashboard" class="active">Dashboard</button><button data-view="jobs">All Jobs</button><button data-view="actions">Action List</button><button data-view="notes">Quick Notes</button><div class="navlabel">PERSONAL WORKSPACES</div><button data-view="rafal">Rafal · My Jobs</button><button data-view="tanja">Tanja · My Jobs</button><button data-view="daim">Daim · My Jobs</button><button data-view="ivana">Ivana · My Jobs</button><div class="navlabel">REPORTING</div><button data-view="team">Team Views</button><button data-view="supplier">Supplier Update</button><button data-view="closed">Closed / Filled</button><button data-view="data">Data & Backup</button></nav></aside><main class="main"><header class="top"><div><h1 id="pageTitle">Recruitment Dashboard</h1><div class="muted small" id="weekLabel"></div></div><div class="actions-top"><span id="rhCloudBadge" hidden>Shared database</span><button type="button" class="btn" id="rhCloudSignOut" hidden>Sign out</button><label class="actor-control">Editing as <select id="actorSelect" aria-label="Current editor" required><option value="">Select your CSP</option><option>Rafal</option><option>Tanja</option><option>Daim</option><option>Ivana</option></select></label><button class="btn" id="exportCsv">Export CSV</button><button class="btn" id="backupBtn">Backup JSON</button><button class="btn primary" id="addBtn">+ New job</button></div></header><div id="rhCloudError" hidden><strong>Unsynced changes</strong><p id="rhCloudErrorText"></p><button type="button" class="btn" id="rhCloudBackup">Download JSON of unsynced changes</button><button type="button" class="btn" id="rhCloudReload">Discard unsynced changes and reload server</button></div><div class="notice"><span id="rhCloudSyncStatus" hidden></span><b>Local workspace</b> · All CSPs can edit all job cards. Choose your own name under “Editing as” before updating any job, including jobs owned by someone else. Every change is recorded with the editor, time and job owner. This is a local browser workspace, not shared between devices. The selector is self-declared and is not verified login/authentication. Back up the JSON data regularly.</div>
+
+/* CSP start gate: visible from first paint, never persisted */
+#rhCspWelcome[hidden]{display:none!important}
+#rhCspWelcome.rh-csp-welcome{position:fixed!important;inset:0!important;z-index:1000005!important;display:flex;justify-content:center;align-items:center;background:linear-gradient(130deg,#091b33 0%,#142f54 55%,#0b1c35 100%);padding:18px;overflow:auto}
+#rhCspWelcome .rh-csp-welcome-card{width:min(100%,560px);padding:30px 34px;background:#fff;border-radius:13px;border:1px solid #d9e2ed;box-shadow:0 28px 80px rgba(2,15,35,.42);color:#1b304a}
+#rhCspWelcome .rh-csp-welcome-brand{display:flex;gap:12px;align-items:center;font-size:12px;font-weight:850;color:#20476f;letter-spacing:.075em}
+#rhCspWelcome .rh-csp-brand-mark{width:43px;height:43px;display:grid;place-items:center;background:#1b5eaa;color:#fff;border-radius:9px;font-size:15px;letter-spacing:0}
+#rhCspWelcome .rh-csp-welcome-brand small{display:block;font-size:10px;letter-spacing:.13em;color:#75869b;font-weight:750;margin-top:2px}
+#rhCspWelcome h1{font-size:25px;line-height:1.2;font-weight:850;letter-spacing:-.02em;color:#152b46;margin:24px 0 8px}
+#rhCspWelcome .rh-csp-welcome-sub{font-size:13px;color:#63758b;line-height:1.5;margin:0 0 20px}
+#rhCspWelcome .rh-csp-profiles{border:0;margin:0 0 17px;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#rhCspWelcome .rh-csp-profiles legend,#rhCspWelcome .rh-csp-pin-label{display:block;width:100%;font-size:11px;font-weight:850;color:#455f79;letter-spacing:.035em;margin:0 0 9px}
+#rhCspWelcome .rh-csp-choice{position:relative;display:flex;align-items:center;gap:10px;min-height:62px;padding:10px 13px;border:1.5px solid #d1deec;border-radius:9px;background:#fafcff;font-weight:800;color:#263f5d;font-size:14px;cursor:pointer;transition:background .15s,border-color .15s}
+#rhCspWelcome .rh-csp-choice input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+#rhCspWelcome .rh-csp-choice:has(input:checked){background:#e8f2ff;border-color:#1a66ba;color:#0c4f96}
+#rhCspWelcome .rh-csp-choice:has(input:focus-visible){outline:3px solid #89b8f2;outline-offset:2px}
+#rhCspWelcome .rh-csp-initial{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:8px;background:#e3ebf5;color:#295476;font-size:14px;font-weight:850}
+#rhCspWelcome .rh-csp-choice:has(input:checked) .rh-csp-initial{background:#1c67b6;color:white}
+#rhCspWelcome .rh-csp-choice-check{margin-left:auto;color:#1b65b5;visibility:hidden;font-size:17px}
+#rhCspWelcome .rh-csp-choice:has(input:checked) .rh-csp-choice-check{visibility:visible}
+#rhCspWelcome #rhCspWelcomePin{width:100%!important;max-width:none!important;height:46px!important;min-height:46px!important;background:#fff!important;color:#183651!important;border:1.5px solid #b9cadb!important;border-radius:7px!important;padding:10px 14px!important;font-size:16px!important;letter-spacing:.12em}
+#rhCspWelcome #rhCspWelcomePin:focus{outline:2px solid #77a9ed;outline-offset:1px}
+#rhCspWelcome .rh-csp-welcome-error{height:18px;color:#b32a2a;font-size:12px;font-weight:800;margin:8px 0}
+#rhCspWelcome .rh-csp-submit{width:100%;min-height:45px;padding:10px!important;background:#1a65b5!important;color:white!important;border:1px solid #1a65b5!important;border-radius:7px!important;font-size:14px!important;font-weight:850!important}
+#rhCspWelcome .rh-csp-submit:hover{background:#165596!important}
+#rhCspWelcome .rh-csp-welcome-foot{font-size:10.5px;line-height:1.55;color:#708197;margin:18px 0 0}
+#rhSwitchCsp.rh-switch-csp{background:#e8f2ff!important;color:#20558a!important;border:1px solid #bcd6ed!important;white-space:nowrap}
+@media(max-width:530px){#rhCspWelcome .rh-csp-welcome-card{padding:22px 18px}#rhCspWelcome .rh-csp-profiles{gap:7px}#rhCspWelcome .rh-csp-choice{padding:9px;min-height:57px}#rhCspWelcome h1{font-size:22px}}
+</style></head><body><div id="rhCspWelcome" class="rh-csp-welcome" role="dialog" aria-modal="true" aria-labelledby="rhCspWelcomeTitle">
+ <div class="rh-csp-welcome-card">
+  <div class="rh-csp-welcome-brand"><span class="rh-csp-brand-mark">RH</span><span>RECRUITMENT HUB <small>TEAM WORKSPACE</small></span></div>
+  <h1 id="rhCspWelcomeTitle">Select your CSP profile</h1>
+  <p class="rh-csp-welcome-sub">Choose your name and enter the access code to start your workspace.</p>
+  <form id="rhCspWelcomeForm" autocomplete="off">
+   <fieldset class="rh-csp-profiles"><legend>CSP profile</legend>
+    <label class="rh-csp-choice"><input type="radio" name="rhCspName" value="Rafal" required><span class="rh-csp-initial">R</span><span>Rafal</span><span class="rh-csp-choice-check">✓</span></label>
+    <label class="rh-csp-choice"><input type="radio" name="rhCspName" value="Ivana" required><span class="rh-csp-initial">I</span><span>Ivana</span><span class="rh-csp-choice-check">✓</span></label>
+    <label class="rh-csp-choice"><input type="radio" name="rhCspName" value="Daim" required><span class="rh-csp-initial">D</span><span>Daim</span><span class="rh-csp-choice-check">✓</span></label>
+    <label class="rh-csp-choice"><input type="radio" name="rhCspName" value="Tanja" required><span class="rh-csp-initial">T</span><span>Tanja</span><span class="rh-csp-choice-check">✓</span></label>
+   </fieldset>
+   <label class="rh-csp-pin-label" for="rhCspWelcomePin">Access code</label>
+   <input id="rhCspWelcomePin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" placeholder="Enter 4-digit code" required>
+   <p id="rhCspWelcomeError" class="rh-csp-welcome-error" role="alert" aria-live="polite"></p>
+   <button class="rh-csp-submit" type="submit">Open workspace</button>
+  </form>
+  <p class="rh-csp-welcome-foot">This code controls access to the interface. Shared-database access, when enabled, requires your individual account.</p>
+ </div>
+</div>
+<div id="rhCloudGate" hidden><div class="rh-cloud-login"><h1>Recruitment Hub</h1><p>Secure team login. Sign in with your invited CSP account to access jobs and internal notes.</p><form id="rhCloudLoginForm"><label>Email<input id="rhCloudEmail" type="email" autocomplete="username" required></label><label>Password<input id="rhCloudPassword" type="password" autocomplete="current-password" required></label><button id="rhCloudSignIn" type="submit">Sign in</button></form><button type="button" id="rhCloudRequestReset">Set or reset account password</button><form id="rhCloudRecoveryForm" hidden><label>New password (12+ characters)<input id="rhCloudNewPassword" type="password" autocomplete="new-password" minlength="12" required></label><button id="rhCloudUpdatePassword" type="submit">Save new password</button></form><p id="rhCloudMessage" role="status">Connecting...</p><p>Only accounts assigned by the administrator can access shared recruitment data.</p></div></div><div class="app"><aside class="sidebar"><div class="brand"><span class="brandmark">R</span> Recruitment Hub<small>Team recruitment workspace</small></div><nav class="nav" id="nav"><button data-view="dashboard" class="active">Dashboard</button><button data-view="jobs">All Jobs</button><button data-view="actions">Action List</button><button data-view="notes">Quick Notes</button><div class="navlabel">PERSONAL WORKSPACES</div><button data-view="rafal">Rafal · My Jobs</button><button data-view="tanja">Tanja · My Jobs</button><button data-view="daim">Daim · My Jobs</button><button data-view="ivana">Ivana · My Jobs</button><div class="navlabel">REPORTING</div><button data-view="team">Team Views</button><button data-view="supplier">Supplier Update</button><button data-view="closed">Closed / Filled</button><button data-view="data">Data & Backup</button></nav></aside><main class="main"><header class="top"><div><h1 id="pageTitle">Recruitment Dashboard</h1><div class="muted small" id="weekLabel"></div></div><div class="actions-top"><span id="rhCloudBadge" hidden>Shared database</span><button type="button" class="btn" id="rhCloudSignOut" hidden>Sign out</button><label class="actor-control">Editing as <select id="actorSelect" aria-label="Current editor" required><option value="">Select your CSP</option><option>Rafal</option><option>Tanja</option><option>Daim</option><option>Ivana</option></select></label><button type="button" id="rhSwitchCsp" class="btn rh-switch-csp" title="Choose another CSP and enter the access code again">Switch CSP</button><button class="btn" id="exportCsv">Export CSV</button><button class="btn" id="backupBtn">Backup JSON</button><button class="btn primary" id="addBtn">+ New job</button></div></header><div id="rhCloudError" hidden><strong>Unsynced changes</strong><p id="rhCloudErrorText"></p><button type="button" class="btn" id="rhCloudBackup">Download JSON of unsynced changes</button><button type="button" class="btn" id="rhCloudReload">Discard unsynced changes and reload server</button></div><div class="notice"><span id="rhCloudSyncStatus" hidden></span><b>Local workspace</b> · All CSPs can edit all job cards. Choose your own name under “Editing as” before updating any job, including jobs owned by someone else. Every change is recorded with the editor, time and job owner. This is a local browser workspace, not shared between devices. The selector is self-declared and is not verified login/authentication. Back up the JSON data regularly.</div>
 <section class="view active" id="dashboard"><div class="grid kpis" id="kpis"></div><section class="panel csp-dashboard-panel"><div class="split"><div><h2>Current jobs by CSP</h2><p class="muted small">Includes Open, On hold and Pre-ID. Excludes Filled, Closed, Canceled and Rejected. Click a CSP to see all of their jobs.</p></div></div><div id="cspDashboard" class="csp-dashboard-grid"></div></section><div class="grid two"><article class="panel"><h2>Jobs by location</h2><div id="locationChart"></div></article><article class="panel"><h2>Jobs by owner</h2><div id="ownerChart"></div></article></div><article class="panel"><h2>Status overview</h2><div class="tablewrap"><table><thead><tr><th>Group</th><th>Jobs</th><th>Positions</th></tr></thead><tbody id="statusTable"></tbody></table></div></article><article class="panel"><div class="split"><h2>Needs attention</h2><button class="btn" data-go="actions">View action list</button></div><div id="dashboardAlerts"></div></article></section>
 <section class="view" id="jobs"><div class="panel rh-panel"><header class="rh-header"><div><h2>All Jobs</h2><p>Requisitions grouped by location</p></div><strong id="matchingCount"></strong></header><div class="alljobs-owner-tabs" role="group" aria-label="Show jobs by CSP"><button type="button" class="alljobs-owner-tab is-selected" data-alljobs-owner="" aria-pressed="true"><span>All Jobs</span><strong data-alljobs-count>0</strong></button><button type="button" class="alljobs-owner-tab" data-alljobs-owner="Rafal" aria-pressed="false"><span>Rafal</span><strong data-alljobs-count>0</strong></button><button type="button" class="alljobs-owner-tab" data-alljobs-owner="Tanja" aria-pressed="false"><span>Tanja</span><strong data-alljobs-count>0</strong></button><button type="button" class="alljobs-owner-tab" data-alljobs-owner="Ivana" aria-pressed="false"><span>Ivana</span><strong data-alljobs-count>0</strong></button><button type="button" class="alljobs-owner-tab" data-alljobs-owner="Daim" aria-pressed="false"><span>Daim</span><strong data-alljobs-count>0</strong></button></div><div class="toolbar"><label class="rh-jobnumber-filter">Job Number<input id="allJobsNumber" inputmode="numeric" aria-label="Filter all jobs by job number" autocomplete="off" placeholder="Job #"></label><input id="search" aria-label="Search jobs" placeholder="Search job, manager, candidate, supplier..."><select id="ownerFilter" aria-label="Filter by CSP" hidden></select><select id="locationFilter" aria-label="Filter by location"></select><select id="statusFilter" aria-label="Filter by exact job status"></select><select id="priorityFilter" aria-label="Priority"></select><button class="btn" id="clearFilters">Clear filters</button></div><div class="status-legend"><span class="legend-label">STATUS KEY</span><span class="pill status-pill st-open">Open</span><span class="pill status-pill st-progress">In Progress</span><span class="pill status-pill st-interview">Interview</span><span class="pill status-pill st-offer">Offer</span><span class="pill status-pill st-onboarding">Onboarding</span><span class="pill status-pill st-hold">On hold</span><span class="pill status-pill st-hidden">Hide from Supplier</span><span class="pill status-pill st-preid">Pre-ID</span><span class="pill status-pill st-filled">Filled</span></div><div class="rh-result"><span>Requisitions by location</span><span>Open Details to see full job information</span></div><div id="jobsTable" class="rh-worklist"></div></div></section>
 <section class="view" id="notes"><div class="panel"><div class="split"><div><h2>Quick Notes</h2><p class="muted small">All internal job notes in one searchable timeline. Select any job to add a note quickly.</p></div><span class="muted small" id="notesCount"></span></div><div class="toolbar"><input id="noteSearch" placeholder="Search job number, title or note..." aria-label="Search notes"><select id="notesOwner"></select><select id="notesLocation"></select><select id="notesStatus"></select><button class="btn" id="notesClear">Clear filters</button></div><div class="panel" style="background:#f7faff;margin-bottom:20px"><h3 style="margin-top:0">Add a quick note</h3><div class="toolbar"><select id="quickJob" style="min-width:300px;flex:1"></select><button class="btn" id="quickOpen">Open job details</button></div><textarea id="quickNote" rows="3" style="width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:9px;resize:vertical;font:inherit" placeholder="Write an internal update or follow-up..."></textarea><div class="toolbar" style="margin-top:10px"><button class="btn primary" id="quickSave">Save note</button></div></div><div id="notesFeed"></div></div></section><section class="view" id="actions"><div class="panel"><div class="split"><h2>Follow-up and action list</h2><span class="muted small">Overdue, due today, high priority or aged &gt; 90 days</span></div><div class="tablewrap"><table><thead><tr><th>Urgency</th><th>Job</th><th>Owner</th><th>Next action</th><th>Due date</th><th>Days open</th><th>Update</th></tr></thead><tbody id="actionTable"></tbody></table></div></div></section>
@@ -763,7 +811,75 @@ try{state=CLOUD_ENABLED?{jobs:[],history:[]}:JSON.parse(localStorage.getItem(KEY
 function persist(){if(CLOUD_ENABLED){if(!window.RHCloud?.ready){setStorageStatus('Cloud not ready - NOT saved');return;}window.RHCloud.persist();setStorageStatus('Syncing shared database...');return;}try{localStorage.setItem(KEY,JSON.stringify(state));setStorageStatus('Saved automatically in this browser · '+new Date().toLocaleTimeString('en-GB'));scheduleDiskSave()}catch(e){setStorageStatus('Browser storage failed: '+e.message);alert('Browser storage is unavailable or full. Export a JSON backup now.')}}
 
 const ACTOR_STORAGE_KEY='recruitment-acting-csp-v2';
+
+let rhCspUnlocked=false;
+let rhCspSelected='';
+function rhCspLock(){
+ rhCspUnlocked=false;
+ rhCspSelected='';
+ const access=document.getElementById('rhCspWelcome');
+ if(!access)return;
+ access.hidden=false;
+ const form=document.getElementById('rhCspWelcomeForm');
+ if(form)form.reset();
+ const error=document.getElementById('rhCspWelcomeError');
+ if(error)error.textContent='';
+ if(!CLOUD_ENABLED){
+  const actor=document.getElementById('actorSelect');
+  if(actor){actor.value='';actor.disabled=true}
+ }
+}
+function rhCspUnlock(event){
+ event.preventDefault();
+ const chosen=document.querySelector('#rhCspWelcomeForm input[name="rhCspName"]:checked');
+ const password=$('rhCspWelcomePin').value;
+ const error=$('rhCspWelcomeError');
+ if(!chosen||!owners.includes(chosen.value)){
+  error.textContent='Select your CSP profile.';
+  return;
+ }
+ if(password!=='4685'){
+  error.textContent='Incorrect access code. Please try again.';
+  $('rhCspWelcomePin').value='';
+  $('rhCspWelcomePin').focus();
+  return;
+ }
+ rhCspSelected=chosen.value;
+ rhCspUnlocked=true;
+ $('rhCspWelcomePin').value='';
+ error.textContent='';
+ $('rhCspWelcome').hidden=true;
+ if(!CLOUD_ENABLED){
+  const actor=$('actorSelect');
+  actor.disabled=true;
+  actor.value=rhCspSelected;
+ }
+ if(current==='data')rhDataLeaveModule();
+ navigate(rhCspSelected.toLowerCase());
+}
+$('rhCspWelcomeForm').addEventListener('submit',rhCspUnlock);
+$('rhCspWelcomePin').addEventListener('input',()=>$('rhCspWelcomeError').textContent='');
+$('rhSwitchCsp').addEventListener('click',()=>{
+ if(typeof closeEditor==='function')closeEditor();
+ if(current==='data')rhDataLeaveModule();
+ rhCspLock();
+});
+window.addEventListener('pagehide',rhCspLock);
+window.addEventListener('pageshow',event=>{if(event.persisted)rhCspLock()});
+try{
+ const frame=window.frameElement;
+ if(frame){
+  const parentBody=window.parent.document.body;
+  const obs=new MutationObserver(()=>{
+   if(!frame.classList.contains('show')||!parentBody.classList.contains('app-open'))rhCspLock();
+  });
+  obs.observe(frame,{attributes:true,attributeFilter:['class','hidden','style']});
+  obs.observe(parentBody,{attributes:true,attributeFilter:['class']});
+ }
+}catch(_){}
+
 function currentActor(){
+ if(!rhCspUnlocked)return '';
  if(CLOUD_ENABLED)return window.RHCloud?.ready?window.RHCloud.identity:'';
  const candidate=String($('actorSelect')?.value||'').trim();
  return owners.includes(candidate)?candidate:'';
@@ -1072,7 +1188,7 @@ function closeEditor(){$('modal').classList.remove('open');editing=null}
 $('jobForm').addEventListener('submit',e=>{e.preventDefault();if(!requireActor())return;const f=new FormData(e.currentTarget);const j={};for(const [k,v] of f.entries())j[k]=String(v).trim();j.hidden=$('jobForm').elements.namedItem('hidden').checked;j.positions=Number(j.positions);if(!j.number||!j.title||!j.owner||!j.location||!Number.isInteger(j.positions)||j.positions<1){alert('Complete required fields. Positions must be a positive whole number.');return}if(j.openDate&&j.closedDate&&j.closedDate<j.openDate){alert('Closed date cannot precede opening date.');return}if(state.jobs.some(x=>String(x.number)===String(j.number)&&x.id!==editing)){alert('Job number already exists.');return}const prior=state.jobs.find(x=>x.id===editing);j.id=editing||('job-'+Date.now()+'-'+Math.random().toString(36).slice(2,7));j.noteEntries=Array.isArray(prior?.noteEntries)?prior.noteEntries:[];j.createdAt=prior?.createdAt||new Date().toISOString();j.updatedAt=new Date().toISOString();if(archiveStatuses.includes(j.status)&&!j.closedDate)j.closedDate=iso();if(!archiveStatuses.includes(j.status))j.closedDate='';if(prior){state.jobs[state.jobs.findIndex(x=>x.id===editing)]=j;log('Updated',j,Object.keys(j).filter(k=>!['updatedAt','createdAt','id'].includes(k)&&String(prior[k]??'')!==String(j[k]??'')).map(k=>`${k}: ${String(prior[k]??'-').slice(0,65)} → ${String(j[k]??'-').slice(0,65)}`).join('; ')||'Saved without field changes')}else{state.jobs.push(j);log('Created',j,j.title)}persist();closeEditor();render();notify('Job saved')});
 $('deleteJob').onclick=()=>{const j=state.jobs.find(x=>x.id===editing);if(!j||!requireActor()||!confirm(`Permanently delete job #${j.number}? Export a backup first if you need a record.`))return;state.jobs=state.jobs.filter(x=>x.id!==editing);log('Deleted',j,j.title);persist();closeEditor();render();notify('Job deleted')};$('closeModal').onclick=$('cancelModal').onclick=closeEditor;$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeEditor()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeEditor()});
 document.addEventListener('change',e=>{const el=e.target.closest('[data-cv-job]');if(!el)return;const job=state.jobs.find(j=>j.id===el.dataset.cvJob);if(!job)return;if(!requireActor()){render();return;}const value=el.value;if(!['Yes','No','On hold','Not set'].includes(value))return;const before=cvValue(job);if(before===value)return;job.cvNeeded=value;job.updatedAt=new Date().toISOString();log('Updated',job,`More CVs Needed: ${before} -> ${value}`);persist();render();notify('CV requirement saved');});
-document.addEventListener('click',e=>{const details=e.target.closest('[data-rh-details]');if(details){const key=details.dataset.rhDetails||'',panel=details.closest('.rh-record')?.querySelector('.rh-detail-panel');if(panel){const opening=details.getAttribute('aria-expanded')!=='true';panel.hidden=!opening;details.setAttribute('aria-expanded',opening?'true':'false');details.textContent=opening?'Less':'Details';if(opening)expandedRhRows.add(key);else expandedRhRows.delete(key);}return;}const groupButton=e.target.closest('[data-rh-group]');if(groupButton){const key=groupButton.dataset.rhGroup||'',panel=groupButton.closest('.rh-group')?.querySelector('.rh-group-body');if(panel){const opening=groupButton.getAttribute('aria-expanded')!=='true';panel.hidden=!opening;groupButton.setAttribute('aria-expanded',opening?'true':'false');if(opening)collapsedRhGroups.delete(key);else collapsedRhGroups.add(key);}return;}const ownerTab=e.target.closest('[data-alljobs-owner]');if(ownerTab){chooseAllJobsOwner(ownerTab.dataset.alljobsOwner||'');return;}const csp=e.target.closest('[data-filter-csp]');if(csp){chooseAllJobsOwner(csp.dataset.filterCsp);navigate('jobs');return;}const quick=e.target.closest('[data-quicknotes]');if(quick){if(!openEditor(quick.dataset.quicknotes))return;setTimeout(()=>{$('jobNoteText').focus();$('jobNoteText').scrollIntoView({block:'center',behavior:'smooth'})},70)}const edit=e.target.closest('[data-edit]');if(edit)openEditor(edit.dataset.edit);const nav=e.target.closest('[data-go]');if(nav)navigate(nav.dataset.go);const owner=e.target.closest('[data-owner]');if(owner){teamOwner=teamOwner===owner.dataset.owner?'':owner.dataset.owner;renderTeam()}const re=e.target.closest('[data-reopen]');if(re){const j=state.jobs.find(x=>x.id===re.dataset.reopen);if(j&&requireActor()&&confirm(`Reopen job #${j.number}?`)){j.status='Open';j.closedDate='';j.updatedAt=new Date().toISOString();log('Reopened',j,'Changed status to Open');persist();render()}}});document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>navigate(b.dataset.view));$('addBtn').onclick=()=>openEditor();$('personalAdd').onclick=()=>openEditor();$('actorSelect').value=owners.includes(localStorage.getItem(ACTOR_STORAGE_KEY))?localStorage.getItem(ACTOR_STORAGE_KEY):'';$('actorSelect').onchange=()=>{const editor=currentActor();if(editor)localStorage.setItem(ACTOR_STORAGE_KEY,editor);else localStorage.removeItem(ACTOR_STORAGE_KEY)};$('personalClear').onclick=()=>{for(const id of ['personalJobNumber','personalSearch','personalLocation','personalStatus','personalPriority','personalVisibility'])$(id).value=id==='personalStatus'?'Current':'';renderPersonal()};$('personalExport').onclick=()=>csvExport('recruitment-'+personalOwner.toLowerCase()+'-'+iso()+'.csv',state.jobs.filter(j=>j.owner===personalOwner));['personalJobNumber','personalSearch','personalStatus','personalPriority','personalLocation','personalVisibility'].forEach(id=>$(id).addEventListener(['personalJobNumber','personalSearch'].includes(id)?'input':'change',renderPersonal));['allJobsNumber','search','locationFilter','statusFilter','priorityFilter'].forEach(id=>$(id).addEventListener(['allJobsNumber','search'].includes(id)?'input':'change',renderJobs));$('ownerFilter').addEventListener('change',()=>chooseAllJobsOwner($('ownerFilter').value));$('clearFilters').onclick=()=>{$('search').value='';$('allJobsNumber').value='';for(const id of ['locationFilter','ownerFilter','statusFilter','priorityFilter'])$(id).value='';renderJobs()};
+document.addEventListener('click',e=>{const details=e.target.closest('[data-rh-details]');if(details){const key=details.dataset.rhDetails||'',panel=details.closest('.rh-record')?.querySelector('.rh-detail-panel');if(panel){const opening=details.getAttribute('aria-expanded')!=='true';panel.hidden=!opening;details.setAttribute('aria-expanded',opening?'true':'false');details.textContent=opening?'Less':'Details';if(opening)expandedRhRows.add(key);else expandedRhRows.delete(key);}return;}const groupButton=e.target.closest('[data-rh-group]');if(groupButton){const key=groupButton.dataset.rhGroup||'',panel=groupButton.closest('.rh-group')?.querySelector('.rh-group-body');if(panel){const opening=groupButton.getAttribute('aria-expanded')!=='true';panel.hidden=!opening;groupButton.setAttribute('aria-expanded',opening?'true':'false');if(opening)collapsedRhGroups.delete(key);else collapsedRhGroups.add(key);}return;}const ownerTab=e.target.closest('[data-alljobs-owner]');if(ownerTab){chooseAllJobsOwner(ownerTab.dataset.alljobsOwner||'');return;}const csp=e.target.closest('[data-filter-csp]');if(csp){chooseAllJobsOwner(csp.dataset.filterCsp);navigate('jobs');return;}const quick=e.target.closest('[data-quicknotes]');if(quick){if(!openEditor(quick.dataset.quicknotes))return;setTimeout(()=>{$('jobNoteText').focus();$('jobNoteText').scrollIntoView({block:'center',behavior:'smooth'})},70)}const edit=e.target.closest('[data-edit]');if(edit)openEditor(edit.dataset.edit);const nav=e.target.closest('[data-go]');if(nav)navigate(nav.dataset.go);const owner=e.target.closest('[data-owner]');if(owner){teamOwner=teamOwner===owner.dataset.owner?'':owner.dataset.owner;renderTeam()}const re=e.target.closest('[data-reopen]');if(re){const j=state.jobs.find(x=>x.id===re.dataset.reopen);if(j&&requireActor()&&confirm(`Reopen job #${j.number}?`)){j.status='Open';j.closedDate='';j.updatedAt=new Date().toISOString();log('Reopened',j,'Changed status to Open');persist();render()}}});document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>navigate(b.dataset.view));$('addBtn').onclick=()=>openEditor();$('personalAdd').onclick=()=>openEditor();$('actorSelect').value='';if(!CLOUD_ENABLED)$('actorSelect').disabled=true;$('actorSelect').onchange=()=>{if(!CLOUD_ENABLED){$('actorSelect').value=rhCspUnlocked?rhCspSelected:'';}};$('personalClear').onclick=()=>{for(const id of ['personalJobNumber','personalSearch','personalLocation','personalStatus','personalPriority','personalVisibility'])$(id).value=id==='personalStatus'?'Current':'';renderPersonal()};$('personalExport').onclick=()=>csvExport('recruitment-'+personalOwner.toLowerCase()+'-'+iso()+'.csv',state.jobs.filter(j=>j.owner===personalOwner));['personalJobNumber','personalSearch','personalStatus','personalPriority','personalLocation','personalVisibility'].forEach(id=>$(id).addEventListener(['personalJobNumber','personalSearch'].includes(id)?'input':'change',renderPersonal));['allJobsNumber','search','locationFilter','statusFilter','priorityFilter'].forEach(id=>$(id).addEventListener(['allJobsNumber','search'].includes(id)?'input':'change',renderJobs));$('ownerFilter').addEventListener('change',()=>chooseAllJobsOwner($('ownerFilter').value));$('clearFilters').onclick=()=>{$('search').value='';$('allJobsNumber').value='';for(const id of ['locationFilter','ownerFilter','statusFilter','priorityFilter'])$(id).value='';renderJobs()};
 function download(name,content,mime){const b=new Blob([content],{type:mime});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
 const csvFields=['number','title','location','owner','status','priority','positions','openDate','manager','next','dueDate','supplier','candidate','notes','hidden','closedDate','cvNeeded'];function csv(rows){const quote=x=>'"'+String(x??'').replace(/"/g,'""')+'"';return '\ufeff'+csvFields.join(',')+'\r\n'+rows.map(j=>csvFields.map(k=>quote(j[k])).join(',')).join('\r\n')}const csvExport=(name,rows)=>download(name,csv(rows),'text/csv;charset=utf-8');
 const supplierCsvFields=['number','title','location','status','positions','cvNeeded','owner'];
@@ -1089,88 +1205,195 @@ $('resetDemo').onclick=()=>{if(!requireActor())return;if(!confirm('Replace all j
 
 // Offline, direct PDF export: no external library or internet connection required.
 function supplierPdfDownload(){
-  const items=supplierJobs().slice().sort((a,b)=>String(a.location).localeCompare(String(b.location))||String(a.number).localeCompare(String(b.number)));
-  const pageW=595.28,pageH=841.89,ml=40,mr=40,bottom=55;
-  const pages=[];let commands=[],y=pageH-45,pageNo=0;
-  const encode=s=>String(s??'').replace(/[\u2018\u2019]/g,"'").replace(/[\u201c\u201d]/g,'"').replace(/[\u2013\u2014]/g,'-').replace(/\u2022/g,'-').replace(/[^\x20-\x7e\xA0-\xFF]/g,'?');
-  const pdfEsc=s=>encode(s).replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)');
-  function text(t,x,top,size=9,bold=false,color='0.16 0.22 0.30'){
-    commands.push(`${color} rg BT /${bold?'F2':'F1'} ${size} Tf 1 0 0 1 ${x.toFixed(1)} ${(pageH-top).toFixed(1)} Tm (${pdfEsc(t)}) Tj ET`);
+ const items=supplierJobs().slice().sort((a,b)=>String(a.location||'').localeCompare(String(b.location||''),'en',{numeric:true})||String(a.number||'').localeCompare(String(b.number||''),'en',{numeric:true}));
+ const W=1190.55,H=841.89,left=32,right=32,tableW=1126,footTop=806;
+ const columns=[
+  {name:'JOB #',width:73,key:'number'},{name:'JOB TITLE',width:160,key:'title'},
+  {name:'STATUS',width:92,key:'status'},{name:'QTY',width:52,key:'positions'},
+  {name:'CV INSTRUCTION',width:144,key:'cv'},{name:'CSP',width:58,key:'owner'},
+  {name:'PRIORITY',width:60,key:'priority'},{name:'HIRING MANAGER',width:111,key:'manager'},
+  {name:'NEXT ACTION',width:159,key:'next'},{name:'DUE DATE',width:79,key:'due'},
+  {name:'OPEN DAYS',width:65,key:'age'},{name:'OPENED',width:73,key:'opened'}
+ ];
+ const statusStyle={
+  'New':['#e9eefb','#3653a4'],'Intake call':['#e4f4ff','#075b96'],
+  'Pending PO':['#fff2cd','#865500'],'Open':['#dceeff','#135ca4'],
+  'In Progress':['#e9ddff','#6339a5'],'Interview':['#ffddf1','#a12b70'],
+  'Offer':['#d4f5ed','#06715e'],'Onboarding':['#c9f3df','#076341'],
+  'Pre-ID':['#eee9f8','#65528b'],'On hold':['#ffe6c7','#9b4c00'],
+  'Filled':['#c8efd2','#07612e'],'Closed':['#e5e7eb','#475569'],
+  'Canceled':['#f4dfe2','#9b263a'],'Rejected':['#f9d8d8','#a11d1d']
+ };
+ const cvStyle={Yes:['#d9f7e5','#087443'],No:['#ffebdf','#9d3a12'],'On hold':['#fff1cb','#885b00'],'Not set':['#edf1f5','#5b6574']};
+ const normalize=s=>String(s??'').replace(/[\u2018\u2019]/g,"'").replace(/[\u201c\u201d]/g,'"')
+  .replace(/[\u2013\u2014]/g,'-').replace(/[\u2022\u2026]/g,'-')
+  .replace(/[\u0100-\u024f]/g,ch=>{const map={'ł':'l','Ł':'L','ą':'a','Ą':'A','ę':'e','Ę':'E','ś':'s','Ś':'S','ć':'c','Ć':'C','ń':'n','Ń':'N','ź':'z','Ź':'Z','ż':'z','Ż':'Z'};return map[ch]||ch.normalize('NFD').replace(/[\u0300-\u036f]/g,'')})
+  .replace(/[^\x20-\x7e\xA0-\xFF\n]/g,'?');
+ const rgb=hex=>[1,3,5].map(i=>(parseInt(hex.slice(i,i+2),16)/255).toFixed(3)).join(' ');
+ const totalPositions=items.reduce((n,j)=>n+(Number(j.positions)||0),0);
+ const totalLocations=new Set(items.map(j=>j.location||'Location not assigned')).size;
+ const cvRequired=items.filter(j=>cvValue(j)==='Yes').length;
+ const generated=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+ let pages=[],draw=[],y=0,pageNo=0,jobIndex=0;
+ function escPdf(t){return normalize(t).replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)')}
+ function rect(x,top,w,h,fill){
+  draw.push(rgb(fill)+' rg '+x.toFixed(2)+' '+(H-top-h).toFixed(2)+' '+w.toFixed(2)+' '+h.toFixed(2)+' re f');
+ }
+ function line(x1,top,x2,top2,color='#dae3ee',stroke=.5){
+  draw.push(rgb(color)+' RG '+stroke+' w '+x1.toFixed(2)+' '+(H-top).toFixed(2)+' m '+x2.toFixed(2)+' '+(H-top2).toFixed(2)+' l S');
+ }
+ function text(value,x,baseline,size=8,bold=false,color='#1d334e'){
+  draw.push(rgb(color)+' rg BT /'+(bold?'F2':'F1')+' '+size+' Tf 1 0 0 1 '+x.toFixed(2)+' '+(H-baseline).toFixed(2)+' Tm ('+escPdf(value)+') Tj ET');
+ }
+ function drawFooter(){
+  line(left,footTop,W-right,footTop,'#cad9e8',.75);
+  text('RECRUITMENT HUB  /  SUPPLIER UPDATE',left,footTop+16,7.6,true,'#365779');
+  text('Supplier-facing data only  |  Generated '+generated,W-430,footTop+16,7.5,false,'#67788c');
+  text('PAGE '+pageNo,W-90,footTop+16,8,true,'#284d79');
+ }
+ function summary(label,value,x,w,shade){
+  rect(x,97,w,41,shade);line(x,138,x+w,138,'#d6e2ed',.7);
+  text(String(value),x+11,114,16,true,'#174677');text(label,x+44,114,8.2,true,'#516a82');
+ }
+ function columnHead(){
+  const top=y;rect(left,top,tableW,34,'#203f64');let x=left;
+  for(const col of columns){
+   line(x,top,x,top+34,'#456789',.55);
+   const words=col.name.split(' ');
+   const two=col.name.length>13||(['HIRING MANAGER','CV INSTRUCTION','NEXT ACTION','OPEN DAYS','DUE DATE','JOB TITLE'].includes(col.name));
+   if(two&&words.length>1){
+    const pivot=Math.ceil(words.length/2);
+    text(words.slice(0,pivot).join(' '),x+6,top+13,7.2,true,'#ffffff');
+    text(words.slice(pivot).join(' '),x+6,top+24,7.2,true,'#ffffff');
+   }else text(col.name,x+6,top+20,7.4,true,'#ffffff');
+   x+=col.width;
   }
-  // PDF status swatches mirror the CSS status-pill palette exactly.
-  const palette={
-    'New':['#e9eefb','#3653a4'],'Intake call':['#e4f4ff','#075b96'],
-    'Pending PO':['#fff2cd','#865500'],'Open':['#dceeff','#135ca4'],
-    'In Progress':['#e9ddff','#6339a5'],'Interview':['#ffddf1','#a12b70'],
-    'Offer':['#d4f5ed','#06715e'],'Onboarding':['#c9f3df','#076341'],
-    'Pre-ID':['#eee9f8','#65528b'],'Pre-ID closed':['#eee9f8','#65528b'],
-    'On hold':['#ffe6c7','#9b4c00'],'Filled':['#c8efd2','#07612e'],
-    'Closed':['#e5e7eb','#475569'],'Canceled':['#f4dfe2','#9b263a'],
-    'Rejected':['#f9d8d8','#a11d1d'],'Hide from suppliers':['#e5e7eb','#555f6d']
-  };
-  const rgb=hex=>[1,3,5].map(i=>(parseInt(hex.slice(i,i+2),16)/255).toFixed(3)).join(' ');
-  function rect(x,top,w,h,hex){commands.push(`${rgb(hex)} rg ${x.toFixed(1)} ${(pageH-top-h).toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)} re f`)}
-  function line(x1,top,x2,color='0.87 0.90 0.94'){
-    commands.push(`${color} RG 0.45 w ${x1} ${(pageH-top).toFixed(1)} m ${x2} ${(pageH-top).toFixed(1)} l S`);
-  }
-  function newPage(){
-    if(pageNo){text(`Recruitment Hub  |  Supplier Update`,ml,pageH-28,8,false,'0.42 0.47 0.54');text(`Page ${pageNo}`,pageW-80,pageH-28,8);pages.push(commands.join('\n'));}
-    pageNo++;commands=[];y=46;
-    text('WEEKLY SUPPLIER UPDATE',ml,y,18,true,'0.11 0.24 0.40');y+=20;
-    const today=new Date();const date=today.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
-    text(`${isoWeek(today).replace(' · ',' / ')}   |   Generated ${date}`,ml,y,9,false,'0.42 0.47 0.54');y+=18;
-    text(`${items.length} jobs   /   ${items.reduce((n,j)=>n+(Number(j.positions)||0),0)} positions   /   ${new Set(items.map(j=>j.location)).size} locations`,ml,y,9,true);y+=14;
-    line(ml,y,pageW-mr,'0.16 0.41 0.73');y+=21;
-  }
-  function ensure(h){if(y+h>pageH-bottom){newPage();return true;}return false;}
-  function wrap(s,max){let words=encode(s).split(/\s+/),lines=[],cur='';for(const word of words){if(!word)continue;if((cur+' '+word).trim().length>max&&cur){lines.push(cur);cur=word;}else cur=(cur+' '+word).trim();}if(cur)lines.push(cur);return lines.length?lines:['-'];}
-  newPage();
-  for(const loc of [...new Set(items.map(j=>j.location))]){
-    const groupItems=items.filter(j=>j.location===loc);
-    const heading=(continued=false)=>{
-      rect(ml,y-11,pageW-ml-mr,21,'#eaf2fc');
-      text(`${loc.toUpperCase()}  (${groupItems.length} jobs${continued?', continued':''})`,ml+9,y+3,10,true,'0.10 0.28 0.51');y+=27;
-      text('JOB #',ml+5,y,8,true);text('JOB TITLE',ml+70,y,8,true);text('STATUS',ml+275,y,8,true);text('CV INSTRUCTION',ml+390,y,8,true);text('QTY',pageW-mr-19,y,8,true);y+=8;line(ml,y,pageW-mr);y+=15;
-    };
-    ensure(70);heading();
-    for(const j of groupItems){
-      const cv=cvValue(j),cvLines=wrap(cvSupplierLabel(cv).toUpperCase(),15);
-      const rows=wrap(j.title,34),statusLines=wrap(j.status,14),height=Math.max(rows.length,statusLines.length,cvLines.length)*12+14;
-      if(ensure(height+8))heading(true);
-      const [bg,fg]=palette[j.status]||['#eff3f8','#435a72'];
-      rect(ml,y-7,4,height+3,fg);
-      text(j.number,ml+5,y+4,9,true);
-      rows.forEach((row,i)=>text(row,ml+70,y+4+i*12,8.2));
-      const badgeX=ml+271,badgeW=105,badgeH=Math.max(17,statusLines.length*12+6);
-      rect(badgeX,y-6,badgeW,badgeH,bg);
-      statusLines.forEach((row,i)=>text(row,badgeX+7,y+5+i*12,8.2,true,rgb(fg)));
-      const cvBg=cv==='Yes'?'#d9f7e5':cv==='No'?'#fde2e2':cv==='On hold'?'#fff1c7':'#e9eef4';const cvFg=cv==='Yes'?'#087443':cv==='No'?'#a12626':cv==='On hold'?'#9a6700':'#596577';
-      rect(ml+384,y-6,91,Math.max(18,cvLines.length*11+6),cvBg);
-      cvLines.forEach((row,i)=>text(row,ml+390,y+5+i*11,7.0,true,rgb(cvFg)));
-      text(Number(j.positions)||1,pageW-mr-19,y+4,9,true);
-      y+=height;line(ml,y-3,pageW-mr);y+=5;
+  line(left+tableW,top,left+tableW,top+34,'#456789',.55);
+  y+=34;
+ }
+ function newPage(){
+  if(pageNo){drawFooter();pages.push(draw.join('\n'))}
+  draw=[];pageNo++;
+  rect(0,0,W,9,'#174f89');
+  text('RECRUITMENT HUB  /  WEEKLY REPORT',left,28,9,true,'#215282');
+  text('SUPPLIER REQUISITION UPDATE',left,57,21,true,'#163e68');
+  text('Live, supplier-visible jobs grouped by location',left,77,9,false,'#61778f');
+  text('Generated '+generated,W-219,54,9,true,'#345b82');
+  text('A3 landscape  /  '+isoWeek(new Date()).replace(' · ',' - '),W-219,70,8,false,'#61778f');
+  const sW=225,sGap=10;
+  summary('Visible jobs',items.length,left,sW,'#f0f6fd');
+  summary('Positions',totalPositions,left+sW+sGap,sW,'#f0f6fd');
+  summary('Locations',totalLocations,left+2*(sW+sGap),sW,'#f0f6fd');
+  summary('CV requests',cvRequired,left+3*(sW+sGap),sW,'#eaf8f0');
+  y=152;columnHead();
+ }
+ function groupHead(location,count,positions,continued=false){
+  if(y+30>footTop-12)newPage();
+  rect(left,y,tableW,28,'#deebf7');
+  rect(left,y,5,28,'#1a5c9e');
+  text(String(location).toUpperCase()+(continued?'  (CONTINUED)':''),left+13,y+18,10,true,'#164876');
+  text(count+' jobs   |   '+positions+' positions',W-right-215,y+17,8.3,true,'#3f6383');
+  line(left,y+28,left+tableW,y+28,'#b8cfe3',.9);
+  y+=28;
+ }
+ function breakWords(value,maxChars){
+  const chunks=[],input=normalize(value).replace(/\r/g,'');
+  for(const para of input.split('\n')){
+   const words=para.trim().split(/\s+/).filter(Boolean);
+   if(!words.length){chunks.push('');continue}
+   let current='';
+   for(let word of words){
+    while(word.length>maxChars){
+     if(current){chunks.push(current);current=''}
+     chunks.push(word.slice(0,maxChars));word=word.slice(maxChars);
     }
-    y+=15;
+    if(!word)continue;
+    if((current+' '+word).trim().length>maxChars&&current){chunks.push(current);current=word}
+    else current=(current+' '+word).trim();
+   }
+   if(current)chunks.push(current);
   }
-  if(!items.length){text('No supplier-visible jobs to report.',ml,y,11);}
-  text('Recruitment Hub  |  Supplier Update',ml,pageH-28,8,false,'0.42 0.47 0.54');text(`Page ${pageNo}`,pageW-80,pageH-28,8);
-  pages.push(commands.join('\n'));
-  const objs=[null],add=o=>(objs.push(o),objs.length-1);
-  const catalog=add('');const pagesRoot=add('');
-  const regular=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
-  const bold=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
-  const kids=[];
-  for(const content of pages){const streamId=add(`<< /Length ${content.length} >>\nstream\n${content}\nendstream`);const pageId=add(`<< /Type /Page /Parent ${pagesRoot} 0 R /MediaBox [0 0 ${pageW} ${pageH}] /Resources << /Font << /F1 ${regular} 0 R /F2 ${bold} 0 R >> >> /Contents ${streamId} 0 R >>`);kids.push(`${pageId} 0 R`);}
-  objs[pagesRoot]=`<< /Type /Pages /Kids [${kids.join(' ')}] /Count ${kids.length} >>`;
-  objs[catalog]=`<< /Type /Catalog /Pages ${pagesRoot} 0 R >>`;
-  const parts=['%PDF-1.4\n%\xE2\xE3\xCF\xD3\n'];const offsets=[0];let length=parts[0].length;
-  objs.slice(1).forEach((obj,i)=>{offsets.push(length);const str=`${i+1} 0 obj\n${obj}\nendobj\n`;parts.push(str);length+=str.length;});
-  const startxref=length;parts.push(`xref\n0 ${objs.length}\n0000000000 65535 f \n`);
-  for(const offset of offsets.slice(1))parts.push(`${String(offset).padStart(10,'0')} 00000 n \n`);
-  parts.push(`trailer\n<< /Size ${objs.length} /Root ${catalog} 0 R >>\nstartxref\n${startxref}\n%%EOF`);
-  const raw=parts.join('');const bytes=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i)&255;
-  const blob=new Blob([bytes],{type:'application/pdf'}),url=URL.createObjectURL(blob),a=document.createElement('a');
-  a.href=url;a.download='supplier-update-'+iso()+'-week-'+isoWeek(new Date()).split(' ')[1]+'.pdf';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
+  return chunks.length?chunks:['-'];
+ }
+ const xPositions=[left];columns.forEach(c=>xPositions.push(xPositions[xPositions.length-1]+c.width));
+ function valuesFor(j){
+  const safeDate=v=>String(v||'-').slice(0,10);
+  return {
+   number:j.number||'-',title:j.title||'-',status:j.status||'-',positions:String(Number(j.positions)||1),
+   cv:cvSupplierLabel(cvValue(j)),owner:j.owner||'-',priority:j.priority||'Normal',manager:j.manager||'-',
+   next:j.next||'No action specified',due:safeDate(j.dueDate),age:String(days(j)),opened:safeDate(j.openDate)
+  };
+ }
+ function printChunk(lines,offset,take,j,part){
+  const rowHeight=Math.max(29,take*11+12);
+  const top=y,base=jobIndex%2?'#f6f9fd':'#ffffff';
+  rect(left,top,tableW,rowHeight,base);
+  const status=statusStyle[j.status]||['#edf2f7','#475569'];
+  const cv=cvStyle[cvValue(j)]||cvStyle['Not set'];
+  rect(xPositions[2]+1,top+1,columns[2].width-2,rowHeight-2,status[0]);
+  rect(xPositions[4]+1,top+1,columns[4].width-2,rowHeight-2,cv[0]);
+  if(j.priority==='High')rect(xPositions[6]+1,top+1,columns[6].width-2,rowHeight-2,'#fff2dd');
+  if(j.dueDate&&j.dueDate<iso()&&!['Filled','Closed','Canceled','Rejected'].includes(j.status))
+   rect(xPositions[9]+1,top+1,columns[9].width-2,rowHeight-2,'#ffebeb');
+  if(days(j)>90)rect(xPositions[10]+1,top+1,columns[10].width-2,rowHeight-2,'#fff1e4');
+  for(let col=0;col<columns.length;col++){
+   const c=columns[col],x=xPositions[col],selected=lines[col].slice(offset,offset+take);
+   const color=col===2?status[1]:col===4?cv[1]:col===9&&j.dueDate&&j.dueDate<iso()?'#a6292b':col===6&&j.priority==='High'?'#9b5600':'#233f5c';
+   selected.forEach((t,i)=>text(t,x+6,top+14+i*11,col===4?7.3:col===1||col===8?7.8:7.5,col===0||col===2||col===4||col===6,color));
+   line(x,top,x,top+rowHeight,'#d9e2ec',.42);
+  }
+  line(left+tableW,top,left+tableW,top+rowHeight,'#d9e2ec',.42);
+  line(left,top+rowHeight,left+tableW,top+rowHeight,'#d2dce7',.5);
+  y+=rowHeight;
+ }
+ newPage();
+ for(const location of [...new Set(items.map(j=>j.location||'Location not assigned'))]){
+  const jobs=items.filter(j=>(j.location||'Location not assigned')===location);
+  const qty=jobs.reduce((n,j)=>n+(Number(j.positions)||0),0);
+  if(y+75>footTop-12)newPage();
+  groupHead(location,jobs.length,qty);
+  for(const j of jobs){
+   const values=valuesFor(j),lines=columns.map(c=>breakWords(values[c.key],Math.max(6,Math.floor((c.width-12)/(c.key==='title'||c.key==='next'?4.0:3.8)))));
+   const totalLines=Math.max(...lines.map(a=>a.length));
+   let offset=0;
+   while(offset<totalLines){
+    let room=Math.floor((footTop-12-y-13)/11);
+    if(room<2){newPage();groupHead(location,jobs.length,qty,true);room=Math.floor((footTop-12-y-13)/11);}
+    const taken=Math.min(Math.max(1,room),totalLines-offset);
+    printChunk(lines,offset,taken,j,offset>0);
+    offset+=taken;
+    if(offset<totalLines){newPage();groupHead(location,jobs.length,qty,true)}
+   }
+   jobIndex++;
+  }
+  y+=7;
+ }
+ if(!items.length){rect(left,y,tableW,50,'#f0f5fb');text('No supplier-visible jobs available for this reporting period.',left+16,y+28,11,false,'#456481')}
+ drawFooter();pages.push(draw.join('\n'));
+ const objects=[null],add=x=>(objects.push(x),objects.length-1);
+ const catalogId=add(''),pagesId=add('');
+ const font=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
+ const fontBold=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
+ const pageIds=[];
+ for(const content of pages){
+  const streamId=add('<< /Length '+content.length+' >>\nstream\n'+content+'\nendstream');
+  const pageId=add('<< /Type /Page /Parent '+pagesId+' 0 R /MediaBox [0 0 '+W+' '+H+'] /Resources << /Font << /F1 '+font+' 0 R /F2 '+fontBold+' 0 R >> >> /Contents '+streamId+' 0 R >>');
+  pageIds.push(pageId+' 0 R');
+ }
+ objects[pagesId]='<< /Type /Pages /Kids ['+pageIds.join(' ')+'] /Count '+pageIds.length+' >>';
+ objects[catalogId]='<< /Type /Catalog /Pages '+pagesId+' 0 R >>';
+ const parts=['%PDF-1.4\n%\xE2\xE3\xCF\xD3\n'],offsets=[0];let total=parts[0].length;
+ for(let id=1;id<objects.length;id++){offsets.push(total);const value=id+' 0 obj\n'+objects[id]+'\nendobj\n';parts.push(value);total+=value.length}
+ const crossRef=total;
+ parts.push('xref\n0 '+objects.length+'\n0000000000 65535 f \n');
+ for(const offset of offsets.slice(1))parts.push(String(offset).padStart(10,'0')+' 00000 n \n');
+ parts.push('trailer\n<< /Size '+objects.length+' /Root '+catalogId+' 0 R >>\nstartxref\n'+crossRef+'\n%%EOF');
+ const pdf=parts.join(''),bytes=new Uint8Array(pdf.length);
+ for(let i=0;i<pdf.length;i++)bytes[i]=pdf.charCodeAt(i)&255;
+ const blob=new Blob([bytes],{type:'application/pdf'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+ link.href=url;link.download='Supplier_Update_'+iso()+'_A3_Landscape.pdf';
+ document.body.appendChild(link);link.click();link.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),30000);
 }
 $('supplierPdf').addEventListener('click',supplierPdfDownload);
 
