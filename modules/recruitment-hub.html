@@ -1248,9 +1248,7 @@ function supplierPdfDownload(){
  }
  function drawFooter(){
   line(left,footTop,W-right,footTop,'#cad9e8',.75);
-  text('RECRUITMENT HUB  /  SUPPLIER UPDATE',left,footTop+16,7.6,true,'#365779');
-  text('Supplier-facing data only  |  Generated '+generated,W-430,footTop+16,7.5,false,'#67788c');
-  text('PAGE '+pageNo,W-90,footTop+16,8,true,'#284d79');
+  text('Page '+pageNo,W-86,footTop+16,8,false,'#526780');
  }
  function summary(label,value,x,w,shade){
   rect(x,97,w,41,shade);line(x,138,x+w,138,'#d6e2ed',.7);
@@ -1276,11 +1274,9 @@ function supplierPdfDownload(){
   if(pageNo){drawFooter();pages.push(draw.join('\n'))}
   draw=[];pageNo++;
   rect(0,0,W,9,'#174f89');
-  text('RECRUITMENT HUB  /  WEEKLY REPORT',left,28,9,true,'#215282');
-  text('SUPPLIER REQUISITION UPDATE',left,57,21,true,'#163e68');
-  text('Live, supplier-visible jobs grouped by location',left,77,9,false,'#61778f');
-  text('Generated '+generated,W-219,54,9,true,'#345b82');
-  text('A3 landscape  /  '+isoWeek(new Date()).replace(' · ',' - '),W-219,70,8,false,'#61778f');
+  text('SUPPLIER UPDATE',left,52,21,true,'#163e68');
+  text('Week '+isoWeek(new Date()).replace(' · ',' - '),left,75,9,false,'#61778f');
+  text('Date: '+generated,W-219,52,9,true,'#345b82');
   const sW=274,sGap=10;
   summary('Visible jobs',items.length,left,sW,'#f0f6fd');
   summary('Positions',totalPositions,left+sW+sGap,sW,'#f0f6fd');
@@ -1387,7 +1383,7 @@ function supplierPdfDownload(){
  const pdf=parts.join(''),bytes=new Uint8Array(pdf.length);
  for(let i=0;i<pdf.length;i++)bytes[i]=pdf.charCodeAt(i)&255;
  const blob=new Blob([bytes],{type:'application/pdf'}),url=URL.createObjectURL(blob),link=document.createElement('a');
- link.href=url;link.download='Supplier_Update_'+iso()+'_A3_Landscape.pdf';
+ link.href=url;link.download='Supplier_Update_'+iso()+'.pdf';
  document.body.appendChild(link);link.click();link.remove();
  setTimeout(()=>URL.revokeObjectURL(url),30000);
 }
