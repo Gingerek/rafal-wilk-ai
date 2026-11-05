@@ -1208,12 +1208,13 @@ function supplierPdfDownload(){
  const items=supplierJobs().slice().sort((a,b)=>String(a.location||'').localeCompare(String(b.location||''),'en',{numeric:true})||String(a.number||'').localeCompare(String(b.number||''),'en',{numeric:true}));
  const W=1190.55,H=841.89,left=32,right=32,tableW=1126,footTop=806;
  const columns=[
-  {name:'JOB #',width:73,key:'number'},{name:'JOB TITLE',width:160,key:'title'},
-  {name:'STATUS',width:92,key:'status'},{name:'QTY',width:52,key:'positions'},
-  {name:'CV INSTRUCTION',width:144,key:'cv'},{name:'CSP',width:58,key:'owner'},
-  {name:'PRIORITY',width:60,key:'priority'},{name:'HIRING MANAGER',width:111,key:'manager'},
-  {name:'NEXT ACTION',width:159,key:'next'},{name:'DUE DATE',width:79,key:'due'},
-  {name:'OPEN DAYS',width:65,key:'age'},{name:'OPENED',width:73,key:'opened'}
+  {name:'JOB #',width:112,key:'number'},
+  {name:'JOB TITLE',width:385,key:'title'},
+  {name:'STATUS',width:160,key:'status'},
+  {name:'QTY',width:67,key:'positions'},
+  {name:'CV INSTRUCTION',width:220,key:'cv'},
+  {name:'CSP',width:100,key:'owner'},
+  {name:'PRIORITY',width:82,key:'priority'}
  ];
  const statusStyle={
   'New':['#e9eefb','#3653a4'],'Intake call':['#e4f4ff','#075b96'],
@@ -1260,7 +1261,7 @@ function supplierPdfDownload(){
   for(const col of columns){
    line(x,top,x,top+34,'#456789',.55);
    const words=col.name.split(' ');
-   const two=col.name.length>13||(['HIRING MANAGER','CV INSTRUCTION','NEXT ACTION','OPEN DAYS','DUE DATE','JOB TITLE'].includes(col.name));
+   const two=col.name.length>13||(['CV INSTRUCTION','JOB TITLE'].includes(col.name));
    if(two&&words.length>1){
     const pivot=Math.ceil(words.length/2);
     text(words.slice(0,pivot).join(' '),x+6,top+13,7.2,true,'#ffffff');
@@ -1317,29 +1318,24 @@ function supplierPdfDownload(){
  }
  const xPositions=[left];columns.forEach(c=>xPositions.push(xPositions[xPositions.length-1]+c.width));
  function valuesFor(j){
-  const safeDate=v=>String(v||'-').slice(0,10);
   return {
-   number:j.number||'-',title:j.title||'-',status:j.status||'-',positions:String(Number(j.positions)||1),
-   cv:cvSupplierLabel(cvValue(j)),owner:j.owner||'-',priority:j.priority||'Normal',manager:j.manager||'-',
-   next:j.next||'No action specified',due:safeDate(j.dueDate),age:String(days(j)),opened:safeDate(j.openDate)
+   number:j.number||'-',title:j.title||'-',status:j.status||'-',
+   positions:String(Number(j.positions)||1),cv:cvSupplierLabel(cvValue(j)),
+   owner:j.owner||'-',priority:j.priority||'Normal'
   };
  }
- function printChunk(lines,offset,take,j,part){
-  const rowHeight=Math.max(29,take*11+12);
-  const top=y,base=jobIndex%2?'#f6f9fd':'#ffffff';
+ function printChunk(lines,offset,take,j){
+  const rowHeight=Math.max(34,take*12+16),top=y,base=jobIndex%2?'#f6f9fd':'#ffffff';
   rect(left,top,tableW,rowHeight,base);
   const status=statusStyle[j.status]||['#edf2f7','#475569'];
   const cv=cvStyle[cvValue(j)]||cvStyle['Not set'];
   rect(xPositions[2]+1,top+1,columns[2].width-2,rowHeight-2,status[0]);
   rect(xPositions[4]+1,top+1,columns[4].width-2,rowHeight-2,cv[0]);
   if(j.priority==='High')rect(xPositions[6]+1,top+1,columns[6].width-2,rowHeight-2,'#fff2dd');
-  if(j.dueDate&&j.dueDate<iso()&&!['Filled','Closed','Canceled','Rejected'].includes(j.status))
-   rect(xPositions[9]+1,top+1,columns[9].width-2,rowHeight-2,'#ffebeb');
-  if(days(j)>90)rect(xPositions[10]+1,top+1,columns[10].width-2,rowHeight-2,'#fff1e4');
   for(let col=0;col<columns.length;col++){
    const c=columns[col],x=xPositions[col],selected=lines[col].slice(offset,offset+take);
-   const color=col===2?status[1]:col===4?cv[1]:col===9&&j.dueDate&&j.dueDate<iso()?'#a6292b':col===6&&j.priority==='High'?'#9b5600':'#233f5c';
-   selected.forEach((t,i)=>text(t,x+6,top+14+i*11,col===4?7.3:col===1||col===8?7.8:7.5,col===0||col===2||col===4||col===6,color));
+   const color=col===2?status[1]:col===4?cv[1]:col===6&&j.priority==='High'?'#9b5600':'#233f5c';
+   selected.forEach((value,i)=>text(value,x+8,top+16+i*12,col===1?9.5:col===4?9.1:8.9,col===0||col===2||col===4||col===6,color));
    line(x,top,x,top+rowHeight,'#d9e2ec',.42);
   }
   line(left+tableW,top,left+tableW,top+rowHeight,'#d9e2ec',.42);
@@ -1353,14 +1349,14 @@ function supplierPdfDownload(){
   if(y+75>footTop-12)newPage();
   groupHead(location,jobs.length,qty);
   for(const j of jobs){
-   const values=valuesFor(j),lines=columns.map(c=>breakWords(values[c.key],Math.max(6,Math.floor((c.width-12)/(c.key==='title'||c.key==='next'?4.0:3.8)))));
+   const values=valuesFor(j),lines=columns.map(c=>breakWords(values[c.key],Math.max(6,Math.floor((c.width-18)/(c.key==='title'?5.2:c.key==='cv'?5.0:4.9)))));
    const totalLines=Math.max(...lines.map(a=>a.length));
    let offset=0;
    while(offset<totalLines){
-    let room=Math.floor((footTop-12-y-13)/11);
-    if(room<2){newPage();groupHead(location,jobs.length,qty,true);room=Math.floor((footTop-12-y-13)/11);}
+    let room=Math.floor((footTop-12-y-16)/12);
+    if(room<2){newPage();groupHead(location,jobs.length,qty,true);room=Math.floor((footTop-12-y-16)/12);}
     const taken=Math.min(Math.max(1,room),totalLines-offset);
-    printChunk(lines,offset,taken,j,offset>0);
+    printChunk(lines,offset,taken,j);
     offset+=taken;
     if(offset<totalLines){newPage();groupHead(location,jobs.length,qty,true)}
    }
