@@ -530,123 +530,126 @@ html.rh-cloud-configured:not(.rh-cloud-ready) #modal{display:none!important}
 #rhCloudError button{margin:6px 8px 4px 0}
 
 
-/* CSP Workspaces v4: compact operational rows. Intentionally replaces oversized cards. */
-#personal .personal-workspace{max-width:100%;min-width:0;overflow:hidden}
-#personal .personal-head{align-items:flex-start;gap:16px}
-#personal .personal-head h2{margin:2px 0 4px!important;font-size:23px!important;line-height:1.22!important;color:#172f4d!important}
-#personal .personal-head p.muted{margin:5px 0 0;line-height:1.4}
-#personal .csp-eyebrow{margin:0!important;font-size:10px!important;color:#245c9f!important;letter-spacing:1.3px;font-weight:850}
-#personal #personalStats{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:9px!important;margin:16px 0 18px!important}
-#personal #personalStats .stat{min-width:0;display:flex;flex-direction:column;gap:5px;padding:12px 14px!important;border:1px solid #d7e0ec!important;border-radius:11px!important;box-shadow:none!important;background:#fff!important}
-#personal #personalStats .stat .muted{font-size:11px!important;color:#53647a!important;font-weight:750;line-height:1.4}
-#personal #personalStats .stat strong{font-size:25px!important;line-height:1.16!important;color:#183c67!important;margin:0!important}
-#personal #personalStats .stat:nth-child(3){background:#fff7e9!important;border-color:#efd8af!important}
-#personal #personalStats .stat:nth-child(4){background:#f1f6ff!important;border-color:#cee0ff!important}
-#personal #personalStats .stat:nth-child(5){background:#fff2e3!important;border-color:#eacb9e!important}
-#personal .personal-filter-panel{background:#f7f9fc!important;border:1px solid #d5e0ef!important;border-radius:12px;padding:12px 14px!important;margin-bottom:11px!important}
-#personal .csp-search-label,#personal .personal-filters label{display:flex;flex-direction:column;gap:5px;min-width:0;color:#455d78;font-size:11px;font-weight:800;letter-spacing:.01em}
-#personal .csp-search-label{margin-bottom:10px}
-#personal .csp-search-label input{font-size:14px!important;font-weight:550;min-height:42px;width:100%!important;border-radius:8px!important;background:white!important}
-#personal .personal-filters{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr)) auto!important;align-items:end!important;gap:9px!important;margin:0!important}
-#personal .personal-filters label select{width:100%!important;max-width:100%!important;min-height:40px!important;min-width:0!important;font-size:12.5px!important;padding:9px!important;background:#fff!important;border-radius:8px!important}
-#personal .personal-clear{min-height:40px!important;border-radius:8px!important;white-space:nowrap;padding:8px 12px!important}
-#personal .csp-list-summary{display:flex;justify-content:space-between;gap:7px 18px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
-#personal .personal-results{font-size:12px;color:#234b77;font-weight:800}
-#personal .csp-list-hint{font-size:11px;color:#607087}
-#personal .personal-groups{display:flex;flex-direction:column;gap:20px;min-width:0}
-#personal .csp-location-block{background:#fff;border:1px solid #cfdae9;border-radius:12px;overflow:hidden;min-width:0;box-shadow:0 1px 3px #1c375b0c}
-#personal .csp-location-header{background:#eaf2fe;border-bottom:1px solid #cbdcf0;padding:12px 15px;display:flex;justify-content:space-between;align-items:center;gap:10px 14px;flex-wrap:wrap}
-#personal .csp-location-toggle{display:flex;gap:9px;align-items:center;min-width:0;color:#184778;font-size:15px;font-weight:850;border:0!important;background:transparent!important;padding:3px 0!important;box-shadow:none!important;text-align:left}
-#personal .csp-location-toggle:focus-visible{outline:2px solid #1a73e8;outline-offset:3px}
-#personal .csp-chevron{font-size:12px;color:#476988;transform:rotate(0deg);transition:transform .15s}
-#personal .csp-location-toggle[aria-expanded="false"] .csp-chevron{transform:rotate(-90deg)}
-#personal .csp-location-meta{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;color:#415f80;font-size:11.5px;font-weight:750}
-#personal .csp-location-hidden{color:#8e4900;font-weight:800}
-#personal .csp-location-body{min-width:0}
-#personal .csp-location-body[hidden],#personal .csp-job-extra[hidden]{display:none!important}
-#personal .csp-column-head,#personal .csp-job-main{display:grid;grid-template-columns:minmax(185px,2.35fr) minmax(100px,1.13fr) minmax(145px,1.85fr) minmax(65px,.53fr) minmax(111px,1.2fr) minmax(73px,.73fr);gap:10px;align-items:start;min-width:0}
-#personal .csp-column-head{padding:9px 15px;background:#f7f9fd;border-bottom:1px solid #e3eaf3;color:#5b718b;font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.04em}
-#personal .csp-job-row{background:#fff;border-bottom:1px solid #e2eaf5;border-left:4px solid transparent;min-width:0}
-#personal .csp-job-row:nth-child(even){background:#fbfdff}
-#personal .csp-job-row:last-child{border-bottom:0}
-#personal .csp-job-row:hover{background:#f5faff}
-#personal .csp-job-row.is-overdue{border-left-color:#d93025}
-#personal .csp-job-row.is-today:not(.is-overdue){border-left-color:#e99f15}
-#personal .csp-job-row.is-hidden:not(.is-overdue):not(.is-today){border-left-color:#d17a21}
-#personal .csp-job-row.is-archived{opacity:.83}
-#personal .csp-job-main{padding:13px 15px;align-items:center;gap:10px}
-#personal .csp-job-main .csp-cell{min-width:0;display:flex;flex-direction:column;gap:5px;justify-content:center;overflow-wrap:anywhere}
-#personal .csp-title-line{display:flex;align-items:center;flex-wrap:wrap;gap:5px 8px}
-#personal .csp-job-number{font-size:12px!important;line-height:1.2!important;font-weight:850!important;color:#165baa!important;text-decoration:none;text-align:left;padding:0!important}
-#personal .csp-job-title{font-size:14px;font-weight:800;line-height:1.36;color:#1c304a;overflow-wrap:anywhere}
-#personal .csp-job-sub{font-size:11.5px;line-height:1.45;color:#53667c;display:flex;gap:6px 9px;flex-wrap:wrap}
-#personal .csp-job-sub .csp-notes-link{font-size:11px!important;text-align:left!important;padding:0!important;font-weight:750!important}
-#personal .csp-status-cell .status-pill{align-self:flex-start;font-size:11px!important;padding:4px 7px!important;max-width:100%}
-#personal .csp-private-flag{align-self:flex-start;display:inline-flex;align-items:center;gap:4px;background:#fff0d6;border:1px solid #edc995;border-radius:7px;padding:4px 6px;font-size:10px;font-weight:850;color:#895000;line-height:1.3}
-#personal .csp-action-text{font-size:12.5px;line-height:1.4;font-weight:700;color:#284057;white-space:pre-wrap;overflow-wrap:anywhere}
-#personal .csp-action-text.is-missing{color:#9b5b17}
-#personal .csp-due{font-size:11px;font-weight:750;color:#60728a}
-#personal .csp-due.is-overdue{color:#ad2525}
-#personal .csp-due.is-today{color:#8b5600}
-#personal .csp-days-value{font-weight:850;color:#204b7a;font-size:21px;line-height:1.2;font-variant-numeric:tabular-nums}
-#personal .csp-days-unit{color:#62768d;font-weight:650;font-size:10.5px}
-#personal .csp-cv-label{display:none}
-#personal .csp-cv-cell select{font-size:11px!important;width:100%!important;max-width:100%!important;min-width:0!important;min-height:36px;padding:7px!important;white-space:normal!important}
-#personal .csp-job-actions{display:flex!important;gap:6px!important;align-items:stretch!important;flex-direction:column!important}
-#personal .csp-job-actions button{font-size:11.5px!important;font-weight:800!important;min-height:30px!important;padding:5px 8px!important;border-radius:7px!important;white-space:nowrap!important}
-#personal .csp-job-actions .csp-job-open{background:#1a73e8!important;color:white!important;border-color:#1a73e8!important}
-#personal .csp-job-actions .csp-job-more{background:#edf4ff!important;color:#185398!important;border-color:#bcd5f5!important}
-#personal .csp-job-more[aria-expanded="true"]{background:#d4e8ff!important}
-#personal .csp-job-extra{padding:12px 15px 15px;background:#f5f8fd;border-top:1px dashed #d5e0ef}
-#personal .csp-extra-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 16px}
-#personal .csp-extra-item{display:flex;flex-direction:column;gap:3px;min-width:0}
-#personal .csp-extra-item span{color:#60758b;font-weight:800;text-transform:uppercase;letter-spacing:.02em;font-size:10px}
-#personal .csp-extra-item strong{color:#263f60;font-size:12px;line-height:1.42;overflow-wrap:anywhere}
-#personal .csp-extra-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px 16px;margin-top:11px;flex-wrap:wrap}
-#personal .csp-extra-bottom .rw-last-editor{margin:0;font-size:11px}
-#personal .csp-extra-bottom button{font-size:12px!important;padding:6px 12px!important;border-radius:8px!important}
-#personal .personal-no-results{text-align:center;padding:30px 15px;background:#fff;border:1px dashed #c5d3e5;border-radius:10px;color:#52687e;font-weight:700}
-@media(max-width:1400px){
- #personal #personalStats{grid-template-columns:repeat(3,minmax(0,1fr))!important}
- #personal .csp-column-head{display:none}
- #personal .csp-job-main{grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:12px}
- #personal .csp-identity-cell{grid-column:span 6}
- #personal .csp-status-cell{grid-column:span 3}
- #personal .csp-days-cell{grid-column:span 3}
- #personal .csp-action-cell{grid-column:span 6}
- #personal .csp-cv-cell{grid-column:span 4}
- #personal .csp-job-actions{grid-column:span 2;flex-direction:row!important;align-self:end}
- #personal .csp-job-main .csp-cell:before{content:attr(data-field);display:block;color:#647990;font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.03em}
+
+/* Recruitment Hub v6: professional aligned operational worklists. */
+#personal,#jobs{--rh-border:#d4dfe9;--rh-text:#1d314b;--rh-muted:#526780;--rh-blue:#185caa}
+#personal .rh-panel,#jobs .rh-panel{padding:0!important;border:1px solid var(--rh-border)!important;border-radius:11px!important;background:#fff!important;overflow:visible!important;box-shadow:0 2px 8px rgba(34,51,75,.045)!important}
+#personal .rh-header,#jobs .rh-header{padding:20px 22px 15px;display:flex;justify-content:space-between;align-items:center;gap:12px 20px;flex-wrap:wrap}
+#personal .rh-header h2,#jobs .rh-header h2{font-size:22px!important;color:var(--rh-text)!important;letter-spacing:-.018em;margin:0!important;line-height:1.25!important}
+#personal .rh-header p,#jobs .rh-header p{margin:5px 0 0;color:var(--rh-muted);font-size:12px}
+#personal .rh-header-actions{display:flex;flex-wrap:wrap;gap:8px}
+#personal .rh-header-actions .btn{min-height:38px;border-radius:7px!important;padding:8px 13px!important;font-size:12px!important;font-weight:750}
+#personal #personalStats.rh-stats{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:0!important;margin:4px 22px 17px!important;background:#f7f9fc!important;border:1px solid #dce5ef;border-radius:8px;overflow:hidden}
+#personal #personalStats .rh-stat{display:flex;align-items:baseline;min-width:0;gap:8px;padding:13px!important;background:transparent!important;border:0!important;border-right:1px solid #dce5ef!important;border-radius:0!important}
+#personal #personalStats .rh-stat:last-child{border-right:none!important}
+#personal #personalStats .rh-stat strong{font-size:23px!important;line-height:1!important;font-weight:850!important;color:#1b416e!important}
+#personal #personalStats .rh-stat span{font-size:11px!important;color:#4d627b!important;line-height:1.3!important;font-weight:750}
+#personal #personalStats .rh-alert-stat strong{color:#a84b19!important}
+#personal .rh-filters{display:grid!important;grid-template-columns:minmax(180px,2fr) repeat(4,minmax(110px,1fr)) auto!important;align-items:end;gap:9px;margin:0 22px 13px;padding:12px;background:#f6f8fb;border:1px solid #e1e7ee;border-radius:8px}
+#personal .rh-filters label{display:flex!important;flex-direction:column!important;gap:5px!important;min-width:0;font-size:10.5px!important;color:#52677f!important;font-weight:800!important;line-height:1.3}
+#personal .rh-filters input,#personal .rh-filters select{width:100%!important;min-width:0!important;max-width:100%!important;height:38px!important;min-height:38px!important;background:#fff!important;color:#2a3b53!important;border:1px solid #c4d0df!important;border-radius:6px!important;font-size:12px!important;font-weight:600!important;padding:7px 9px!important}
+#personal .rh-filters .rh-reset{height:38px!important;min-height:38px!important;white-space:nowrap;font-size:12px!important;border-radius:6px!important}
+#personal .rh-result,#jobs .rh-result{margin:0 22px 12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 14px;font-size:11.5px;color:#697b91}
+#personal .rh-result span:first-child,#jobs .rh-result span:first-child{font-weight:800;color:#255078}
+#personal .rh-worklist,#jobs .rh-worklist{container-type:inline-size;padding:0 22px 20px;min-width:0}
+#personal .rh-group,#jobs .rh-group{border:1px solid #d6e0eb;border-radius:8px;overflow:hidden;margin-bottom:14px;min-width:0;background:#fff}
+#personal .rh-group:last-child,#jobs .rh-group:last-child{margin-bottom:0}
+#personal .rh-group-head,#jobs .rh-group-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:7px 14px;min-height:43px;padding:7px 14px;background:#eaf1f8;border-bottom:1px solid #d4dfeb}
+#personal .rh-group-head button,#jobs .rh-group-head button{display:flex;align-items:center;gap:9px;background:transparent!important;box-shadow:none!important;border:0!important;padding:4px 0!important;color:#19446f!important;text-align:left!important;font-weight:850!important;font-size:13px!important}
+#personal .rh-arrow,#jobs .rh-arrow{display:inline-block;transition:transform .12s;color:#5a708b;font-size:11px}
+#personal [aria-expanded="false"]>.rh-arrow,#jobs [aria-expanded="false"]>.rh-arrow{transform:rotate(-90deg)}
+#personal .rh-group-count,#jobs .rh-group-count{font-size:11px;font-weight:750;color:#506984}
+#personal .rh-hidden-label,#jobs .rh-hidden-label{color:#914c19;font-weight:850}
+#personal .rh-group-body[hidden],#jobs .rh-group-body[hidden],#personal .rh-detail-panel[hidden],#jobs .rh-detail-panel[hidden]{display:none!important}
+#personal .rh-columns,#jobs .rh-columns,#personal .rh-record-main,#jobs .rh-record-main{display:grid;grid-template-columns:minmax(190px,2.5fr) minmax(108px,1.08fr) minmax(175px,2fr) minmax(75px,.62fr) minmax(120px,1.1fr) minmax(82px,.75fr);gap:12px;align-items:center;min-width:0}
+#personal .rh-columns,#jobs .rh-columns{background:#f7f9fc;border-bottom:1px solid #dfe7f0;padding:9px 13px}
+#personal .rh-columns span,#jobs .rh-columns span{color:#60768d;font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.035em}
+#personal .rh-record,#jobs .rh-record{min-width:0;background:#fff;border-left:3px solid transparent;border-bottom:1px solid #e3e9f0}
+#personal .rh-record:nth-child(even),#jobs .rh-record:nth-child(even){background:#fcfdff}
+#personal .rh-record:last-child,#jobs .rh-record:last-child{border-bottom:none}
+#personal .rh-record:hover,#jobs .rh-record:hover{background:#f5f9fd}
+#personal .rh-record.rh-overdue,#jobs .rh-record.rh-overdue{border-left-color:#c7463e}
+#personal .rh-record.rh-due-today,#jobs .rh-record.rh-due-today{border-left-color:#d69423}
+#personal .rh-record.rh-hidden:not(.rh-overdue):not(.rh-due-today),#jobs .rh-record.rh-hidden:not(.rh-overdue):not(.rh-due-today){border-left-color:#c28a3d}
+#personal .rh-record-main,#jobs .rh-record-main{padding:11px 12px;min-height:72px}
+#personal .rh-cell,#jobs .rh-cell{display:flex;flex-direction:column;gap:4px;justify-content:center;min-width:0;align-items:flex-start;overflow-wrap:anywhere}
+#personal .rh-identity-line,#jobs .rh-identity-line{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+#personal .rh-number,#jobs .rh-number{color:#145eaa!important;font-size:12px!important;line-height:1.2!important;font-weight:850!important;padding:0!important;border:0!important;text-align:left!important;background:transparent!important}
+#personal .rh-high,#jobs .rh-high{font-weight:850;font-size:10px;color:#a3531a;letter-spacing:.025em}
+#personal .rh-jobtitle,#jobs .rh-jobtitle{display:block;color:#1a304b;font-size:13.5px!important;font-weight:850!important;line-height:1.35!important;overflow-wrap:anywhere}
+#personal .rh-subline,#jobs .rh-subline{font-size:11px;color:#60738a;display:flex;gap:5px 10px;flex-wrap:wrap;line-height:1.35}
+#personal .rh-status .status-pill,#jobs .rh-status .status-pill{font-size:11px!important;line-height:1.3!important;white-space:normal!important;align-self:flex-start;padding:4px 7px!important}
+#personal .rh-private,#jobs .rh-private{font-size:10px;font-weight:850;color:#895018;background:#fff0df;border:1px solid #e9cca8;border-radius:5px;padding:3px 5px;line-height:1.25}
+#personal .rh-next,#jobs .rh-next{font-size:12px;color:#273b55;line-height:1.4;font-weight:650;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
+#personal .rh-next.rh-missing,#jobs .rh-next.rh-missing{color:#9b642b}
+#personal .rh-deadline,#jobs .rh-deadline{font-size:10.5px;font-weight:750;color:#657b90}
+#personal .rh-deadline.rh-late,#jobs .rh-deadline.rh-late{color:#b53232}
+#personal .rh-deadline.rh-today,#jobs .rh-deadline.rh-today{color:#8c5916}
+#personal .rh-age,#jobs .rh-age{display:flex;align-items:baseline;gap:5px}
+#personal .rh-age strong,#jobs .rh-age strong{font-size:19px!important;line-height:1.1!important;font-variant-numeric:tabular-nums;font-weight:850!important;color:#21466d!important}
+#personal .rh-age small,#jobs .rh-age small{font-size:10px;color:#62758d;font-weight:650}
+#personal .rh-cv select,#jobs .rh-cv select{width:100%!important;min-width:0!important;max-width:100%!important;min-height:36px!important;padding:7px!important;border:1px solid #becddd!important;border-radius:6px!important;font-size:11px!important;font-weight:750!important;line-height:1.35!important;white-space:normal!important}
+#personal .rh-commands,#jobs .rh-commands{display:flex;flex-direction:column;align-items:stretch;gap:5px}
+#personal .rh-commands button,#jobs .rh-commands button{min-height:29px!important;padding:5px 7px!important;border-radius:5px!important;font-weight:800!important;font-size:11px!important;text-align:center!important;white-space:nowrap!important}
+#personal .rh-commands .rh-edit,#jobs .rh-commands .rh-edit{color:#fff!important;background:#1b65b4!important;border:1px solid #1b65b4!important}
+#personal .rh-commands .rh-details-btn,#jobs .rh-commands .rh-details-btn{color:#1c548e!important;background:#eef4fc!important;border:1px solid #c8d9eb!important}
+#personal .rh-detail-panel,#jobs .rh-detail-panel{padding:13px 17px 15px;background:#f4f8fc;border-top:1px solid #d8e3ef}
+#personal .rh-detail-grid,#jobs .rh-detail-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 18px;margin:0}
+#personal .rh-field,#jobs .rh-field{min-width:0}
+#personal .rh-field dt,#jobs .rh-field dt{font-size:10px;letter-spacing:.025em;text-transform:uppercase;font-weight:850;color:#61758b}
+#personal .rh-field dd,#jobs .rh-field dd{font-size:12px;font-weight:650;color:#263c57;line-height:1.45;margin:4px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+#personal .rh-field.rh-full,#jobs .rh-field.rh-full{grid-column:1/-1}
+#personal .rh-detail-footer,#jobs .rh-detail-footer{display:flex;justify-content:space-between;align-items:center;gap:12px 18px;flex-wrap:wrap;border-top:1px solid #dfe7ef;margin-top:13px;padding-top:12px}
+#personal .rh-detail-footer .rw-last-editor,#jobs .rh-detail-footer .rw-last-editor{margin:0;font-size:11px}
+#personal .rh-detail-footer button,#jobs .rh-detail-footer button{min-height:32px!important;font-size:11.5px!important;border-radius:5px!important;padding:6px 10px!important}
+#personal .rh-empty,#jobs .rh-empty{padding:25px;text-align:center;color:#556b83;font-size:13px}
+#jobs .alljobs-owner-tabs{display:flex!important;flex-wrap:wrap!important;gap:5px!important;margin:4px 22px 14px!important;padding:4px!important;background:#f5f7fa!important;border:1px solid #dde5ed!important;border-radius:8px!important}
+#jobs .alljobs-owner-tabs .alljobs-owner-tab{display:flex!important;align-items:center!important;gap:8px!important;min-height:35px!important;flex:0 1 auto!important;padding:6px 12px!important;background:transparent!important;border:1px solid transparent!important;border-radius:6px!important;color:#50647c!important;font-size:12px!important;font-weight:800!important;box-shadow:none!important}
+#jobs .alljobs-owner-tabs .alljobs-owner-tab strong{font-size:10px!important;background:#e4eaf1!important;color:#597089!important;height:19px!important;min-width:21px!important}
+#jobs .alljobs-owner-tabs .alljobs-owner-tab.is-selected{color:#164f8c!important;background:#fff!important;border:1px solid #bdd1e5!important}
+#jobs .alljobs-owner-tabs .alljobs-owner-tab.is-selected strong{background:#d9eafa!important;color:#1b5e9e!important}
+#jobs .toolbar{display:flex!important;gap:8px!important;align-items:center!important;flex-wrap:wrap!important;margin:0 22px 13px!important}
+#jobs .toolbar #search{flex:2 1 220px!important;min-width:130px!important}
+#jobs .toolbar input,#jobs .toolbar select{font-size:12px!important;min-height:38px!important;height:38px!important;border-radius:6px!important}
+#jobs .toolbar select{flex:1 1 120px!important;max-width:225px!important}
+#jobs .toolbar button{font-size:12px!important;min-height:38px!important;border-radius:6px!important}
+#jobs .status-legend{display:none!important}
+@container (max-width:1000px){
+ #personal .rh-columns,#jobs .rh-columns{display:none!important}
+ #personal .rh-record-main,#jobs .rh-record-main{grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:11px 13px!important}
+ #personal .rh-identity,#jobs .rh-identity{grid-column:span 6}
+ #personal .rh-status,#jobs .rh-status{grid-column:span 3}
+ #personal .rh-age,#jobs .rh-age{grid-column:span 3}
+ #personal .rh-followup,#jobs .rh-followup{grid-column:span 6}
+ #personal .rh-cv,#jobs .rh-cv{grid-column:span 4}
+ #personal .rh-commands,#jobs .rh-commands{grid-column:span 2;flex-direction:row!important}
+ #personal .rh-cell[data-caption]:before,#jobs .rh-cell[data-caption]:before{content:attr(data-caption);font-size:10px;color:#6b7c91;font-weight:850;text-transform:uppercase}
+ #personal .rh-detail-grid,#jobs .rh-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-@media(max-width:900px){
- #personal .personal-filters{grid-template-columns:repeat(2,minmax(0,1fr))!important}
- #personal .personal-clear{grid-column:span 2}
- #personal .csp-extra-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- #personal .csp-job-main{grid-template-columns:repeat(6,minmax(0,1fr))!important}
- #personal .csp-identity-cell{grid-column:span 4}
- #personal .csp-status-cell{grid-column:span 2}
- #personal .csp-action-cell{grid-column:span 4}
- #personal .csp-days-cell{grid-column:span 2}
- #personal .csp-cv-cell{grid-column:span 4}
- #personal .csp-job-actions{grid-column:span 2}
+@container (max-width:610px){
+ #personal .rh-record-main,#jobs .rh-record-main{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important}
+ #personal .rh-identity,#jobs .rh-identity{grid-column:1/-1}
+ #personal .rh-status,#jobs .rh-status{grid-column:span 1}
+ #personal .rh-age,#jobs .rh-age{grid-column:span 1}
+ #personal .rh-followup,#jobs .rh-followup{grid-column:1/-1}
+ #personal .rh-cv,#jobs .rh-cv{grid-column:span 1}
+ #personal .rh-commands,#jobs .rh-commands{grid-column:span 1}
 }
-@media(max-width:650px){
- #personal #personalStats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
- #personal .personal-filters{grid-template-columns:minmax(0,1fr)!important}
- #personal .personal-clear{grid-column:auto}
- #personal .csp-location-header{padding:10px 12px}
- #personal .csp-job-main{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:13px 12px;gap:11px 10px}
- #personal .csp-identity-cell,#personal .csp-action-cell{grid-column:1/-1}
- #personal .csp-status-cell,#personal .csp-days-cell{grid-column:span 1}
- #personal .csp-cv-cell{grid-column:1/-1}
- #personal .csp-job-actions{grid-column:1/-1;justify-content:flex-start}
- #personal .csp-job-actions button{min-width:95px}
- #personal .csp-extra-grid{grid-template-columns:minmax(0,1fr)}
+@media(max-width:1470px){
+ #personal .rh-filters{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+ #personal .rh-search-label{grid-column:span 2}
+ #personal #personalStats.rh-stats{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 }
-@media print{
- #personal .personal-filter-panel,#personal .personaltools,#personal .csp-job-actions{display:none!important}
- #personal .csp-job-row{break-inside:avoid}
+@media(max-width:800px){
+ #personal .rh-filters{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ #personal .rh-search-label{grid-column:1/-1}
+ #personal .rh-header,#jobs .rh-header{padding:16px!important}
+ #personal .rh-filters,#personal #personalStats.rh-stats,#jobs .alljobs-owner-tabs{margin-left:16px!important;margin-right:16px!important}
+ #personal .rh-worklist,#jobs .rh-worklist{padding-left:16px!important;padding-right:16px!important}
+ #personal .rh-result,#jobs .rh-result{margin-left:16px!important;margin-right:16px!important}
+ #jobs .toolbar{margin-left:16px!important;margin-right:16px!important}
 }
+@media(max-width:500px){#personal .rh-filters{grid-template-columns:1fr!important}#personal .rh-search-label{grid-column:auto}#personal #personalStats.rh-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}#personal .rh-detail-grid,#jobs .rh-detail-grid{grid-template-columns:1fr}}
 
 /* 2026-11-05 CSP dashboard and All Jobs owner control */
 #dashboard .csp-dashboard-panel{margin-bottom:18px}
@@ -679,27 +682,9 @@ html.rh-cloud-configured:not(.rh-cloud-ready) #modal{display:none!important}
 @media(max-width:650px){#jobs .alljobs-owner-tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#jobs .alljobs-owner-tab:first-child{grid-column:1/-1}#jobs .alljobs-owner-tab{min-height:48px;padding:10px 12px!important}}
 </style></head><body><div id="rhCloudGate" hidden><div class="rh-cloud-login"><h1>Recruitment Hub</h1><p>Secure team login. Sign in with your invited CSP account to access jobs and internal notes.</p><form id="rhCloudLoginForm"><label>Email<input id="rhCloudEmail" type="email" autocomplete="username" required></label><label>Password<input id="rhCloudPassword" type="password" autocomplete="current-password" required></label><button id="rhCloudSignIn" type="submit">Sign in</button></form><button type="button" id="rhCloudRequestReset">Set or reset account password</button><form id="rhCloudRecoveryForm" hidden><label>New password (12+ characters)<input id="rhCloudNewPassword" type="password" autocomplete="new-password" minlength="12" required></label><button id="rhCloudUpdatePassword" type="submit">Save new password</button></form><p id="rhCloudMessage" role="status">Connecting...</p><p>Only accounts assigned by the administrator can access shared recruitment data.</p></div></div><div class="app"><aside class="sidebar"><div class="brand"><span class="brandmark">R</span> Recruitment Hub<small>Team recruitment workspace</small></div><nav class="nav" id="nav"><button data-view="dashboard" class="active">Dashboard</button><button data-view="jobs">All Jobs</button><button data-view="actions">Action List</button><button data-view="notes">Quick Notes</button><div class="navlabel">PERSONAL WORKSPACES</div><button data-view="rafal">Rafal · My Jobs</button><button data-view="tanja">Tanja · My Jobs</button><button data-view="daim">Daim · My Jobs</button><button data-view="ivana">Ivana · My Jobs</button><div class="navlabel">REPORTING</div><button data-view="team">Team Views</button><button data-view="supplier">Supplier Update</button><button data-view="closed">Closed / Filled</button><button data-view="data">Data & Backup</button></nav></aside><main class="main"><header class="top"><div><h1 id="pageTitle">Recruitment Dashboard</h1><div class="muted small" id="weekLabel"></div></div><div class="actions-top"><span id="rhCloudBadge" hidden>Shared database</span><button type="button" class="btn" id="rhCloudSignOut" hidden>Sign out</button><label class="actor-control">Editing as <select id="actorSelect" aria-label="Current editor" required><option value="">Select your CSP</option><option>Rafal</option><option>Tanja</option><option>Daim</option><option>Ivana</option></select></label><button class="btn" id="exportCsv">Export CSV</button><button class="btn" id="backupBtn">Backup JSON</button><button class="btn primary" id="addBtn">+ New job</button></div></header><div id="rhCloudError" hidden><strong>Unsynced changes</strong><p id="rhCloudErrorText"></p><button type="button" class="btn" id="rhCloudBackup">Download JSON of unsynced changes</button><button type="button" class="btn" id="rhCloudReload">Discard unsynced changes and reload server</button></div><div class="notice"><span id="rhCloudSyncStatus" hidden></span><b>Local workspace</b> · All CSPs can edit all job cards. Choose your own name under “Editing as” before updating any job, including jobs owned by someone else. Every change is recorded with the editor, time and job owner. This is a local browser workspace, not shared between devices. The selector is self-declared and is not verified login/authentication. Back up the JSON data regularly.</div>
 <section class="view active" id="dashboard"><div class="grid kpis" id="kpis"></div><section class="panel csp-dashboard-panel"><div class="split"><div><h2>Current jobs by CSP</h2><p class="muted small">Includes Open, On hold and Pre-ID. Excludes Filled, Closed, Canceled and Rejected. Click a CSP to see all of their jobs.</p></div></div><div id="cspDashboard" class="csp-dashboard-grid"></div></section><div class="grid two"><article class="panel"><h2>Jobs by location</h2><div id="locationChart"></div></article><article class="panel"><h2>Jobs by owner</h2><div id="ownerChart"></div></article></div><article class="panel"><h2>Status overview</h2><div class="tablewrap"><table><thead><tr><th>Group</th><th>Jobs</th><th>Positions</th></tr></thead><tbody id="statusTable"></tbody></table></div></article><article class="panel"><div class="split"><h2>Needs attention</h2><button class="btn" data-go="actions">View action list</button></div><div id="dashboardAlerts"></div></article></section>
-<section class="view" id="jobs"><div class="panel"><div class="split"><h2>All Jobs</h2><span class="muted small" id="matchingCount"></span></div><div class="alljobs-owner-tabs" role="group" aria-label="Show jobs by CSP"><button type="button" class="alljobs-owner-tab is-selected" data-alljobs-owner="" aria-pressed="true"><span>All Jobs</span><strong data-alljobs-count>0</strong></button><button type="button" class="alljobs-owner-tab" data-alljobs-owner="Rafal" aria-pressed="false"><span>Rafal</span><strong data-alljobs-count>0</strong></button><button type="button" class="alljobs-owner-tab" data-alljobs-owner="Tanja" aria-pressed="false"><span>Tanja</span><strong data-alljobs-count>0</strong></button><button type="button" class="alljobs-owner-tab" data-alljobs-owner="Ivana" aria-pressed="false"><span>Ivana</span><strong data-alljobs-count>0</strong></button><button type="button" class="alljobs-owner-tab" data-alljobs-owner="Daim" aria-pressed="false"><span>Daim</span><strong data-alljobs-count>0</strong></button></div><div class="toolbar"><input id="search" aria-label="Search jobs" placeholder="Search job, manager, candidate, supplier..."><select id="ownerFilter" aria-label="Filter by CSP" hidden></select><select id="locationFilter" aria-label="Filter by location"></select><select id="statusFilter" aria-label="Filter by exact job status"></select><select id="priorityFilter" aria-label="Priority"></select><button class="btn" id="clearFilters">Clear filters</button></div><div class="status-legend"><span class="legend-label">STATUS KEY</span><span class="pill status-pill st-open">Open</span><span class="pill status-pill st-progress">In Progress</span><span class="pill status-pill st-interview">Interview</span><span class="pill status-pill st-offer">Offer</span><span class="pill status-pill st-onboarding">Onboarding</span><span class="pill status-pill st-hold">On hold</span><span class="pill status-pill st-hidden">Hide from Supplier</span><span class="pill status-pill st-preid">Pre-ID</span><span class="pill status-pill st-filled">Filled</span></div><div class="tablewrap"><table class="jobtable"><thead><tr><th>Location</th><th>Job #</th><th>Job title</th><th>Status</th><th>More CVs?</th><th>Owner</th><th>Priority</th><th>Positions</th><th>Days open</th><th>Hiring manager</th><th>Next action</th><th>Due</th><th>Notes</th><th>Edit</th></tr></thead><tbody id="jobsTable"></tbody></table></div></div></section>
+<section class="view" id="jobs"><div class="panel rh-panel"><header class="rh-header"><div><h2>All Jobs</h2><p>Requisitions grouped by location</p></div><strong id="matchingCount"></strong></header><div class="alljobs-owner-tabs" role="group" aria-label="Show jobs by CSP"><button type="button" class="alljobs-owner-tab is-selected" data-alljobs-owner="" aria-pressed="true"><span>All Jobs</span><strong data-alljobs-count>0</strong></button><button type="button" class="alljobs-owner-tab" data-alljobs-owner="Rafal" aria-pressed="false"><span>Rafal</span><strong data-alljobs-count>0</strong></button><button type="button" class="alljobs-owner-tab" data-alljobs-owner="Tanja" aria-pressed="false"><span>Tanja</span><strong data-alljobs-count>0</strong></button><button type="button" class="alljobs-owner-tab" data-alljobs-owner="Ivana" aria-pressed="false"><span>Ivana</span><strong data-alljobs-count>0</strong></button><button type="button" class="alljobs-owner-tab" data-alljobs-owner="Daim" aria-pressed="false"><span>Daim</span><strong data-alljobs-count>0</strong></button></div><div class="toolbar"><input id="search" aria-label="Search jobs" placeholder="Search job, manager, candidate, supplier..."><select id="ownerFilter" aria-label="Filter by CSP" hidden></select><select id="locationFilter" aria-label="Filter by location"></select><select id="statusFilter" aria-label="Filter by exact job status"></select><select id="priorityFilter" aria-label="Priority"></select><button class="btn" id="clearFilters">Clear filters</button></div><div class="status-legend"><span class="legend-label">STATUS KEY</span><span class="pill status-pill st-open">Open</span><span class="pill status-pill st-progress">In Progress</span><span class="pill status-pill st-interview">Interview</span><span class="pill status-pill st-offer">Offer</span><span class="pill status-pill st-onboarding">Onboarding</span><span class="pill status-pill st-hold">On hold</span><span class="pill status-pill st-hidden">Hide from Supplier</span><span class="pill status-pill st-preid">Pre-ID</span><span class="pill status-pill st-filled">Filled</span></div><div class="rh-result"><span>Requisitions by location</span><span>Open Details to see full job information</span></div><div id="jobsTable" class="rh-worklist"></div></div></section>
 <section class="view" id="notes"><div class="panel"><div class="split"><div><h2>Quick Notes</h2><p class="muted small">All internal job notes in one searchable timeline. Select any job to add a note quickly.</p></div><span class="muted small" id="notesCount"></span></div><div class="toolbar"><input id="noteSearch" placeholder="Search job number, title or note..." aria-label="Search notes"><select id="notesOwner"></select><select id="notesLocation"></select><select id="notesStatus"></select><button class="btn" id="notesClear">Clear filters</button></div><div class="panel" style="background:#f7faff;margin-bottom:20px"><h3 style="margin-top:0">Add a quick note</h3><div class="toolbar"><select id="quickJob" style="min-width:300px;flex:1"></select><button class="btn" id="quickOpen">Open job details</button></div><textarea id="quickNote" rows="3" style="width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:9px;resize:vertical;font:inherit" placeholder="Write an internal update or follow-up..."></textarea><div class="toolbar" style="margin-top:10px"><button class="btn primary" id="quickSave">Save note</button></div></div><div id="notesFeed"></div></div></section><section class="view" id="actions"><div class="panel"><div class="split"><h2>Follow-up and action list</h2><span class="muted small">Overdue, due today, high priority or aged &gt; 90 days</span></div><div class="tablewrap"><table><thead><tr><th>Urgency</th><th>Job</th><th>Owner</th><th>Next action</th><th>Due date</th><th>Days open</th><th>Update</th></tr></thead><tbody id="actionTable"></tbody></table></div></div></section>
-<section class="view" id="personal"><div class="panel personal-workspace">
-  <div class="split personal-head">
-    <div><p class="csp-eyebrow">CSP WORKSPACE</p><h2 id="personalTitle">My jobs</h2><p class="muted small">A compact operational list, organized by location. Expand a row for additional details.</p></div>
-    <div class="personaltools"><button class="btn primary" id="personalAdd">+ Add job</button><button class="btn" id="personalExport">Export CSV</button></div>
-  </div>
-  <div id="personalStats" class="personalstats"></div>
-  <div class="personal-filter-panel">
-    <label class="csp-search-label">Find a job<input id="personalSearch" placeholder="Job number, title, manager, candidate..." aria-label="Search personal jobs"></label>
-    <div class="toolbar personal-filters">
-      <label>Location<select id="personalLocation" aria-label="Filter personal jobs by location"><option value="">All locations</option></select></label>
-      <label>Job group<select id="personalStatus" aria-label="Filter personal jobs by status"><option value="Current" selected>Current jobs</option><option value="">All jobs incl. archived</option><option value="Active">Active</option><option value="On hold">On hold</option><option value="Pre-ID">Pre-ID</option><option value="Closed">Closed / Filled</option></select></label>
-      <label>Priority<select id="personalPriority" aria-label="Filter by priority"><option value="">All priorities</option><option>High</option><option>Normal</option><option>Low</option></select></label>
-      <label>Supplier visibility<select id="personalVisibility" aria-label="Filter supplier visibility"><option value="">All visibility</option><option value="hidden">Hide from Supplier</option><option value="not-hidden">Not hidden</option></select></label>
-      <button type="button" class="btn personal-clear" id="personalClear">Clear filters</button>
-    </div>
-  </div>
-  <div class="csp-list-summary"><span id="personalResults" class="personal-results" aria-live="polite"></span><span class="csp-list-hint">Select More to see candidate, supplier and edit history.</span></div>
-  <div id="personalTable" class="personal-groups"></div>
-</div></section>
+<section class="view" id="personal"><div class="panel rh-panel"><header class="rh-header"><div><h2 id="personalTitle">My Jobs</h2><p>Recruitment overview organized by location</p></div><div class="rh-header-actions"><button type="button" class="btn primary" id="personalAdd">+ New job</button><button type="button" class="btn" id="personalExport">Export CSV</button></div></header><div id="personalStats" class="rh-stats"></div><div class="rh-filters"><label class="rh-search-label">Search<input id="personalSearch" aria-label="Search personal jobs" placeholder="Job number, title, manager or candidate"></label><label>Location<select id="personalLocation" aria-label="Filter by location"><option value="">All locations</option></select></label><label>Show<select id="personalStatus" aria-label="Filter by status"><option value="Current" selected>Current jobs</option><option value="">All jobs incl. closed</option><option value="Active">Active</option><option value="On hold">On hold</option><option value="Pre-ID">Pre-ID</option><option value="Closed">Closed / Filled</option></select></label><label>Priority<select id="personalPriority" aria-label="Filter by priority"><option value="">All priorities</option><option>High</option><option>Normal</option><option>Low</option></select></label><label>Visibility<select id="personalVisibility" aria-label="Filter supplier visibility"><option value="">All</option><option value="hidden">Hidden</option><option value="not-hidden">Not hidden</option></select></label><button type="button" class="btn rh-reset" id="personalClear">Reset</button></div><div class="rh-result"><span id="personalResults" role="status"></span><span>Details reveal candidate, supplier and history</span></div><div id="personalTable" class="rh-worklist"></div></div></section>
 <section class="view" id="team"><div class="panel"><h2>Team workload</h2><div class="teamcards" id="teamCards"></div></div><div class="panel"><h2 id="teamHeading">Team jobs</h2><div class="tablewrap"><table><thead><tr><th>Owner</th><th>Job</th><th>Location</th><th>Status</th><th>Positions</th><th>Open days</th></tr></thead><tbody id="teamTable"></tbody></table></div></div></section>
 <section class="view" id="supplier"><div class="panel"><div class="split"><div><h2>Weekly Supplier Update</h2><span class="muted small">Read-only report, automatically updated from all CSP cards</span><p class="muted small">Excludes Pre-ID, Onboarding and jobs marked Hide from suppliers. Grouped by location. Includes current CV requirements. Supplier Update is generated automatically from CSP job cards. Edit job details only in the CSP workspaces.</p></div><div class="toolbar" style="margin:0"><button class="btn" id="supplierCsv">Export CSV</button><button class="btn primary" id="supplierPdf">Download PDF</button></div></div><div class="muted small" id="supplierSummary" style="margin:12px 0"></div><div class="status-legend"><span class="legend-label">STATUS KEY</span><span class="pill status-pill st-open">Open</span><span class="pill status-pill st-progress">In Progress</span><span class="pill status-pill st-interview">Interview</span><span class="pill status-pill st-offer">Offer</span><span class="pill status-pill st-onboarding">Onboarding</span><span class="pill status-pill st-hold">On hold</span><span class="pill status-pill st-preid">Pre-ID</span><span class="pill status-pill st-filled">Filled</span></div><div id="supplierContent"></div></div></section>
 <section class="view" id="closed"><div class="panel"><h2>Filled / Closed / Canceled archive</h2><div class="tablewrap"><table><thead><tr><th>Job</th><th>Location</th><th>Owner</th><th>Status</th><th>Closed date</th><th>Reopen</th></tr></thead><tbody id="closedTable"></tbody></table></div></div></section>
@@ -787,28 +772,13 @@ function renderDashboard(){
 function refreshSelect(id,vals,first){const el=$(id),v=el.value;el.innerHTML=`<option value="">${first}</option>`+vals.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');if(vals.includes(v))el.value=v}
 function refreshFilters(){refreshSelect('locationFilter',[...new Set([...locations,...state.jobs.map(j=>j.location)])].sort(),'All locations');refreshSelect('ownerFilter',[...new Set([...owners,...state.jobs.map(j=>j.owner)])].sort(),'All CSPs');refreshSelect('statusFilter',[...new Set([...statuses,...state.jobs.map(j=>j.status).filter(Boolean)])].sort(),'All job statuses');refreshSelect('priorityFilter',['High','Normal','Low'],'All priorities')}
 function renderJobs(){
- const owner=$('ownerFilter').value,normalized=String(owner||'').trim().toLowerCase();
- const jobsForOwner=state.jobs.filter(j=>!normalized||String(j.owner||'').trim().toLowerCase()===normalized);
+ const owner=$('ownerFilter').value,normalized=String(owner||'').trim().toLowerCase(),base=state.jobs.filter(j=>!normalized||String(j.owner||'').trim().toLowerCase()===normalized);
  const q=$('search').value.trim().toLowerCase();
- const list=jobsForOwner.filter(j=>
-  (!q||[j.title,j.number,j.manager,j.candidate,j.supplier,j.next,j.notes,...(j.noteEntries||[]).map(n=>n.text)].some(v=>String(v||'').toLowerCase().includes(q)))&&
-  (!$('locationFilter').value||j.location===$('locationFilter').value)&&
-  (!$('statusFilter').value||j.status===$('statusFilter').value)&&
-  (!$('priorityFilter').value||j.priority===$('priorityFilter').value));
- const refined=Boolean(q||$('locationFilter').value||$('statusFilter').value||$('priorityFilter').value);
- const ownerButtons=document.querySelectorAll('#allJobsCspTabs, #jobs .alljobs-owner-tab');
- document.querySelectorAll('#jobs .alljobs-owner-tab').forEach(button=>{
-   const buttonOwner=button.dataset.alljobsOwner||'';
-   const matching=buttonOwner ? state.jobs.filter(j=>String(j.owner||'').trim().toLowerCase()===buttonOwner.toLowerCase()).length : state.jobs.length;
-   const count=button.querySelector('[data-alljobs-count]');
-   if(count)count.textContent=matching;
-   const selected=String(owner||'').trim().toLowerCase()===buttonOwner.toLowerCase();
-   button.classList.toggle('is-selected',selected);
-   button.setAttribute('aria-pressed',selected?'true':'false');
- });
- $('matchingCount').textContent=(owner||'All CSPs')+': '+(refined?list.length+' of '+jobsForOwner.length:list.length)+' jobs';
- list.sort((a,b)=>Number(b.priority==='High')-Number(a.priority==='High')||days(b)-days(a));
- $('jobsTable').innerHTML=list.map(j=>'<tr><td>'+esc(j.location)+'</td><td><button class="link" data-edit="'+esc(j.id)+'">'+esc(j.number)+'</button></td><td><b>'+esc(j.title)+'</b>'+lastEditorHtml(j)+((j.noteEntries||[]).length?'<div class="note-hint">'+j.noteEntries.length+' activity notes</div>':'')+'</td><td>'+badge(j.status)+(supplierHidden(j)&&!/^hide from suppliers?$/i.test(String(j.status||''))?'<span class="pj-visibility is-hidden">🔒 Hide from Suppliers</span>':'')+'</td><td>'+cvBadge(j)+'</td><td>'+esc(j.owner)+'</td><td>'+badge(j.priority)+'</td><td>'+j.positions+'</td><td>'+days(j)+'</td><td>'+esc(j.manager)+'</td><td>'+esc(j.next||'-')+'</td><td class="nowrap">'+dateFmt(j.dueDate)+'</td><td><button class="mini" data-quicknotes="'+esc(j.id)+'">Notes ('+(j.noteEntries||[]).length+')</button></td><td><button class="mini" data-edit="'+esc(j.id)+'">Edit</button></td></tr>').join('')||'<tr><td colspan="14" class="empty">No jobs match these filters</td></tr>';
+ const list=base.filter(j=>(!q||[j.title,j.number,j.manager,j.candidate,j.supplier,j.next,j.notes,...(j.noteEntries||[]).map(n=>n.text)].some(v=>String(v||'').toLowerCase().includes(q)))&&(!$('locationFilter').value||j.location===$('locationFilter').value)&&(!$('statusFilter').value||j.status===$('statusFilter').value)&&(!$('priorityFilter').value||j.priority===$('priorityFilter').value));
+ const filtered=Boolean(q||$('locationFilter').value||$('statusFilter').value||$('priorityFilter').value);
+ $('matchingCount').textContent=(owner||'All CSPs')+': '+(filtered?list.length+' / '+base.length:list.length)+' jobs';
+ document.querySelectorAll('#jobs .alljobs-owner-tab').forEach(b=>{const val=b.dataset.alljobsOwner||'',num=val?state.jobs.filter(j=>String(j.owner||'').trim().toLowerCase()===val.toLowerCase()).length:state.jobs.length;const out=b.querySelector('[data-alljobs-count]');if(out)out.textContent=num;const yes=normalized===val.toLowerCase();b.classList.toggle('is-selected',yes);b.setAttribute('aria-pressed',yes?'true':'false')});
+ $('jobsTable').innerHTML=rhGroups(list,'jobs',owner||'all');
 }
 function chooseAllJobsOwner(owner){
  for(const id of ['search','locationFilter','statusFilter','priorityFilter'])$(id).value='';
@@ -820,114 +790,62 @@ function supplierHidden(j){
  const stored=String(j?.hidden??'').trim().toLowerCase();
  return j?.hidden===true||stored==='true'||stored==='1'||stored==='yes'||/^hide from suppliers?$/i.test(String(j?.status||'').trim());
 }
-const expandedCspJobs=new Set();
-const collapsedCspLocations=new Set();
-function personalCard(j){
- const hidden=supplierHidden(j),archived=group(j)==='Closed';
- const due=j.dueDate||'';
- const overdue=!archived&&due&&due<todayLocal(),today=!archived&&due===todayLocal();
- const priority=String(j.priority||'Normal');
- const noteCount=Array.isArray(j.noteEntries)?j.noteEntries.length:0;
- const expanded=expandedCspJobs.has(String(j.id));
- const details=(label,value)=>`<div class="csp-extra-item"><span>${label}</span><strong>${esc(value||'-')}</strong></div>`;
- return `<article class="csp-job-row${overdue?' is-overdue':''}${today?' is-today':''}${hidden?' is-hidden':''}${archived?' is-archived':''}" aria-label="Job ${esc(j.number)}">
-  <div class="csp-job-main">
-   <div class="csp-cell csp-identity-cell" data-field="Job &amp; manager">
-    <div class="csp-title-line"><button type="button" class="link csp-job-number" data-edit="${esc(j.id)}">#${esc(j.number||'-')}</button>${priority==='High'?badge('High'):''}</div>
-    <div class="csp-job-title">${esc(j.title||'Untitled position')}</div>
-    <div class="csp-job-sub"><span>${esc(j.manager||'Manager not assigned')}</span><span>· ${Number(j.positions)||1} position${Number(j.positions)===1?'':'s'}</span><button class="link csp-notes-link" type="button" data-quicknotes="${esc(j.id)}">· Notes (${noteCount})</button></div>
-   </div>
-   <div class="csp-cell csp-status-cell" data-field="Status">
-    ${badge(j.status||'Open')}
-    ${hidden?'<span class="csp-private-flag">🔒 Hide from Supplier</span>':''}
-   </div>
-   <div class="csp-cell csp-action-cell" data-field="Next action">
-    <span class="csp-action-text${j.next?'':' is-missing'}">${esc(j.next||'No next action recorded')}</span>
-    <span class="csp-due${overdue?' is-overdue':today?' is-today':''}">${overdue?'OVERDUE: ':today?'DUE TODAY: ':'Due: '}${esc(due||'Not set')}</span>
-   </div>
-   <div class="csp-cell csp-days-cell" data-field="Days open">
-    <strong class="csp-days-value">${days(j)}</strong><small class="csp-days-unit">workdays</small>
-   </div>
-   <div class="csp-cell csp-cv-cell" data-field="More CVs?">
-    ${cvQuickSelect(j)}
-   </div>
-   <div class="csp-cell csp-job-actions" data-field="Actions">
-    <button class="btn primary csp-job-open" type="button" data-edit="${esc(j.id)}">Edit</button>
-    <button class="btn csp-job-more" type="button" data-expand-csp="${esc(j.id)}" aria-controls="csp-extra-${esc(j.id)}" aria-expanded="${expanded?'true':'false'}">${expanded?'Less':'More'} <span aria-hidden="true">${expanded?'⌃':'⌄'}</span></button>
-   </div>
-  </div>
-  <div class="csp-job-extra" id="csp-extra-${esc(j.id)}" ${expanded?'':'hidden'}>
-   <div class="csp-extra-grid">
-    ${details('Candidate',j.candidate)}
-    ${details('Supplier',j.supplier)}
-    ${details('Opening date',j.openDate)}
-    ${details('Priority',priority)}
-    ${details('Owner CSP',j.owner)}
-    ${details('Last edited by',j.lastEditedBy)}
-    ${details('Last edited at',j.lastEditedAt?internalNoteDate(j.lastEditedAt):'')}
-    ${details('Supplier visibility',hidden?'Hidden from Supplier Update':'Visible, subject to status rules')}
-   </div>
-   <div class="csp-extra-bottom"><div>${lastEditorHtml(j)}</div><button type="button" class="mini" data-quicknotes="${esc(j.id)}">Open notes (${noteCount})</button></div>
-  </div>
- </article>`;
+const expandedRhRows=new Set();
+const collapsedRhGroups=new Set();
+function rhUrgency(j){
+ if(group(j)==='Closed')return 5;
+ const t=todayLocal();
+ if(j.dueDate&&j.dueDate<t)return 0;
+ if(j.dueDate===t)return 1;
+ if(j.priority==='High')return 2;
+ if(j.dueDate)return 3;
+ return 4;
+}
+function rhRow(j,scope){
+ const hidden=supplierHidden(j),statusIsHidden=/^hide from suppliers?$/i.test(String(j.status||''));
+ const archived=group(j)==='Closed',today=todayLocal(),overdue=!archived&&!!j.dueDate&&j.dueDate<today,dueToday=!archived&&j.dueDate===today;
+ const key=scope+'|'+String(j.id),expanded=expandedRhRows.has(key);
+ const domId='rh-detail-'+scope+'-'+String(j.id).replace(/[^a-zA-Z0-9_-]/g,'_');
+ const positions=Number(j.positions)||1,notes=Array.isArray(j.noteEntries)?j.noteEntries.length:0;
+ const field=(label,value,full=false)=>`<div class="rh-field${full?' rh-full':''}"><dt>${esc(label)}</dt><dd>${esc(value||'-')}</dd></div>`;
+ return `<article class="rh-record${overdue?' rh-overdue':''}${dueToday?' rh-due-today':''}${hidden?' rh-hidden':''}">
+ <div class="rh-record-main">
+  <div class="rh-cell rh-identity"><div class="rh-identity-line"><button type="button" class="link rh-number" data-edit="${esc(j.id)}">#${esc(j.number||'-')}</button>${j.priority==='High'?'<span class="rh-high">HIGH</span>':''}</div><strong class="rh-jobtitle">${esc(j.title||'Untitled position')}</strong><div class="rh-subline">${scope==='jobs'?`<span>${esc(j.owner||'No owner')}</span>`:''}<span>${esc(j.manager||'Manager not assigned')}</span><span>${positions} ${positions===1?'position':'positions'}</span></div></div>
+  <div class="rh-cell rh-status" data-caption="Status">${badge(j.status||'Open')}${hidden&&!statusIsHidden?'<span class="rh-private">🔒 Hide from Supplier</span>':''}</div>
+  <div class="rh-cell rh-followup" data-caption="Next action"><span class="rh-next${j.next?'':' rh-missing'}">${esc(j.next||'No next action recorded')}</span><span class="rh-deadline${overdue?' rh-late':dueToday?' rh-today':''}">${overdue?'Overdue':dueToday?'Due today':'Due'}: ${esc(j.dueDate||'Not set')}</span></div>
+  <div class="rh-cell rh-age" data-caption="Days open"><strong>${days(j)}</strong><small>workdays</small></div>
+  <div class="rh-cell rh-cv" data-caption="More CVs">${cvQuickSelect(j)}</div>
+  <div class="rh-cell rh-commands" data-caption="Actions"><button type="button" class="mini rh-edit" data-edit="${esc(j.id)}">Edit</button><button type="button" class="mini rh-details-btn" data-rh-details="${esc(key)}" aria-controls="${esc(domId)}" aria-expanded="${expanded?'true':'false'}">${expanded?'Less':'Details'}</button></div>
+ </div>
+ <div class="rh-detail-panel" id="${esc(domId)}" ${expanded?'':'hidden'}><dl class="rh-detail-grid">
+ ${field('Hiring manager',j.manager)}${field('Candidate',j.candidate)}${field('Supplier',j.supplier)}${field('Owner CSP',j.owner)}
+ ${field('Opening date',j.openDate)}${field('Priority',j.priority||'Normal')}${field('Supplier visibility',hidden?'Hidden from Supplier Update':'Not marked hidden')}${field('CV requirement',cvValue(j))}
+ ${field('Full next action',j.next,true)}${j.notes?field('Internal summary',j.notes,true):''}
+ </dl><div class="rh-detail-footer">${lastEditorHtml(j)}<button type="button" class="mini" data-quicknotes="${esc(j.id)}">Internal notes (${notes})</button></div></div></article>`;
+}
+function rhGroups(list,scope,owner){
+ const map=new Map();
+ for(const j of list){const l=j.location||'Location not assigned';if(!map.has(l))map.set(l,[]);map.get(l).push(j)}
+ return [...map.entries()].sort(([a],[b])=>a.localeCompare(b,'en',{numeric:true})).map(([loc,jobs],i)=>{
+  jobs.sort((a,b)=>rhUrgency(a)-rhUrgency(b)||String(a.dueDate||'9999').localeCompare(String(b.dueDate||'9999'))||String(a.number||'').localeCompare(String(b.number||''),'en',{numeric:true}));
+  const key=scope+'|'+(owner||'all')+'|'+loc,collapsed=collapsedRhGroups.has(key),hidden=jobs.filter(supplierHidden).length;
+  const domId='rh-group-'+scope+'-'+i;
+  return `<section class="rh-group" aria-label="${esc(loc)}"><header class="rh-group-head"><button type="button" data-rh-group="${esc(key)}" aria-controls="${domId}" aria-expanded="${collapsed?'false':'true'}"><span class="rh-arrow" aria-hidden="true">▾</span><span>📍 ${esc(loc)}</span></button><div class="rh-group-count">${jobs.length} jobs · ${sum(jobs)} positions${hidden?` <span class="rh-hidden-label">· 🔒 ${hidden} hidden</span>`:''}</div></header><div class="rh-group-body" id="${domId}" ${collapsed?'hidden':''}><div class="rh-columns" aria-hidden="true"><span>Job / manager</span><span>Status</span><span>Next action / deadline</span><span>Days open</span><span>More CVs</span><span>Actions</span></div>${jobs.map(j=>rhRow(j,scope)).join('')}</div></section>`;
+ }).join('')||'<div class="rh-empty">No jobs match the selected filters.</div>';
 }
 function renderPersonal(){
- const owner=personalOwner;
- const all=state.jobs.filter(j=>j.owner===owner);
- const current=all.filter(j=>group(j)!=='Closed');
- const due=current.filter(j=>j.dueDate&&j.dueDate<=todayLocal());
- const stats=[
-  ['Current jobs',current.length],
-  ['Open positions',sum(current)],
-  ['Due or overdue',due.length],
-  ['High priority',current.filter(j=>j.priority==='High').length],
-  ['Hidden from suppliers',current.filter(supplierHidden).length]
- ];
+ const owner=personalOwner,all=state.jobs.filter(j=>j.owner===owner),currentJobs=all.filter(j=>group(j)!=='Closed');
+ const due=currentJobs.filter(j=>j.dueDate&&j.dueDate<=todayLocal());
+ const metrics=[['Current jobs',currentJobs.length],['Positions',sum(currentJobs)],['Due / overdue',due.length],['High priority',currentJobs.filter(j=>j.priority==='High').length],['Hidden from suppliers',currentJobs.filter(supplierHidden).length]];
  $('personalTitle').textContent=owner+' · My Jobs';
- $('personalStats').innerHTML=stats.map(([label,value],i)=>`<div class="stat${i===4?' personal-hidden-stat':''}"><span class="muted small">${label}</span><strong>${value}</strong></div>`).join('');
- const location=$('personalLocation'),before=location.value;
- const locationsList=[...new Set(all.map(j=>j.location).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'en',{numeric:true}));
- location.innerHTML='<option value="">All locations</option>'+locationsList.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');
- if(locationsList.includes(before))location.value=before;
- const q=$('personalSearch').value.toLowerCase().trim();
- const g=$('personalStatus').value,pr=$('personalPriority').value,loc=location.value,visibility=$('personalVisibility').value;
- const list=all.filter(j=>
-  (!g||(g==='Current'?group(j)!=='Closed':group(j)===g))&&(!pr||j.priority===pr)&&(!loc||j.location===loc)&&
-  (!visibility||(visibility==='hidden'?supplierHidden(j):!supplierHidden(j)))&&
-  (!q||[j.number,j.title,j.manager,j.next,j.location,j.candidate,j.supplier,j.status,j.priority,supplierHidden(j)?'hide from supplier hidden':'supplier visible'].some(v=>String(v||'').toLowerCase().includes(q)))
- );
- const order=(j)=>{
-  if(group(j)==='Closed')return 5;
-  if(j.dueDate&&j.dueDate<todayLocal())return 0;
-  if(j.dueDate===todayLocal())return 1;
-  if(j.priority==='High')return 2;
-  if(j.dueDate)return 3;
-  return 4;
- };
- list.sort((a,b)=>order(a)-order(b)||String(a.dueDate||'9999').localeCompare(String(b.dueDate||'9999'))||String(a.number||'').localeCompare(String(b.number||''),'en',{numeric:true}));
- $('personalResults').textContent=`Showing ${list.length} of ${all.length} jobs · ${list.filter(supplierHidden).length} hidden from suppliers`;
- const locationsMap=new Map();
- for(const j of list){
-  const key=j.location||'Location not assigned';
-  if(!locationsMap.has(key))locationsMap.set(key,[]);
-  locationsMap.get(key).push(j);
- }
- const groups=[...locationsMap.entries()].sort(([a],[b])=>a.localeCompare(b,'en',{numeric:true}));
- $('personalTable').innerHTML=groups.map(([loc,jobs])=>{
-  const collapsed=collapsedCspLocations.has(owner+'|'+loc);
-  return `<section class="csp-location-block" aria-label="${esc(loc)}">
-   <header class="csp-location-header">
-    <button class="csp-location-toggle" type="button" data-collapse-csp-location="${esc(loc)}" aria-expanded="${collapsed?'false':'true'}" aria-label="${collapsed?'Expand':'Collapse'} ${esc(loc)}">
-      <span class="csp-chevron" aria-hidden="true">▾</span><span>📍 ${esc(loc)}</span>
-    </button>
-    <div class="csp-location-meta"><span>${jobs.length} jobs</span><span>${sum(jobs)} positions</span>${jobs.some(supplierHidden)?`<span class="csp-location-hidden">🔒 ${jobs.filter(supplierHidden).length} hidden</span>`:''}</div>
-   </header>
-   <div class="csp-location-body" data-csp-location-body="${esc(loc)}" ${collapsed?'hidden':''}>
-    <div class="csp-column-head" aria-hidden="true"><span>Job / Manager</span><span>Status</span><span>Next action / due</span><span>Days open</span><span>More CVs?</span><span>Action</span></div>
-    <div class="csp-rows">${jobs.map(personalCard).join('')}</div>
-   </div>
-  </section>`;
- }).join('')||'<div class="personal-no-results">No jobs match. Adjust the filters above, or select All jobs incl. archived.</div>';
+ $('personalStats').innerHTML=metrics.map(([l,v],i)=>`<div class="rh-stat${i===2||i===4?' rh-alert-stat':''}"><strong>${v}</strong><span>${esc(l)}</span></div>`).join('');
+ const select=$('personalLocation'),old=select.value,options=[...new Set(all.map(j=>j.location).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'en',{numeric:true}));
+ select.innerHTML='<option value="">All locations</option>'+options.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join('');
+ if(options.includes(old))select.value=old;
+ const q=$('personalSearch').value.toLowerCase().trim(),g=$('personalStatus').value,p=$('personalPriority').value,l=select.value,vis=$('personalVisibility').value;
+ const list=all.filter(j=>(!g||(g==='Current'?group(j)!=='Closed':group(j)===g))&&(!p||j.priority===p)&&(!l||j.location===l)&&(!vis||(vis==='hidden'?supplierHidden(j):!supplierHidden(j)))&&(!q||[j.number,j.title,j.manager,j.candidate,j.supplier,j.next,j.location,j.status].some(x=>String(x||'').toLowerCase().includes(q))));
+ $('personalResults').textContent=`Showing ${list.length} of ${all.length} jobs`;
+ $('personalTable').innerHTML=rhGroups(list,'personal',owner);
 }
 function renderTeam(){const o=[...new Set([...owners,...state.jobs.map(j=>j.owner)])].filter(Boolean);$('teamCards').innerHTML=o.map(x=>{const a=state.jobs.filter(j=>j.owner===x&&group(j)!=='Closed');return `<button class="teamcard" data-owner="${esc(x)}"><b>${esc(x)}</b><strong>${a.length}</strong><span class="muted small">current jobs · ${sum(a)} positions</span><div class="tagline">${a.filter(active).length} active · ${a.filter(j=>j.priority==='High').length} high priority</div></button>`}).join('');$('teamHeading').textContent=teamOwner?teamOwner+' · current jobs':'All team jobs';$('teamTable').innerHTML=state.jobs.filter(j=>group(j)!=='Closed'&&(!teamOwner||j.owner===teamOwner)).map(j=>`<tr><td>${esc(j.owner)}</td><td><button class="link" data-edit="${esc(j.id)}">#${esc(j.number)} ${esc(j.title)}</button></td><td>${esc(j.location)}</td><td>${badge(j.status)}${supplierHidden(j)?'<span class="pj-visibility is-hidden">🔒 Hide from Suppliers</span>':''}</td><td>${j.positions}</td><td>${days(j)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No jobs</td></tr>'}
 function supplierJobs(){return state.jobs.filter(j=>!supplierHidden(j)&&!['Pre-ID','Onboarding'].includes(j.status)&&group(j)!=='Closed'&&group(j)!=='Pre-ID')}
@@ -1011,35 +929,7 @@ function closeEditor(){$('modal').classList.remove('open');editing=null}
 $('jobForm').addEventListener('submit',e=>{e.preventDefault();if(!requireActor())return;const f=new FormData(e.currentTarget);const j={};for(const [k,v] of f.entries())j[k]=String(v).trim();j.hidden=$('jobForm').elements.namedItem('hidden').checked;j.positions=Number(j.positions);if(!j.number||!j.title||!j.owner||!j.location||!Number.isInteger(j.positions)||j.positions<1){alert('Complete required fields. Positions must be a positive whole number.');return}if(j.openDate&&j.closedDate&&j.closedDate<j.openDate){alert('Closed date cannot precede opening date.');return}if(state.jobs.some(x=>String(x.number)===String(j.number)&&x.id!==editing)){alert('Job number already exists.');return}const prior=state.jobs.find(x=>x.id===editing);j.id=editing||('job-'+Date.now()+'-'+Math.random().toString(36).slice(2,7));j.noteEntries=Array.isArray(prior?.noteEntries)?prior.noteEntries:[];j.createdAt=prior?.createdAt||new Date().toISOString();j.updatedAt=new Date().toISOString();if(archiveStatuses.includes(j.status)&&!j.closedDate)j.closedDate=iso();if(!archiveStatuses.includes(j.status))j.closedDate='';if(prior){state.jobs[state.jobs.findIndex(x=>x.id===editing)]=j;log('Updated',j,Object.keys(j).filter(k=>!['updatedAt','createdAt','id'].includes(k)&&String(prior[k]??'')!==String(j[k]??'')).map(k=>`${k}: ${String(prior[k]??'-').slice(0,65)} → ${String(j[k]??'-').slice(0,65)}`).join('; ')||'Saved without field changes')}else{state.jobs.push(j);log('Created',j,j.title)}persist();closeEditor();render();notify('Job saved')});
 $('deleteJob').onclick=()=>{const j=state.jobs.find(x=>x.id===editing);if(!j||!requireActor()||!confirm(`Permanently delete job #${j.number}? Export a backup first if you need a record.`))return;state.jobs=state.jobs.filter(x=>x.id!==editing);log('Deleted',j,j.title);persist();closeEditor();render();notify('Job deleted')};$('closeModal').onclick=$('cancelModal').onclick=closeEditor;$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeEditor()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeEditor()});
 document.addEventListener('change',e=>{const el=e.target.closest('[data-cv-job]');if(!el)return;const job=state.jobs.find(j=>j.id===el.dataset.cvJob);if(!job)return;if(!requireActor()){render();return;}const value=el.value;if(!['Yes','No','On hold','Not set'].includes(value))return;const before=cvValue(job);if(before===value)return;job.cvNeeded=value;job.updatedAt=new Date().toISOString();log('Updated',job,`More CVs Needed: ${before} -> ${value}`);persist();render();notify('CV requirement saved');});
-document.addEventListener('click',e=>{
-  const personalExpand=e.target.closest('[data-expand-csp]');
-  if(personalExpand){
-   const id=String(personalExpand.dataset.expandCsp||'');
-   const detail=document.getElementById('csp-extra-'+id);
-   if(detail){
-    const next=personalExpand.getAttribute('aria-expanded')!=='true';
-    personalExpand.setAttribute('aria-expanded',next?'true':'false');
-    personalExpand.innerHTML=next?'Less <span aria-hidden="true">⌃</span>':'More <span aria-hidden="true">⌄</span>';
-    detail.hidden=!next;
-    if(next)expandedCspJobs.add(id);else expandedCspJobs.delete(id);
-   }
-   return;
-  }
-  const locationToggle=e.target.closest('[data-collapse-csp-location]');
-  if(locationToggle){
-   const location=locationToggle.dataset.collapseCspLocation;
-   const body=locationToggle.closest('.csp-location-block')?.querySelector('.csp-location-body');
-   if(body){
-    body.hidden=!body.hidden;
-    const isOpen=!body.hidden;
-    locationToggle.setAttribute('aria-expanded',isOpen?'true':'false');
-    locationToggle.setAttribute('aria-label',(isOpen?'Collapse ':'Expand ')+location);
-    const key=personalOwner+'|'+location;
-    if(isOpen)collapsedCspLocations.delete(key);else collapsedCspLocations.add(key);
-   }
-   return;
-  }
-  const ownerTab=e.target.closest('[data-alljobs-owner]');if(ownerTab){chooseAllJobsOwner(ownerTab.dataset.alljobsOwner||'');return;}const csp=e.target.closest('[data-filter-csp]');if(csp){chooseAllJobsOwner(csp.dataset.filterCsp);navigate('jobs');return;}const quick=e.target.closest('[data-quicknotes]');if(quick){if(!openEditor(quick.dataset.quicknotes))return;setTimeout(()=>{$('jobNoteText').focus();$('jobNoteText').scrollIntoView({block:'center',behavior:'smooth'})},70)}const edit=e.target.closest('[data-edit]');if(edit)openEditor(edit.dataset.edit);const nav=e.target.closest('[data-go]');if(nav)navigate(nav.dataset.go);const owner=e.target.closest('[data-owner]');if(owner){teamOwner=teamOwner===owner.dataset.owner?'':owner.dataset.owner;renderTeam()}const re=e.target.closest('[data-reopen]');if(re){const j=state.jobs.find(x=>x.id===re.dataset.reopen);if(j&&requireActor()&&confirm(`Reopen job #${j.number}?`)){j.status='Open';j.closedDate='';j.updatedAt=new Date().toISOString();log('Reopened',j,'Changed status to Open');persist();render()}}});document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>navigate(b.dataset.view));$('addBtn').onclick=()=>openEditor();$('personalAdd').onclick=()=>openEditor();$('actorSelect').value=owners.includes(localStorage.getItem(ACTOR_STORAGE_KEY))?localStorage.getItem(ACTOR_STORAGE_KEY):'';$('actorSelect').onchange=()=>{const editor=currentActor();if(editor)localStorage.setItem(ACTOR_STORAGE_KEY,editor);else localStorage.removeItem(ACTOR_STORAGE_KEY)};$('personalClear').onclick=()=>{for(const id of ['personalSearch','personalLocation','personalStatus','personalPriority','personalVisibility'])$(id).value=id==='personalStatus'?'Current':'';renderPersonal()};$('personalExport').onclick=()=>csvExport('recruitment-'+personalOwner.toLowerCase()+'-'+iso()+'.csv',state.jobs.filter(j=>j.owner===personalOwner));['personalSearch','personalStatus','personalPriority','personalLocation','personalVisibility'].forEach(id=>$(id).addEventListener(id==='personalSearch'?'input':'change',renderPersonal));['search','locationFilter','statusFilter','priorityFilter'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',renderJobs));$('ownerFilter').addEventListener('change',()=>chooseAllJobsOwner($('ownerFilter').value));$('clearFilters').onclick=()=>{$('search').value='';for(const id of ['locationFilter','ownerFilter','statusFilter','priorityFilter'])$(id).value='';renderJobs()};
+document.addEventListener('click',e=>{const details=e.target.closest('[data-rh-details]');if(details){const key=details.dataset.rhDetails||'',panel=details.closest('.rh-record')?.querySelector('.rh-detail-panel');if(panel){const opening=details.getAttribute('aria-expanded')!=='true';panel.hidden=!opening;details.setAttribute('aria-expanded',opening?'true':'false');details.textContent=opening?'Less':'Details';if(opening)expandedRhRows.add(key);else expandedRhRows.delete(key);}return;}const groupButton=e.target.closest('[data-rh-group]');if(groupButton){const key=groupButton.dataset.rhGroup||'',panel=groupButton.closest('.rh-group')?.querySelector('.rh-group-body');if(panel){const opening=groupButton.getAttribute('aria-expanded')!=='true';panel.hidden=!opening;groupButton.setAttribute('aria-expanded',opening?'true':'false');if(opening)collapsedRhGroups.delete(key);else collapsedRhGroups.add(key);}return;}const ownerTab=e.target.closest('[data-alljobs-owner]');if(ownerTab){chooseAllJobsOwner(ownerTab.dataset.alljobsOwner||'');return;}const csp=e.target.closest('[data-filter-csp]');if(csp){chooseAllJobsOwner(csp.dataset.filterCsp);navigate('jobs');return;}const quick=e.target.closest('[data-quicknotes]');if(quick){if(!openEditor(quick.dataset.quicknotes))return;setTimeout(()=>{$('jobNoteText').focus();$('jobNoteText').scrollIntoView({block:'center',behavior:'smooth'})},70)}const edit=e.target.closest('[data-edit]');if(edit)openEditor(edit.dataset.edit);const nav=e.target.closest('[data-go]');if(nav)navigate(nav.dataset.go);const owner=e.target.closest('[data-owner]');if(owner){teamOwner=teamOwner===owner.dataset.owner?'':owner.dataset.owner;renderTeam()}const re=e.target.closest('[data-reopen]');if(re){const j=state.jobs.find(x=>x.id===re.dataset.reopen);if(j&&requireActor()&&confirm(`Reopen job #${j.number}?`)){j.status='Open';j.closedDate='';j.updatedAt=new Date().toISOString();log('Reopened',j,'Changed status to Open');persist();render()}}});document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>navigate(b.dataset.view));$('addBtn').onclick=()=>openEditor();$('personalAdd').onclick=()=>openEditor();$('actorSelect').value=owners.includes(localStorage.getItem(ACTOR_STORAGE_KEY))?localStorage.getItem(ACTOR_STORAGE_KEY):'';$('actorSelect').onchange=()=>{const editor=currentActor();if(editor)localStorage.setItem(ACTOR_STORAGE_KEY,editor);else localStorage.removeItem(ACTOR_STORAGE_KEY)};$('personalClear').onclick=()=>{for(const id of ['personalSearch','personalLocation','personalStatus','personalPriority','personalVisibility'])$(id).value=id==='personalStatus'?'Current':'';renderPersonal()};$('personalExport').onclick=()=>csvExport('recruitment-'+personalOwner.toLowerCase()+'-'+iso()+'.csv',state.jobs.filter(j=>j.owner===personalOwner));['personalSearch','personalStatus','personalPriority','personalLocation','personalVisibility'].forEach(id=>$(id).addEventListener(id==='personalSearch'?'input':'change',renderPersonal));['search','locationFilter','statusFilter','priorityFilter'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',renderJobs));$('ownerFilter').addEventListener('change',()=>chooseAllJobsOwner($('ownerFilter').value));$('clearFilters').onclick=()=>{$('search').value='';for(const id of ['locationFilter','ownerFilter','statusFilter','priorityFilter'])$(id).value='';renderJobs()};
 function download(name,content,mime){const b=new Blob([content],{type:mime});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
 const csvFields=['number','title','location','owner','status','priority','positions','openDate','manager','next','dueDate','supplier','candidate','notes','hidden','closedDate','cvNeeded'];function csv(rows){const quote=x=>'"'+String(x??'').replace(/"/g,'""')+'"';return '\ufeff'+csvFields.join(',')+'\r\n'+rows.map(j=>csvFields.map(k=>quote(j[k])).join(',')).join('\r\n')}const csvExport=(name,rows)=>download(name,csv(rows),'text/csv;charset=utf-8');
 const supplierCsvFields=['number','title','location','status','positions','cvNeeded','owner'];
