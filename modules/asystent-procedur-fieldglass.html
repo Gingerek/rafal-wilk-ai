@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#f7f9ff">
-<title>Fieldglass | Asystent procedur</title>
+<title>Fieldglass | Asystent Procedur</title>
 <style>
 :root {font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;color-scheme:light;--ink:#182033;--sub:#63708a;--bg:#f8faff;--panel:#fff;--line:#e5e9f3;--blue:#4285f4;--blue-dark:#1a65d6;--green:#34a853;--yellow:#fbbc05;--red:#ea4335;--shadow:0 18px 60px rgba(27,48,86,.075);--soft-shadow:0 5px 20px rgba(30,53,94,.055)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.55;min-width:320px;min-height:100vh}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--blue);outline-offset:3px}button:disabled{cursor:default;opacity:.46}::selection{background:#d7e6ff;color:#142d57}
@@ -24,7 +24,7 @@ body.dark{color-scheme:dark;--ink:#eaf0ff;--sub:#9daac1;--bg:#0c1222;--panel:#16
 <header class="top">
  <a href="#" class="brand" id="homeLink" title="Nowe pytanie" aria-label="Powrót do wyszukiwarki">
   <span class="symbol" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-  <span><span class="brand-title">Fieldglass</span><span class="brand-sub">Asystent procedur</span></span>
+  <span><span class="brand-title">Fieldglass</span><span class="brand-sub">Asystent Procedur</span></span>
  </a>
  <div class="top-right"><span class="offline"><i class="circle"></i>Działa offline</span><button class="theme-toggle" id="theme" aria-label="Zmień motyw" title="Zmień motyw"></button></div>
 </header>
@@ -165,7 +165,7 @@ answer.innerHTML=`<div class="answer-header"><div><div class="answer-kicker"><i>
 answer.hidden=false;app.classList.add('has-answer');document.title=p.title+' | Fieldglass';
 }
 function doSearch(raw,forced){const q=raw.trim();hideSuggestions();if(!q){search.focus();return}search.value=q;let matched=forced?byId[forced]:rank(q)[0]?.p;state.selected=matched||null;state.step=0;state.mode='all';state.checked=new Set();if(!matched){answer.hidden=false;app.classList.add('has-answer');answer.innerHTML=`<div class="notfound"><h2>Nie znalazłem tej procedury.</h2><p>Spróbuj krótszego pytania lub innego określenia czynności.</p></div>`;document.title='Brak procedury | Fieldglass';return}renderAnswer();const url='#'+encodeURIComponent(matched.id);if(location.hash!==url)history.replaceState({},'',url);}
-function reset(){state.selected=null;state.checked.clear();state.step=0;answer.hidden=true;app.classList.remove('has-answer');search.value='';hideSuggestions();document.title='Fieldglass | Asystent procedur';history.replaceState({},'',location.pathname+location.search);search.focus()}
+function reset(){state.selected=null;state.checked.clear();state.step=0;answer.hidden=true;app.classList.remove('has-answer');search.value='';hideSuggestions();document.title='Fieldglass | Asystent Procedur';history.replaceState({},'',location.pathname+location.search);search.focus()}
 document.getElementById('searchForm').addEventListener('submit',e=>{e.preventDefault();if(state.activeSuggestion>=0&&state.suggestions[state.activeSuggestion])doSearch(state.suggestions[state.activeSuggestion].p.title,state.suggestions[state.activeSuggestion].p.id);else doSearch(search.value)});
 search.addEventListener('input',showSuggestions);
 search.addEventListener('keydown',e=>{if(suggestions.hidden)return;let opts=[...suggestions.querySelectorAll('[data-select]')];if(e.key==='ArrowDown'){e.preventDefault();state.activeSuggestion=(state.activeSuggestion+1)%opts.length}else if(e.key==='ArrowUp'){e.preventDefault();state.activeSuggestion=(state.activeSuggestion-1+opts.length)%opts.length}else if(e.key==='Escape'){e.preventDefault();hideSuggestions();return}else return;opts.forEach((o,i)=>o.setAttribute('aria-selected',i===state.activeSuggestion?'true':'false'))});
