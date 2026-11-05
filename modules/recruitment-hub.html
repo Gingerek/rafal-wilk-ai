@@ -609,20 +609,26 @@ html.rh-cloud-configured:not(.rh-cloud-ready) #modal{display:none!important}
 @media(max-width:1400px){
  #personal #personalStats{grid-template-columns:repeat(3,minmax(0,1fr))!important}
  #personal .csp-column-head{display:none}
- #personal .csp-job-main{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.45fr) minmax(75px,.5fr)!important;gap:12px}
- #personal .csp-identity-cell{grid-column:span 2}
- #personal .csp-action-cell{grid-column:span 2}
- #personal .csp-status-cell{grid-column:span 1}
- #personal .csp-days-cell{grid-column:span 1}
- #personal .csp-cv-cell{grid-column:span 3}
- #personal .csp-job-actions{grid-column:span 1;flex-direction:row!important;align-self:end}
+ #personal .csp-job-main{grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:12px}
+ #personal .csp-identity-cell{grid-column:span 6}
+ #personal .csp-status-cell{grid-column:span 3}
+ #personal .csp-days-cell{grid-column:span 3}
+ #personal .csp-action-cell{grid-column:span 6}
+ #personal .csp-cv-cell{grid-column:span 4}
+ #personal .csp-job-actions{grid-column:span 2;flex-direction:row!important;align-self:end}
  #personal .csp-job-main .csp-cell:before{content:attr(data-field);display:block;color:#647990;font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.03em}
- #personal .csp-cv-label{display:none}
 }
 @media(max-width:900px){
  #personal .personal-filters{grid-template-columns:repeat(2,minmax(0,1fr))!important}
  #personal .personal-clear{grid-column:span 2}
  #personal .csp-extra-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #personal .csp-job-main{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+ #personal .csp-identity-cell{grid-column:span 4}
+ #personal .csp-status-cell{grid-column:span 2}
+ #personal .csp-action-cell{grid-column:span 4}
+ #personal .csp-days-cell{grid-column:span 2}
+ #personal .csp-cv-cell{grid-column:span 4}
+ #personal .csp-job-actions{grid-column:span 2}
 }
 @media(max-width:650px){
  #personal #personalStats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
