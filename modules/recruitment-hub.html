@@ -1024,7 +1024,7 @@ function rhGroups(list,scope,owner){
   jobs.sort((a,b)=>rhUrgency(a)-rhUrgency(b)||String(a.dueDate||'9999').localeCompare(String(b.dueDate||'9999'))||String(a.number||'').localeCompare(String(b.number||''),'en',{numeric:true}));
   const key=scope+'|'+(owner||'all')+'|'+loc,collapsed=collapsedRhGroups.has(key),hidden=jobs.filter(supplierHidden).length;
   const domId='rh-group-'+scope+'-'+i;
-  return `<section class="rh-group" aria-label="${esc(loc)}"><header class="rh-group-head"><button type="button" data-rh-group="${esc(key)}" aria-controls="${domId}" aria-expanded="${collapsed?'false':'true'}"><span class="rh-arrow" aria-hidden="true">▾</span><span>📍 ${esc(loc)}</span></button><div class="rh-group-count">${jobs.length} jobs · ${sum(jobs)} positions${hidden?` <span class="rh-hidden-label">· 🔒 ${hidden} hidden</span>`:''}</div></header><div class="rh-group-body" id="${domId}" ${collapsed?'hidden':''}><div class="rh-columns" aria-hidden="true"><span>Job / manager</span><span>Status</span><span>Next action / deadline</span><span>Days open</span><span>CV instruction</span><span>Actions</span></div>${jobs.map(j=>rhRow(j,scope)).join('')}</div></section>`;
+  return `<section class="rh-group" aria-label="${esc(loc)}"><header class="rh-group-head"><button type="button" data-rh-group="${esc(key)}" aria-controls="${domId}" aria-expanded="${collapsed?'false':'true'}"><span class="rh-arrow" aria-hidden="true">▾</span><span>📍 ${esc(loc)}</span></button><div class="rh-group-count">${jobs.length} jobs · ${sum(jobs)} positions${hidden?` <span class="rh-hidden-label">· 🔒 ${hidden} hidden</span>`:''}</div></header><div class="rh-group-body" id="${domId}" ${collapsed?'hidden':''}><div class="rh-columns" aria-hidden="true"><span>Job / manager</span><span>Status</span><span>Next action</span><span>Days open</span><span>CV instruction</span><span>Actions</span></div>${jobs.map(j=>rhRow(j,scope)).join('')}</div></section>`;
  }).join('')||'<div class="rh-empty">No jobs match the selected filters.</div>';
 }
 function renderPersonal(){
@@ -1261,13 +1261,14 @@ function supplierPdfDownload(){
  const items=supplierJobs().slice().sort((a,b)=>String(a.location||'').localeCompare(String(b.location||''),'en',{numeric:true})||String(a.number||'').localeCompare(String(b.number||''),'en',{numeric:true}));
  const W=1190.55,H=841.89,left=32,right=32,tableW=1126,footTop=806;
  const columns=[
-  {name:'JOB #',width:112,key:'number'},
-  {name:'JOB TITLE',width:385,key:'title'},
-  {name:'STATUS',width:160,key:'status'},
-  {name:'QTY',width:67,key:'positions'},
-  {name:'NEXT STEP',width:220,key:'cv'},
-  {name:'CSP',width:100,key:'owner'},
-  {name:'PRIORITY',width:82,key:'priority'}
+  {name:'JOB #',width:95,key:'number'},
+  {name:'JOB TITLE',width:290,key:'title'},
+  {name:'STATUS',width:130,key:'status'},
+  {name:'QTY',width:55,key:'positions'},
+  {name:'NEXT STEP',width:185,key:'cv'},
+  {name:'NEXT ACTION',width:220,key:'next'},
+  {name:'CSP',width:80,key:'owner'},
+  {name:'PRIORITY',width:71,key:'priority'}
  ];
  const statusStyle={
   'New':['#e9eefb','#3653a4'],'Intake call':['#e4f4ff','#075b96'],
@@ -1305,7 +1306,7 @@ function supplierPdfDownload(){
   for(const col of columns){
    line(x,top,x,top+34,'#456789',.55);
    const words=col.name.split(' ');
-   const two=col.name.length>13||(['NEXT STEP','JOB TITLE'].includes(col.name));
+   const two=col.name.length>13||(['NEXT STEP','NEXT ACTION','JOB TITLE'].includes(col.name));
    if(two&&words.length>1){
     const pivot=Math.ceil(words.length/2);
     text(words.slice(0,pivot).join(' '),x+6,top+13,7.2,true,'#ffffff');
@@ -1357,7 +1358,7 @@ function supplierPdfDownload(){
   return {
    number:j.number||'-',title:j.title||'-',status:j.status||'-',
    positions:String(Number(j.positions)||1),cv:cvSupplierLabel(cvValue(j)),
-   owner:j.owner||'-',priority:j.priority||'Normal'
+   next:j.next||'Not set',owner:j.owner||'-',priority:j.priority||'Normal'
   };
  }
  function printChunk(lines,offset,take,j){
@@ -1367,11 +1368,11 @@ function supplierPdfDownload(){
   const cv=cvStyle[cvValue(j)]||cvStyle['Not set'];
   rect(xPositions[2]+1,top+1,columns[2].width-2,rowHeight-2,status[0]);
   rect(xPositions[4]+1,top+1,columns[4].width-2,rowHeight-2,cv[0]);
-  if(j.priority==='High')rect(xPositions[6]+1,top+1,columns[6].width-2,rowHeight-2,'#fff2dd');
+  if(j.priority==='High')rect(xPositions[7]+1,top+1,columns[7].width-2,rowHeight-2,'#fff2dd');
   for(let col=0;col<columns.length;col++){
    const c=columns[col],x=xPositions[col],selected=lines[col].slice(offset,offset+take);
-   const color=col===2?status[1]:col===4?cv[1]:col===6&&j.priority==='High'?'#9b5600':'#233f5c';
-   selected.forEach((value,i)=>text(value,x+8,top+16+i*12,col===1?9.5:col===4?9.1:8.9,col===0||col===2||col===4||col===6,color));
+   const color=col===2?status[1]:col===4?cv[1]:col===7&&j.priority==='High'?'#9b5600':'#233f5c';
+   selected.forEach((value,i)=>text(value,x+8,top+16+i*12,col===1?9.5:col===4?9.1:col===5?9.0:8.9,col===0||col===2||col===4||col===7,color));
    line(x,top,x,top+rowHeight,'#d9e2ec',.42);
   }
   line(left+tableW,top,left+tableW,top+rowHeight,'#d9e2ec',.42);
@@ -1384,7 +1385,7 @@ function supplierPdfDownload(){
   if(y+75>footTop-12)newPage();
   groupHead(location,jobs.length);
   for(const j of jobs){
-   const values=valuesFor(j),lines=columns.map(c=>breakWords(values[c.key],Math.max(6,Math.floor((c.width-18)/(c.key==='title'?5.2:c.key==='cv'?5.0:4.9)))));
+   const values=valuesFor(j),lines=columns.map(c=>breakWords(values[c.key],Math.max(6,Math.floor((c.width-18)/(c.key==='title'?5.2:c.key==='cv'?5.0:c.key==='next'?5.0:4.9)))));
    const totalLines=Math.max(...lines.map(a=>a.length));
    let offset=0;
    while(offset<totalLines){
