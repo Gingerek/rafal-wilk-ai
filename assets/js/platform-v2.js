@@ -92,6 +92,9 @@
     { match:'Recruitment Hub', icon:'cv', category:'recruitment',
       title:{pl:'Recruitment Hub',en:'Recruitment Hub',nl:'Recruitment Hub'},
       desc:{pl:'Tracker rekrutacji CSP i raporty dostawców PDF.',en:'CSP recruitment tracker and supplier PDF reporting.',nl:'CSP-recruitmenttracker en PDF-rapportages voor leveranciers.'}},
+    { match:['Fieldglass | Asystent Procedur','Asystent Procedur Fieldglass','Fieldglass'], icon:'document', category:'recruitment',
+      title:{pl:'Fieldglass | Asystent Procedur',en:'Fieldglass | Asystent Procedur',nl:'Fieldglass | Asystent Procedur'},
+      desc:{pl:'Wyszukiwarka procedur Fieldglass krok po kroku.',en:'Step-by-step Fieldglass process finder.',nl:'Stapsgewijze Fieldglass-procedurezoeker.'}},
     { match:'Contract Budget Calculator', icon:'calculator', category:'finance',
       title:{pl:'Kalkulator budżetu kontraktu', en:'Contract Budget Calculator', nl:'Contractbudget calculator'},
       desc:{pl:'Szybka estymacja budżetu i kosztów kontraktu.', en:'Fast contract budget and cost estimation.', nl:'Snelle raming van contractbudget en kosten.'}},
@@ -378,17 +381,26 @@
     });
   }
   function findMeta(card){
-    const storedIndex = Number(card?.dataset?.rwModuleIndex);
+    const rawIndex = card?.dataset?.rwModuleIndex;
+    const storedIndex = rawIndex === undefined ? -1 : Number(rawIndex);
     if (Number.isInteger(storedIndex) && modules[storedIndex]) return modules[storedIndex];
-    const title = card.querySelector('.title');
-    const key = title?.dataset.titleKey || title?.textContent || '';
+    const title = card?.querySelector('.title');
+    const key = String(title?.dataset?.titleKey || title?.textContent || '').trim();
+    const visibleTitle = String(title?.textContent || key).trim();
     const foundIndex = modules.findIndex((m) => {
       const matches = Array.isArray(m.match) ? m.match : [m.match];
-      return matches.some((match) => key.includes(match) || String(title?.textContent || '').includes(match));
+      return matches.some((match) => key.includes(match) || visibleTitle.includes(match));
     });
-    const nextIndex = foundIndex >= 0 ? foundIndex : 0;
-    if (card) card.dataset.rwModuleIndex = String(nextIndex);
-    return modules[nextIndex];
+    if (foundIndex >= 0) {
+      if (card) card.dataset.rwModuleIndex = String(foundIndex);
+      return modules[foundIndex];
+    }
+    // Unknown modules retain their own title rather than being mislabeled as Recruitment Hub.
+    return {
+      match:key, icon:'tool', category:'tracking',
+      title:{pl:visibleTitle,en:visibleTitle,nl:visibleTitle},
+      desc:{pl:'',en:'',nl:''}
+    };
   }
   function syncBrand(){
     document.querySelectorAll('.rw-brand-main').forEach((el) => {
