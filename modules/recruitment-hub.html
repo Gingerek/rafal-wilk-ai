@@ -1231,9 +1231,6 @@ function supplierPdfDownload(){
   .replace(/[\u0100-\u024f]/g,ch=>{const map={'ł':'l','Ł':'L','ą':'a','Ą':'A','ę':'e','Ę':'E','ś':'s','Ś':'S','ć':'c','Ć':'C','ń':'n','Ń':'N','ź':'z','Ź':'Z','ż':'z','Ż':'Z'};return map[ch]||ch.normalize('NFD').replace(/[\u0300-\u036f]/g,'')})
   .replace(/[^\x20-\x7e\xA0-\xFF\n]/g,'?');
  const rgb=hex=>[1,3,5].map(i=>(parseInt(hex.slice(i,i+2),16)/255).toFixed(3)).join(' ');
- const totalPositions=items.reduce((n,j)=>n+(Number(j.positions)||0),0);
- const totalLocations=new Set(items.map(j=>j.location||'Location not assigned')).size;
- const cvRequired=items.filter(j=>cvValue(j)==='Yes').length;
  const generated=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
  let pages=[],draw=[],y=0,pageNo=0,jobIndex=0;
  function escPdf(t){return normalize(t).replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)')}
@@ -1249,10 +1246,6 @@ function supplierPdfDownload(){
  function drawFooter(){
   line(left,footTop,W-right,footTop,'#cad9e8',.75);
   text('Page '+pageNo,W-86,footTop+16,8,false,'#526780');
- }
- function summary(label,value,x,w,shade){
-  rect(x,97,w,41,shade);line(x,138,x+w,138,'#d6e2ed',.7);
-  text(String(value),x+11,114,16,true,'#174677');text(label,x+44,114,8.2,true,'#516a82');
  }
  function columnHead(){
   const top=y;rect(left,top,tableW,34,'#203f64');let x=left;
@@ -1277,19 +1270,13 @@ function supplierPdfDownload(){
   text('SUPPLIER UPDATE',left,52,21,true,'#163e68');
   text('Week '+isoWeek(new Date()).replace(' · ',' - '),left,75,9,false,'#61778f');
   text('Date: '+generated,W-219,52,9,true,'#345b82');
-  const sW=274,sGap=10;
-  summary('Visible jobs',items.length,left,sW,'#f0f6fd');
-  summary('Positions',totalPositions,left+sW+sGap,sW,'#f0f6fd');
-  summary('Locations',totalLocations,left+2*(sW+sGap),sW,'#f0f6fd');
-  summary('CV requests',cvRequired,left+3*(sW+sGap),sW,'#eaf8f0');
-  y=152;columnHead();
+  y=98;columnHead();
  }
- function groupHead(location,count,positions,continued=false){
+ function groupHead(location,count,continued=false){
   if(y+30>footTop-12)newPage();
   rect(left,y,tableW,28,'#deebf7');
   rect(left,y,5,28,'#1a5c9e');
-  text(String(location).toUpperCase()+(continued?'  (CONTINUED)':''),left+13,y+18,10,true,'#164876');
-  text(count+' jobs   |   '+positions+' positions',W-right-215,y+17,8.3,true,'#3f6383');
+  text(String(location).toUpperCase()+'  ('+count+' jobs)'+(continued?'  (CONTINUED)':''),left+13,y+18,10,true,'#164876');
   line(left,y+28,left+tableW,y+28,'#b8cfe3',.9);
   y+=28;
  }
@@ -1341,20 +1328,19 @@ function supplierPdfDownload(){
  newPage();
  for(const location of [...new Set(items.map(j=>j.location||'Location not assigned'))]){
   const jobs=items.filter(j=>(j.location||'Location not assigned')===location);
-  const qty=jobs.reduce((n,j)=>n+(Number(j.positions)||0),0);
   if(y+75>footTop-12)newPage();
-  groupHead(location,jobs.length,qty);
+  groupHead(location,jobs.length);
   for(const j of jobs){
    const values=valuesFor(j),lines=columns.map(c=>breakWords(values[c.key],Math.max(6,Math.floor((c.width-18)/(c.key==='title'?5.2:c.key==='cv'?5.0:4.9)))));
    const totalLines=Math.max(...lines.map(a=>a.length));
    let offset=0;
    while(offset<totalLines){
     let room=Math.floor((footTop-12-y-16)/12);
-    if(room<2){newPage();groupHead(location,jobs.length,qty,true);room=Math.floor((footTop-12-y-16)/12);}
+    if(room<2){newPage();groupHead(location,jobs.length,true);room=Math.floor((footTop-12-y-16)/12);}
     const taken=Math.min(Math.max(1,room),totalLines-offset);
     printChunk(lines,offset,taken,j);
     offset+=taken;
-    if(offset<totalLines){newPage();groupHead(location,jobs.length,qty,true)}
+    if(offset<totalLines){newPage();groupHead(location,jobs.length,true)}
    }
    jobIndex++;
   }
