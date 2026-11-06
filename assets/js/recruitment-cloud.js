@@ -391,6 +391,7 @@
   });
 
   $('rhCloudSignOut')?.addEventListener('click',()=>void api.logout());
+  $('rhCloudSwitchAccount')?.addEventListener('click',()=>void api.logout());
   $('rhCloudImportLocal')?.addEventListener('click',()=>void importLocal());
   $('rhCloudImportDetected')?.addEventListener('click',()=>void importLocal());
   $('rhCloudImportBackup')?.addEventListener('click',()=>$('rhCloudImportInput')?.click());
