@@ -5,7 +5,7 @@
 (function(){
   'use strict';
   const config=window.RW_RECRUITMENT_CLOUD||{};
-  if(!config.url||!config.anonKey)return;
+  if(!config.url||!config.anonKey||!document.documentElement.classList.contains('rh-cloud-configured'))return;
   const bridge=window.RHRecruitmentBridge;
   const $=id=>document.getElementById(id);
   const gate=$('rhCloudGate'),form=$('rhCloudLoginForm'),message=$('rhCloudMessage'),joinPanel=$('rhCloudJoinPanel');
