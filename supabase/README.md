@@ -1,6 +1,6 @@
 # Recruitment Hub: authenticated shared database
 
-Status: CODE PREPARED, NOT LIVE. The two sites will continue to use their current browser-only data until the database is configured. No user data is migrated automatically.
+Status (2026-11-06): Supabase backend project gzagtfuefrbuzbcoliaq is ACTIVE in eu-central-1. Base tables, access controls, and the Saturday archive scheduler are installed and the cron job has completed a successful run. The two websites are STILL IN LOCAL-ONLY MODE: no CSP authentication users are provisioned, no local jobs or notes are migrated, and cloud frontend credentials are intentionally blank to avoid locking users out of their existing data. Do not activate cloud mode until account setup and safe migration are ready.
 
 ## 1. Create and secure Supabase
 
