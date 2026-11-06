@@ -5,10 +5,10 @@
 (function(){
   'use strict';
   const config=window.RW_RECRUITMENT_CLOUD||{};
-  if(!config.url||!config.anonKey||!document.documentElement.classList.contains('rh-cloud-configured'))return;
+  if(!config.url||!config.anonKey)return;
   const bridge=window.RHRecruitmentBridge;
   const $=id=>document.getElementById(id);
-  const gate=$('rhCloudGate'),form=$('rhCloudLoginForm'),message=$('rhCloudMessage'),joinPanel=$('rhCloudJoinPanel');
+  const gate=$('rhCloudGate'),form=$('rhCloudLoginForm'),message=$('rhCloudMessage');
   const badge=$('rhCloudBadge'),syncLabel=$('rhCloudSyncStatus');
   const actor=$('actorSelect');
   const remoteVersions=new Map();
@@ -58,8 +58,6 @@
     if($('rhCloudLoginForm'))$('rhCloudLoginForm').hidden=false;
     if($('rhCloudRecoveryForm'))$('rhCloudRecoveryForm').hidden=true;
     if($('rhCloudRequestReset'))$('rhCloudRequestReset').hidden=false;
-    if(joinPanel)joinPanel.hidden=true;
-    if($('rhCloudAdminTools'))$('rhCloudAdminTools').hidden=true;
     savedJobs.clear();remoteVersions.clear();
     actor.disabled=false;actor.value='';
     bridge.replaceState({jobs:[],history:[]});
@@ -87,25 +85,7 @@
       remoteVersions.set(row.job_id,row.version);
     }
     bridge.replaceState({jobs,history});
-    updateLocalMigrationBanner();
     status('Synced · '+new Date().toLocaleTimeString('en-GB'));
-  }
-
-  function updateLocalMigrationBanner(){
-    const panel=$('rhCloudMigrationBanner');
-    if(!panel)return;
-    panel.hidden=true;
-    if(member?.role!=='admin')return;
-    let local;
-    try{local=JSON.parse(localStorage.getItem('recruitment-hub-v3')||'null')}catch(_){return}
-    if(!Array.isArray(local?.jobs)||!local.jobs.length)return;
-    const cloud=bridge.getState().jobs||[];
-    const ids=new Set(cloud.map(j=>String(j.id)));
-    const numbers=new Set(cloud.map(j=>String(j.number||'').trim().toLowerCase()));
-    const count=local.jobs.filter(j=>!ids.has(String(j.id))&&!numbers.has(String(j.number||'').trim().toLowerCase())).length;
-    if(!count)return;
-    $('rhCloudMigrationCount').textContent=count+' original local jobs have not been imported. Notes are included and your browser copy will remain intact.';
-    panel.hidden=false;
   }
   function lastActionFor(id,state){
     return (state.history||[]).find(h=>String(h.jobId||'')===String(id))
@@ -180,12 +160,6 @@
     if(title)title.textContent='Shared database and backups';
     const paragraphs=storage?.closest('.panel')?.querySelectorAll('p.muted.small')||[];
     if(paragraphs.length>1)paragraphs[paragraphs.length-1].textContent='All CSP changes are written to the shared database. Local restore, CSV import and disk synchronisation are disabled in cloud mode. Use JSON backups for recovery.';
-    const notice=document.querySelector('.notice');
-    if(notice){
-      const label=notice.querySelector('b');if(label)label.textContent='Secure team workspace';
-      const copy=[...notice.childNodes].find(node=>node.nodeType===3&&node.textContent.includes('All CSPs'));
-      if(copy)copy.textContent=' · Every CSP can edit job cards. Changes are synchronized in Supabase and recorded under a verified account. Completed jobs remain on CSP cards for at least 7 full days, then move to Closed on Saturday at 12:00 Amsterdam time.';
-    }
     const note=$('rhCloudImportHelp');
     if(note)note.hidden=member?.role!=='admin';
     const importButton=$('rhCloudImportLocal');
@@ -195,59 +169,37 @@
   }
   async function importLocal(sourceJobs){
     if(!ready||member.role!=='admin')return;
-    // Merge only records with new IDs and job numbers; never overwrite cloud jobs.
-    await loadServerData(true);
+    if(savedJobs.size){alert('The shared database is not empty. Import is disabled to prevent overwriting colleagues’ work.');return;}
     let local;
     try{local=sourceJobs?{jobs:sourceJobs}:JSON.parse(localStorage.getItem('recruitment-hub-v3')||'null')}
     catch(_){}
     if(!local||!Array.isArray(local.jobs)||!local.jobs.length){
       alert('No jobs found. Use the original browser or choose a saved Recruitment Hub JSON backup.');return;
     }
-    const existing=bridge.getState().jobs;
-    const ids=new Set(existing.map(j=>String(j.id)));
-    const numbers=new Set(existing.map(j=>String(j.number).trim().toLowerCase()));
-    const unique=local.jobs.filter(j=>!ids.has(String(j.id))&&!numbers.has(String(j.number||'').trim().toLowerCase()));
-    const skipped=local.jobs.length-unique.length;
-    if(!unique.length){alert('No new jobs to import. '+skipped+' already exist by ID or job number. No cloud records were changed.');return;}
-    if(!confirm('Import '+unique.length+' NEW jobs to shared database? '+skipped+' duplicates will be skipped, never overwritten. A local JSON copy will remain unchanged.'))return;
+    if(!confirm('Import '+local.jobs.length+' saved jobs into the EMPTY shared database? Existing notes are preserved. Your local/JSON backup will NOT be deleted.'))return;
     $('rhCloudImportLocal').disabled=true;
     try{
-      for(const job of unique){
+      for(const job of local.jobs){
         if(!job?.id||!job.owner||!job.number||!job.title)throw new Error('Invalid job in local backup');
         await saveOne(String(job.id),job,{history:[{jobId:job.id,action:'Imported',detail:'Admin imported local job and notes'}],jobs:[job]});
       }
-      await loadServerData(true);status('Imported '+unique.length+' new jobs to the shared database');
-      alert('Imported '+unique.length+' new jobs, skipped '+skipped+' duplicates without overwriting. Verify team records.');
+      await loadServerData(true);status('Imported '+local.jobs.length+' jobs to the shared database');
+      alert('Imported '+local.jobs.length+' jobs. Verify the notes and download a JSON backup.');
     }catch(error){setBlocked(error)}
     finally{$('rhCloudImportLocal').disabled=false}
   }
   async function signedIn(user){
     if(!user){clearTeam();access('locked');return;}
-    let membership=await client.from('rh_members').select('csp_name,role,active').eq('user_id',user.id).maybeSingle();
+    const membership=await client.from('rh_members').select('csp_name,role,active').eq('user_id',user.id).maybeSingle();
     if(membership.error)throw membership.error;
-    if(!membership.data?.active){
-      // Claim the very first administrator ONLY for the confirmed owner address.
-      const claimed=await client.rpc('rh_claim_owner');
-      if(claimed.error)throw claimed.error;
-      if(claimed.data)membership=await client.from('rh_members').select('csp_name,role,active').eq('user_id',user.id).maybeSingle();
-      if(membership.error)throw membership.error;
-    }
     if(!membership.data?.active||!['Rafal','Tanja','Daim','Ivana'].includes(membership.data.csp_name)){
-      sessionUser=user;member=null;ready=false;
-      form.hidden=true;
-      if(joinPanel)joinPanel.hidden=false;
-      access('locked');
-      loginMessage('Email verified. Enter the one-time CSP invitation code from the Recruitment Hub administrator.',true);
-      return;
+      clearTeam();access('locked');loginMessage('This account is not an active CSP member. Ask the administrator to invite/assign you.',true);return;
     }
-    if(joinPanel)joinPanel.hidden=true;
-    form.hidden=false;
     member=membership.data;sessionUser=user;
     actor.value=member.csp_name;actor.disabled=true;
     await loadServerData(true);
     ready=true;
     disableDangerousLocalOperations();
-    if($('rhCloudAdminTools'))$('rhCloudAdminTools').hidden=member.role!=='admin';
     access('ready');
     if(!subscription){
       subscription=client.channel('rh-shared-jobs').on('postgres_changes',
@@ -280,7 +232,7 @@
       const {data,error}=await client.auth.getUser();
       if(error&&!/session missing/i.test(error.message||''))throw error;
       if(data?.user&&!recoveryMode){await signedIn(data.user)}
-      else if(!recoveryMode)loginMessage('Sign in, or create an account with your own email. The administrator account must use the verified organization owner email.');
+      else if(!recoveryMode)loginMessage('Sign in with your invited CSP email and password.');
     }catch(error){loginMessage('Login unavailable: '+error.message,true)}
   }
   form?.addEventListener('submit',async(event)=>{
@@ -298,66 +250,6 @@
     finally{submit.disabled=false}
   });
   
-
-  // Sign up only creates a Supabase Auth account. Shared recruitment data
-  // stays protected until the verified owner claims admin or the user redeems an invite.
-  $('rhCloudSignUp')?.addEventListener('click',async()=>{
-    if(!client){loginMessage('Database connection is not ready.',true);return;}
-    const email=$('rhCloudEmail')?.value.trim(),password=$('rhCloudPassword')?.value||'';
-    if(!email||password.length<12){loginMessage('Enter your email and a new password with at least 12 characters.',true);return;}
-    const button=$('rhCloudSignUp');button.disabled=true;
-    try{
-      const {data,error}=await client.auth.signUp({email,password});
-      if(error)throw error;
-      $('rhCloudPassword').value='';
-      if(data?.session&&data?.user)await signedIn(data.user);
-      else loginMessage('Account requested. Check your email for a confirmation link. After confirming, return to this page and sign in.');
-    }catch(error){loginMessage(error.message,true)}
-    finally{button.disabled=false}
-  });
-  $('rhCloudJoinForm')?.addEventListener('submit',async(event)=>{
-    event.preventDefault();
-    const token=$('rhCloudInviteCode')?.value.trim();
-    const button=$('rhCloudJoinButton');button.disabled=true;
-    try{
-      const {data,error}=await client.rpc('rh_claim_invite',{p_code:token});
-      if(error)throw error;
-      if(!data)throw new Error('Invite invalid, expired, already used, or email not verified.');
-      $('rhCloudInviteCode').value='';
-      const {data:auth}=await client.auth.getUser();
-      await signedIn(auth?.user);
-    }catch(error){loginMessage(error.message,true)}
-    finally{button.disabled=false}
-  });
-  $('rhCloudCreateInvite')?.addEventListener('click',async()=>{
-    if(!ready||member?.role!=='admin')return;
-    const button=$('rhCloudCreateInvite');button.disabled=true;
-    try{
-      const {data,error}=await client.rpc('rh_create_invite',{p_csp_name:$('rhCloudInviteCsp').value});
-      if(error)throw error;
-      $('rhCloudInviteResult').value=data||'';
-      $('rhCloudInviteHelp').textContent='Share this one-time code privately. It expires in 14 days. The colleague creates an email/password account and enters the code after email confirmation.';
-    }catch(error){$('rhCloudInviteHelp').textContent=error.message||'Could not issue invitation.'}
-    finally{button.disabled=false}
-  });
-  $('rhCloudCopyInvite')?.addEventListener('click',()=>{
-    const input=$('rhCloudInviteResult');if(!input?.value)return;
-    navigator.clipboard?.writeText(input.value).catch(()=>{input.select()});
-  });
-  $('rhCloudLocalBackup')?.addEventListener('click',()=>{
-    const raw=localStorage.getItem('recruitment-hub-v3');
-    if(!raw){loginMessage('No local Recruitment Hub backup found in this browser and website.',true);return;}
-    try{
-      const data=JSON.parse(raw);
-      if(!Array.isArray(data.jobs))throw new Error('Invalid local data');
-      const blob=new Blob([JSON.stringify({...data,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});
-      const url=URL.createObjectURL(blob),a=document.createElement('a');
-      a.href=url;a.download='recruitment-hub-original-local-backup.json';
-      document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
-      loginMessage('Downloaded the original local jobs and notes. They remain in this browser.');
-    }catch(error){loginMessage('Cannot export local backup: '+error.message,true)}
-  });
-
   $('rhCloudRequestReset')?.addEventListener('click',async()=>{
     if(!client){loginMessage('Database connection is not ready',true);return}
     const email=$('rhCloudEmail')?.value.trim();
@@ -391,9 +283,7 @@
   });
 
   $('rhCloudSignOut')?.addEventListener('click',()=>void api.logout());
-  $('rhCloudSwitchAccount')?.addEventListener('click',()=>void api.logout());
   $('rhCloudImportLocal')?.addEventListener('click',()=>void importLocal());
-  $('rhCloudImportDetected')?.addEventListener('click',()=>void importLocal());
   $('rhCloudImportBackup')?.addEventListener('click',()=>$('rhCloudImportInput')?.click());
   $('rhCloudImportInput')?.addEventListener('change',async(event)=>{
     const file=event.target.files?.[0];
