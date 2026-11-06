@@ -719,33 +719,164 @@ html.rh-cloud-configured:not(.rh-cloud-ready) #modal{display:none!important}
 #supplierContent .supplier-table{min-width:760px}
 #personal .rh-cv select,#jobs .rh-cv select{white-space:normal!important;text-overflow:ellipsis!important;max-width:100%!important}
 
-/* CSP start gate: visible from first paint, never persisted */
+/* Recruitment Hub entry screen: self-contained responsive redesign, no application logic changes */
 #rhCspWelcome[hidden]{display:none!important}
-#rhCspWelcome.rh-csp-welcome{position:fixed!important;inset:0!important;z-index:1000005!important;display:flex;justify-content:center;align-items:center;background:linear-gradient(130deg,#091b33 0%,#142f54 55%,#0b1c35 100%);padding:18px;overflow:auto}
-#rhCspWelcome .rh-csp-welcome-card{width:min(100%,560px);padding:30px 34px;background:#fff;border-radius:13px;border:1px solid #d9e2ed;box-shadow:0 28px 80px rgba(2,15,35,.42);color:#1b304a}
-#rhCspWelcome .rh-csp-welcome-brand{display:flex;gap:12px;align-items:center;font-size:12px;font-weight:850;color:#20476f;letter-spacing:.075em}
-#rhCspWelcome .rh-csp-brand-mark{width:43px;height:43px;display:grid;place-items:center;background:#1b5eaa;color:#fff;border-radius:9px;font-size:15px;letter-spacing:0}
-#rhCspWelcome .rh-csp-welcome-brand small{display:block;font-size:10px;letter-spacing:.13em;color:#75869b;font-weight:750;margin-top:2px}
-#rhCspWelcome h1{font-size:25px;line-height:1.2;font-weight:850;letter-spacing:-.02em;color:#152b46;margin:24px 0 8px}
-#rhCspWelcome .rh-csp-welcome-sub{font-size:13px;color:#63758b;line-height:1.5;margin:0 0 20px}
-#rhCspWelcome .rh-csp-profiles{border:0;margin:0 0 17px;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-#rhCspWelcome .rh-csp-profiles legend,#rhCspWelcome .rh-csp-pin-label{display:block;width:100%;font-size:11px;font-weight:850;color:#455f79;letter-spacing:.035em;margin:0 0 9px}
-#rhCspWelcome .rh-csp-choice{position:relative;display:flex;align-items:center;gap:10px;min-height:62px;padding:10px 13px;border:1.5px solid #d1deec;border-radius:9px;background:#fafcff;font-weight:800;color:#263f5d;font-size:14px;cursor:pointer;transition:background .15s,border-color .15s}
-#rhCspWelcome .rh-csp-choice input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
-#rhCspWelcome .rh-csp-choice:has(input:checked){background:#e8f2ff;border-color:#1a66ba;color:#0c4f96}
-#rhCspWelcome .rh-csp-choice:has(input:focus-visible){outline:3px solid #89b8f2;outline-offset:2px}
-#rhCspWelcome .rh-csp-initial{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:8px;background:#e3ebf5;color:#295476;font-size:14px;font-weight:850}
-#rhCspWelcome .rh-csp-choice:has(input:checked) .rh-csp-initial{background:#1c67b6;color:white}
-#rhCspWelcome .rh-csp-choice-check{margin-left:auto;color:#1b65b5;visibility:hidden;font-size:17px}
-#rhCspWelcome .rh-csp-choice:has(input:checked) .rh-csp-choice-check{visibility:visible}
-#rhCspWelcome #rhCspWelcomePin{width:100%!important;max-width:none!important;height:46px!important;min-height:46px!important;background:#fff!important;color:#183651!important;border:1.5px solid #b9cadb!important;border-radius:7px!important;padding:10px 14px!important;font-size:16px!important;letter-spacing:.12em}
-#rhCspWelcome #rhCspWelcomePin:focus{outline:2px solid #77a9ed;outline-offset:1px}
-#rhCspWelcome .rh-csp-welcome-error{height:18px;color:#b32a2a;font-size:12px;font-weight:800;margin:8px 0}
-#rhCspWelcome .rh-csp-submit{width:100%;min-height:45px;padding:10px!important;background:#1a65b5!important;color:white!important;border:1px solid #1a65b5!important;border-radius:7px!important;font-size:14px!important;font-weight:850!important}
-#rhCspWelcome .rh-csp-submit:hover{background:#165596!important}
-#rhCspWelcome .rh-csp-welcome-foot{font-size:10.5px;line-height:1.55;color:#708197;margin:18px 0 0}
+#rhCspWelcome.rh-csp-welcome{
+ position:fixed!important;inset:0!important;z-index:1000005!important;
+ display:flex;align-items:center;justify-content:center;padding:24px;
+ overflow-y:auto;isolation:isolate;
+ background:radial-gradient(ellipse 60% 56% at 12% 7%,rgba(46,109,236,.24),transparent 75%),
+ radial-gradient(ellipse 50% 45% at 90% 90%,rgba(9,199,202,.14),transparent 75%),#080e1d;
+ color:#14233a;
+}
+#rhCspWelcome.rh-csp-welcome::before{
+ content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.35;
+ background-image:linear-gradient(rgba(123,165,230,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(123,165,230,.1) 1px,transparent 1px);
+ background-size:42px 42px;mask-image:linear-gradient(to right,black,transparent 85%);
+}
+#rhCspWelcome .rh-csp-welcome-card{
+ width:min(100%,1080px);min-height:635px;display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+ margin:auto;overflow:hidden;isolation:isolate;border-radius:28px;
+ background:#fbfcff;border:1px solid rgba(200,218,245,.23);
+ box-shadow:0 34px 120px rgba(0,0,0,.42),0 0 0 1px rgba(255,255,255,.07);
+}
+/* Dark architectural brand pane */
+#rhCspWelcome .rh-csp-welcome-visual{
+ min-width:0;position:relative;display:flex;flex-direction:column;justify-content:space-between;
+ padding:40px 40px 34px;overflow:hidden;
+ background:radial-gradient(circle at 89% 37%,rgba(53,103,236,.39),transparent 36%),
+ radial-gradient(circle at 0% 100%,rgba(19,185,193,.25),transparent 48%),
+ linear-gradient(155deg,#141e39 0%,#0b1731 50%,#070f23 100%);
+ color:#f4f8ff;
+}
+#rhCspWelcome .rh-csp-welcome-visual::before{
+ content:"";position:absolute;width:370px;height:370px;left:50%;top:22%;transform:translateX(-30%) rotate(-22deg);
+ border:1px solid rgba(135,180,252,.16);border-radius:50%;pointer-events:none;
+ box-shadow:0 0 0 48px rgba(63,118,222,.025),0 0 0 102px rgba(66,130,221,.02),inset 0 0 90px rgba(67,111,221,.08);
+}
+#rhCspWelcome .rh-csp-welcome-visual::after{
+ content:"";position:absolute;width:8px;height:8px;right:19%;top:31%;
+ border-radius:50%;background:#76f0da;box-shadow:0 0 0 9px rgba(118,240,218,.1),0 0 30px rgba(118,240,218,.85);pointer-events:none;
+}
+#rhCspWelcome .rh-csp-welcome-brand{position:relative;z-index:1;display:flex;align-items:center;gap:13px;font-size:13px;font-weight:800;letter-spacing:.11em;color:#f4f8ff}
+#rhCspWelcome .rh-csp-brand-mark{
+ width:47px;height:47px;flex:none;display:grid;place-items:center;
+ border:1px solid rgba(154,200,255,.5);border-radius:15px;
+ background:linear-gradient(140deg,rgba(80,146,250,.36),rgba(14,25,55,.45));
+ box-shadow:inset 0 1px rgba(255,255,255,.18),0 9px 24px rgba(0,0,0,.15);
+ color:#fff;font-size:14px;font-weight:850;letter-spacing:-.025em;
+}
+#rhCspWelcome .rh-csp-welcome-brand small{display:block;margin-top:4px;font-size:10px;font-weight:650;letter-spacing:.2em;color:#92a8cb}
+#rhCspWelcome .rh-csp-hero{position:relative;z-index:1;padding:32px 0 36px}
+#rhCspWelcome .rh-csp-kicker{display:inline-flex;gap:9px;align-items:center;color:#94e9dc;text-transform:uppercase;letter-spacing:.23em;font-size:10px;font-weight:850}
+#rhCspWelcome .rh-csp-kicker::before{content:"";width:7px;height:7px;background:#66e4d3;border-radius:50%;box-shadow:0 0 13px rgba(102,228,211,.8)}
+#rhCspWelcome .rh-csp-hero-title{
+ display:block;margin:26px 0 15px;max-width:370px;
+ font-size:clamp(40px,4vw,56px);font-weight:780;letter-spacing:-.061em;line-height:1.075;color:#f7faff;
+}
+#rhCspWelcome .rh-csp-hero-title em{font-style:normal;color:#84aefb}
+#rhCspWelcome .rh-csp-hero-copy{max-width:315px;margin:0;color:#afbeda;font-size:14px;line-height:1.75}
+#rhCspWelcome .rh-csp-visual-footer{position:relative;z-index:1;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding-top:18px;border-top:1px solid rgba(184,208,255,.16)}
+#rhCspWelcome .rh-csp-visual-chip{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(169,205,255,.16);border-radius:100px;padding:8px 10px;background:rgba(255,255,255,.045);font-size:10px;font-weight:700;letter-spacing:.025em;color:#cbd8ed}
+#rhCspWelcome .rh-csp-visual-chip::before{content:"";width:5px;height:5px;border-radius:50%;background:#7ee0cf}
+/* Calm, light control pane */
+#rhCspWelcome .rh-csp-welcome-main{
+ display:flex;min-width:0;flex-direction:column;justify-content:center;padding:48px clamp(30px,5vw,63px) 39px;
+ background:linear-gradient(160deg,#fff 0%,#fafcff 65%,#f4f8ff 100%);
+}
+#rhCspWelcome .rh-csp-step{display:flex;align-items:center;gap:10px;margin:0 0 18px;color:#3265bb;font-weight:800;font-size:10px;letter-spacing:.19em;text-transform:uppercase}
+#rhCspWelcome .rh-csp-step::before{content:"01";font-variant-numeric:tabular-nums;display:grid;place-items:center;width:32px;height:32px;color:#215bc1;border-radius:10px;background:#e8f0ff;font-size:12px;letter-spacing:0}
+#rhCspWelcome h1{margin:0 0 10px;font-size:clamp(29px,3vw,39px);line-height:1.15;letter-spacing:-.055em;font-weight:790;color:#15243e}
+#rhCspWelcome .rh-csp-welcome-sub{margin:0 0 30px;max-width:385px;color:#64748e;font-size:14px;line-height:1.65;font-weight:450}
+#rhCspWelcome #rhCspWelcomeForm{width:100%;margin:0}
+#rhCspWelcome .rh-csp-profiles{
+ border:0!important;min-width:0!important;margin:0 0 24px!important;padding:0!important;
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;
+}
+#rhCspWelcome .rh-csp-profiles legend,#rhCspWelcome .rh-csp-pin-label{
+ display:block;width:100%;padding:0!important;margin:0 0 11px;
+ color:#485d79;font-size:11px;font-weight:800;letter-spacing:.075em;text-transform:uppercase;
+}
+#rhCspWelcome .rh-csp-choice{
+ position:relative;display:flex;align-items:center;gap:11px;min-width:0;min-height:77px;padding:13px 14px;
+ border:1px solid #dee6f1;border-radius:15px;background:#fff;
+ box-shadow:0 2px 12px rgba(18,38,83,.025);
+ color:#273d5e;font-size:14px;font-weight:750;cursor:pointer;
+ transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease;
+}
+#rhCspWelcome .rh-csp-choice:hover{transform:translateY(-2px);border-color:#9bc0fa;box-shadow:0 8px 25px rgba(45,102,198,.1)}
+#rhCspWelcome .rh-csp-choice input{position:absolute;inset:0;z-index:2;opacity:0;width:100%;height:100%;cursor:pointer;margin:0}
+#rhCspWelcome .rh-csp-choice:has(input:checked){border-color:#367af0;background:#eef5ff;box-shadow:0 0 0 1px #367af0,0 8px 21px rgba(43,99,219,.1);color:#174e9e}
+#rhCspWelcome .rh-csp-choice:focus-within{outline:3px solid rgba(52,116,228,.28);outline-offset:3px}
+#rhCspWelcome .rh-csp-initial{
+ flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;
+ background:linear-gradient(145deg,#f1f5fc,#e6ecf6);color:#46668d;font-size:16px;font-weight:800;
+}
+#rhCspWelcome .rh-csp-choice:has(input:checked) .rh-csp-initial{background:linear-gradient(140deg,#2b70e5,#1e4eae);color:#fff;box-shadow:0 5px 12px rgba(51,110,232,.2)}
+#rhCspWelcome .rh-csp-choice-check{margin-left:auto;color:#2267d1;opacity:0;transform:scale(.75);transition:opacity .16s,transform .16s;font-size:18px}
+#rhCspWelcome .rh-csp-choice:has(input:checked) .rh-csp-choice-check{opacity:1;transform:scale(1)}
+#rhCspWelcome .rh-csp-code-wrap{position:relative}
+#rhCspWelcome #rhCspWelcomePin{
+ display:block;width:100%!important;max-width:none!important;min-height:52px!important;height:52px!important;
+ border:1px solid #d9e2ef!important;border-radius:13px!important;
+ background:#fff!important;color:#1e385c!important;padding:13px 18px 13px 48px!important;
+ box-shadow:0 2px 10px rgba(29,57,103,.025)!important;
+ font-size:15px!important;letter-spacing:.13em;font-weight:600!important;outline:none!important;
+}
+#rhCspWelcome #rhCspWelcomePin::placeholder{color:#91a0b6;letter-spacing:0;font-weight:450}
+#rhCspWelcome #rhCspWelcomePin:focus{border-color:#377ae8!important;box-shadow:0 0 0 4px rgba(55,122,232,.12)!important}
+#rhCspWelcome .rh-csp-code-icon{position:absolute;pointer-events:none;left:17px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:#6583b2}
+#rhCspWelcome .rh-csp-welcome-error{min-height:21px;height:auto;margin:9px 0 8px;color:#b32a40;font-size:12px;font-weight:700}
+#rhCspWelcome .rh-csp-submit{
+ width:100%;min-height:53px;padding:13px 20px!important;display:flex!important;align-items:center;justify-content:center;gap:12px;
+ border:1px solid #205bce!important;border-radius:13px!important;
+ background:linear-gradient(105deg,#255bd0,#367df0)!important;color:#fff!important;
+ box-shadow:0 12px 23px rgba(38,94,216,.22)!important;
+ font-size:14px!important;font-weight:800!important;letter-spacing:.01em;cursor:pointer;
+ transition:transform .18s,box-shadow .18s,filter .18s;
+}
+#rhCspWelcome .rh-csp-submit:hover{transform:translateY(-2px);filter:brightness(1.045);box-shadow:0 16px 30px rgba(38,94,216,.28)!important}
+#rhCspWelcome .rh-csp-submit:focus-visible{outline:3px solid rgba(60,127,240,.3);outline-offset:3px}
+#rhCspWelcome .rh-csp-submit-icon{font-size:20px;font-weight:500;line-height:1}
+#rhCspWelcome .rh-csp-welcome-foot{display:flex;align-items:flex-start;gap:8px;margin:22px 0 0;color:#8190a5;font-size:11px;line-height:1.6}
+#rhCspWelcome .rh-csp-foot-icon{color:#6787b5;flex:none;font-size:13px;margin-top:1px}
 #rhSwitchCsp.rh-switch-csp{background:#e8f2ff!important;color:#20558a!important;border:1px solid #bcd6ed!important;white-space:nowrap}
-@media(max-width:530px){#rhCspWelcome .rh-csp-welcome-card{padding:22px 18px}#rhCspWelcome .rh-csp-profiles{gap:7px}#rhCspWelcome .rh-csp-choice{padding:9px;min-height:57px}#rhCspWelcome h1{font-size:22px}}
+@media(max-width:820px){
+ #rhCspWelcome.rh-csp-welcome{padding:14px}
+ #rhCspWelcome .rh-csp-welcome-card{max-width:620px;grid-template-columns:1fr;min-height:0;border-radius:23px}
+ #rhCspWelcome .rh-csp-welcome-visual{min-height:164px;padding:24px 30px 21px}
+ #rhCspWelcome .rh-csp-hero{padding:16px 0 5px}
+ #rhCspWelcome .rh-csp-hero-title{margin:8px 0 6px;max-width:none;font-size:27px;letter-spacing:-.04em}
+ #rhCspWelcome .rh-csp-hero-copy{font-size:12px;max-width:none;line-height:1.5}
+ #rhCspWelcome .rh-csp-visual-footer{display:none}
+ #rhCspWelcome .rh-csp-welcome-main{padding:33px 36px 32px}
+ #rhCspWelcome h1{font-size:31px}
+}
+@media(max-width:480px){
+ #rhCspWelcome.rh-csp-welcome{padding:9px}
+ #rhCspWelcome .rh-csp-welcome-card{border-radius:19px}
+ #rhCspWelcome .rh-csp-welcome-visual{padding:20px 22px;min-height:155px}
+ #rhCspWelcome .rh-csp-brand-mark{width:39px;height:39px;border-radius:12px;font-size:12px}
+ #rhCspWelcome .rh-csp-welcome-brand{font-size:11px}
+ #rhCspWelcome .rh-csp-hero-title{font-size:23px;margin:8px 0 4px}
+ #rhCspWelcome .rh-csp-hero-copy{font-size:11px}
+ #rhCspWelcome .rh-csp-welcome-main{padding:26px 22px 25px}
+ #rhCspWelcome .rh-csp-step{margin-bottom:13px}
+ #rhCspWelcome h1{font-size:29px}
+ #rhCspWelcome .rh-csp-welcome-sub{font-size:13px;margin-bottom:22px}
+ #rhCspWelcome .rh-csp-profiles{gap:9px;margin-bottom:20px!important}
+ #rhCspWelcome .rh-csp-choice{min-height:67px;padding:10px;gap:8px;font-size:13px;border-radius:12px}
+ #rhCspWelcome .rh-csp-initial{width:34px;height:34px;border-radius:10px;font-size:14px}
+}
+@media(max-width:355px){
+ #rhCspWelcome .rh-csp-profiles{grid-template-columns:1fr}
+ #rhCspWelcome .rh-csp-choice{min-height:52px}
+ #rhCspWelcome .rh-csp-welcome-main{padding:22px 16px}
+}
+@media(prefers-reduced-motion:reduce){
+ #rhCspWelcome .rh-csp-choice,#rhCspWelcome .rh-csp-choice-check,#rhCspWelcome .rh-csp-submit{transition:none!important}
+ #rhCspWelcome .rh-csp-choice:hover,#rhCspWelcome .rh-csp-submit:hover{transform:none}
+}
 
 /* Recruitment Hub: structured next-action choices per job */
 #personal .rh-followup,#jobs .rh-followup{min-width:0;align-items:stretch!important}
@@ -759,22 +890,36 @@ html.rh-cloud-configured:not(.rh-cloud-ready) #modal{display:none!important}
 #jobForm .rh-next-helper{font-size:11px;color:#60758b;font-weight:550;line-height:1.4}
 </style></head><body><div id="rhCspWelcome" class="rh-csp-welcome" role="dialog" aria-modal="true" aria-labelledby="rhCspWelcomeTitle">
  <div class="rh-csp-welcome-card">
-  <div class="rh-csp-welcome-brand"><span class="rh-csp-brand-mark">RH</span><span>RECRUITMENT HUB <small>TEAM WORKSPACE</small></span></div>
-  <h1 id="rhCspWelcomeTitle">Select your CSP profile</h1>
-  <p class="rh-csp-welcome-sub">Choose your name and enter the access code to start your workspace.</p>
-  <form id="rhCspWelcomeForm" autocomplete="off">
-   <fieldset class="rh-csp-profiles"><legend>CSP profile</legend>
-    <label class="rh-csp-choice"><input type="radio" name="rhCspName" value="Rafal" required><span class="rh-csp-initial">R</span><span>Rafal</span><span class="rh-csp-choice-check">✓</span></label>
-    <label class="rh-csp-choice"><input type="radio" name="rhCspName" value="Ivana" required><span class="rh-csp-initial">I</span><span>Ivana</span><span class="rh-csp-choice-check">✓</span></label>
-    <label class="rh-csp-choice"><input type="radio" name="rhCspName" value="Daim" required><span class="rh-csp-initial">D</span><span>Daim</span><span class="rh-csp-choice-check">✓</span></label>
-    <label class="rh-csp-choice"><input type="radio" name="rhCspName" value="Tanja" required><span class="rh-csp-initial">T</span><span>Tanja</span><span class="rh-csp-choice-check">✓</span></label>
-   </fieldset>
-   <label class="rh-csp-pin-label" for="rhCspWelcomePin">Access code</label>
-   <input id="rhCspWelcomePin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" placeholder="Enter 4-digit code" required>
-   <p id="rhCspWelcomeError" class="rh-csp-welcome-error" role="alert" aria-live="polite"></p>
-   <button class="rh-csp-submit" type="submit">Open workspace</button>
-  </form>
-  <p class="rh-csp-welcome-foot">This code controls access to the interface. Shared-database access, when enabled, requires your individual account.</p>
+  <aside class="rh-csp-welcome-visual" aria-label="Recruitment Hub">
+   <div class="rh-csp-welcome-brand"><span class="rh-csp-brand-mark" aria-hidden="true">RH</span><span>RECRUITMENT HUB <small>TEAM WORKSPACE</small></span></div>
+   <div class="rh-csp-hero">
+    <div class="rh-csp-kicker">Your workspace, simplified</div>
+    <span class="rh-csp-hero-title">Better work.<br><em>One clear view.</em></span>
+    <p class="rh-csp-hero-copy">Jobs, updates and team activity, thoughtfully organized in one place.</p>
+   </div>
+   <div class="rh-csp-visual-footer"><span class="rh-csp-visual-chip">JOB TRACKING</span><span class="rh-csp-visual-chip">TEAM UPDATES</span><span class="rh-csp-visual-chip">WORKSPACE</span></div>
+  </aside>
+  <div class="rh-csp-welcome-main">
+   <div class="rh-csp-step">Workspace access</div>
+   <h1 id="rhCspWelcomeTitle">Welcome back.</h1>
+   <p class="rh-csp-welcome-sub">Select your CSP profile and enter the access code to continue.</p>
+   <form id="rhCspWelcomeForm" autocomplete="off">
+    <fieldset class="rh-csp-profiles"><legend>Choose your profile</legend>
+     <label class="rh-csp-choice"><input type="radio" name="rhCspName" value="Rafal" required><span class="rh-csp-initial" aria-hidden="true">R</span><span>Rafal</span><span class="rh-csp-choice-check" aria-hidden="true">✓</span></label>
+     <label class="rh-csp-choice"><input type="radio" name="rhCspName" value="Ivana" required><span class="rh-csp-initial" aria-hidden="true">I</span><span>Ivana</span><span class="rh-csp-choice-check" aria-hidden="true">✓</span></label>
+     <label class="rh-csp-choice"><input type="radio" name="rhCspName" value="Daim" required><span class="rh-csp-initial" aria-hidden="true">D</span><span>Daim</span><span class="rh-csp-choice-check" aria-hidden="true">✓</span></label>
+     <label class="rh-csp-choice"><input type="radio" name="rhCspName" value="Tanja" required><span class="rh-csp-initial" aria-hidden="true">T</span><span>Tanja</span><span class="rh-csp-choice-check" aria-hidden="true">✓</span></label>
+    </fieldset>
+    <label class="rh-csp-pin-label" for="rhCspWelcomePin">Access code</label>
+    <div class="rh-csp-code-wrap">
+     <svg class="rh-csp-code-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+     <input id="rhCspWelcomePin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" placeholder="Enter your 4-digit code" required aria-describedby="rhCspWelcomeError">
+    </div>
+    <p id="rhCspWelcomeError" class="rh-csp-welcome-error" role="alert" aria-live="polite"></p>
+    <button class="rh-csp-submit" type="submit">Open my workspace <span class="rh-csp-submit-icon" aria-hidden="true">→</span></button>
+   </form>
+   <p class="rh-csp-welcome-foot"><span class="rh-csp-foot-icon" aria-hidden="true">◎</span><span>This code unlocks the local workspace interface. Existing job data and settings are unchanged.</span></p>
+  </div>
  </div>
 </div>
 <div id="rhCloudGate" hidden><div class="rh-cloud-login"><h1>Recruitment Hub</h1><p>Secure team login. Sign in with your invited CSP account to access jobs and internal notes.</p><form id="rhCloudLoginForm"><label>Email<input id="rhCloudEmail" type="email" autocomplete="username" required></label><label>Password<input id="rhCloudPassword" type="password" autocomplete="current-password" required></label><button id="rhCloudSignIn" type="submit">Sign in</button></form><button type="button" id="rhCloudRequestReset">Set or reset account password</button><form id="rhCloudRecoveryForm" hidden><label>New password (12+ characters)<input id="rhCloudNewPassword" type="password" autocomplete="new-password" minlength="12" required></label><button id="rhCloudUpdatePassword" type="submit">Save new password</button></form><p id="rhCloudMessage" role="status">Connecting...</p><p>Only accounts assigned by the administrator can access shared recruitment data.</p></div></div><div class="app"><aside class="sidebar"><div class="brand"><span class="brandmark">R</span> Recruitment Hub<small>Team recruitment workspace</small></div><nav class="nav" id="nav"><button data-view="dashboard" class="active">Dashboard</button><button data-view="jobs">All Jobs</button><button data-view="actions">Action List</button><button data-view="notes">Quick Notes</button><div class="navlabel">PERSONAL WORKSPACES</div><button data-view="rafal">Rafal · My Jobs</button><button data-view="tanja">Tanja · My Jobs</button><button data-view="daim">Daim · My Jobs</button><button data-view="ivana">Ivana · My Jobs</button><div class="navlabel">REPORTING</div><button data-view="team">Team Views</button><button data-view="supplier">Supplier Update</button><button data-view="closed">Closed / Filled</button><button data-view="data">Data & Backup</button></nav></aside><main class="main"><header class="top"><div><h1 id="pageTitle">Recruitment Dashboard</h1><div class="muted small" id="weekLabel"></div></div><div class="actions-top"><span id="rhCloudBadge" hidden>Shared database</span><button type="button" class="btn" id="rhCloudSignOut" hidden>Sign out</button><label class="actor-control">Editing as <select id="actorSelect" aria-label="Current editor" required><option value="">Select your CSP</option><option>Rafal</option><option>Tanja</option><option>Daim</option><option>Ivana</option></select></label><button type="button" id="rhSwitchCsp" class="btn rh-switch-csp" title="Choose another CSP and enter the access code again">Switch CSP</button><button class="btn" id="exportCsv">Export CSV</button><button class="btn" id="backupBtn">Backup JSON</button><button class="btn primary" id="addBtn">+ New job</button></div></header><div id="rhCloudError" hidden><strong>Unsynced changes</strong><p id="rhCloudErrorText"></p><button type="button" class="btn" id="rhCloudBackup">Download JSON of unsynced changes</button><button type="button" class="btn" id="rhCloudReload">Discard unsynced changes and reload server</button></div><div class="notice"><span id="rhCloudSyncStatus" hidden></span><b>Local workspace</b> · All CSPs can edit all job cards. Choose your own name under “Editing as” before updating any job, including jobs owned by someone else. Every change is recorded with the editor, time and job owner. This is a local browser workspace, not shared between devices. The selector is self-declared and is not verified login/authentication. Back up the JSON data regularly.</div>
