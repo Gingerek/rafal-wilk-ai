@@ -1,6 +1,6 @@
 # Recruitment Hub: authenticated shared database
 
-Status (2026-11-06): Supabase backend project gzagtfuefrbuzbcoliaq is ACTIVE in eu-central-1. Base tables, access controls, and the Saturday archive scheduler are installed and the cron job has completed a successful run. The two websites are STILL IN LOCAL-ONLY MODE: no CSP authentication users are provisioned, no local jobs or notes are migrated, and cloud frontend credentials are intentionally blank to avoid locking users out of their existing data. Do not activate cloud mode until account setup and safe migration are ready.
+Status (2026-11-06): ONLINE CLOUD CONFIGURATION COMMITTED on both GitHub Pages repositories. The Supabase database and scheduled archive are active, verified and running. The frontend is configured with a PUBLIC publishable key. Owner email signup and verification are still required before the first admin can sign in; then the admin can safely import original browser job backups. Existing browser localStorage is retained; ?local=1 accesses the original local workspace for recovery. Other CSPs can enroll using admin-issued single-use invitations after their email accounts are verified. The shared database currently contains no imported user jobs or CSP accounts. GitHub Pages source deployment has been committed; public browser rendering was not independently confirmed from this tool environment.
 
 ## 1. Create and secure Supabase
 
