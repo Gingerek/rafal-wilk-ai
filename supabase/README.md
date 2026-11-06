@@ -35,3 +35,12 @@ This repository does not contain private user passwords, secret credentials, or 
 ## 5. Password setup and recovery
 
 Invited users can click **Set or reset account password** in the sign-in screen. Supabase sends an email with a secure link to choose a password (12+ characters). Add both full callback URLs to the Auth redirect allowlist: `https://www.rafalwilkai.com/modules/recruitment-hub.html` and `https://gingerek.github.io/rafal-wilk-ai/modules/recruitment-hub.html`. Configure SMTP to deliver invitations and password reset emails reliably. Choose an EU project region for candidate data and confirm the organization's data protection requirements before production use.
+
+## 6. Weekly Saturday archive (enabled in browser; cloud scheduler requires setup)
+Recruitment Hub now keeps newly completed jobs (Filled, Closed, Canceled) on their CSP card for at least 168 hours. They move to Closed on the first Saturday at 12:00 Europe/Amsterdam after that eligibility threshold. Daylight saving changes are handled. Rejected records retain their existing archive behavior, and old already-archived completed jobs remain in Closed.
+
+**Current local-only deployment:** The module checks the weekly archive when opened and every 60 seconds while it stays open. It catches up overdue records on the next visit. Because each origin/browser has its own localStorage, no scheduled operation can run on a switched-off device or archive another device's local jobs. The two sites do not automatically share data in local mode.
+
+**To enable true unattended, shared scheduling:** Create the private Supabase project, execute the base supabase/recruitment_hub.sql, then execute supabase/recruitment_weekly_archive.sql from the SQL Editor as the project administrator. Enable pg_cron if prompted. Configure assets/js/recruitment-cloud-config.js on both websites with the project's public URL and publishable/anon key. Invite CSP users and securely migrate existing job data as described above. Check the named job rh-saturday-noon-archive under Supabase Cron and verify a test run plus its audit log. This script evaluates eligibility every minute in the database, so it archives at Saturday 12:00 Amsterdam time even if nobody opens the browser, and catches up following interruptions. It marks the archive in the shared record; it does not delete jobs.
+
+Do not consider the server-side scheduler live until the Supabase project is actually configured and its cron job reports successful runs. No Supabase credentials or production connection are stored in these repositories.
