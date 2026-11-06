@@ -181,7 +181,11 @@
     const paragraphs=storage?.closest('.panel')?.querySelectorAll('p.muted.small')||[];
     if(paragraphs.length>1)paragraphs[paragraphs.length-1].textContent='All CSP changes are written to the shared database. Local restore, CSV import and disk synchronisation are disabled in cloud mode. Use JSON backups for recovery.';
     const notice=document.querySelector('.notice');
-    if(notice)notice.innerHTML='<span id="rhCloudSyncStatus">Shared database connected</span> <b>Secure team workspace</b> · Every CSP can edit job cards. Changes are synchronized in Supabase and recorded under the verified signed-in account. Finished jobs remain visible for at least 7 days before Saturday 12:00 Amsterdam archiving.';
+    if(notice){
+      const label=notice.querySelector('b');if(label)label.textContent='Secure team workspace';
+      const copy=[...notice.childNodes].find(node=>node.nodeType===3&&node.textContent.includes('All CSPs'));
+      if(copy)copy.textContent=' · Every CSP can edit job cards. Changes are synchronized in Supabase and recorded under a verified account. Completed jobs remain on CSP cards for at least 7 full days, then move to Closed on Saturday at 12:00 Amsterdam time.';
+    }
     const note=$('rhCloudImportHelp');
     if(note)note.hidden=member?.role!=='admin';
     const importButton=$('rhCloudImportLocal');
