@@ -1,6 +1,6 @@
 # Recruitment Hub: authenticated shared database
 
-Status (2026-11-06): ONLINE CLOUD CONFIGURATION COMMITTED on both GitHub Pages repositories. The Supabase database and scheduled archive are active, verified and running. The frontend is configured with a PUBLIC publishable key. Owner email signup and verification are still required before the first admin can sign in; then the admin can safely import original browser job backups. Existing browser localStorage is retained; ?local=1 accesses the original local workspace for recovery. Other CSPs can enroll using admin-issued single-use invitations after their email accounts are verified. The shared database currently contains no imported user jobs or CSP accounts. GitHub Pages source deployment has been committed; public browser rendering was not independently confirmed from this tool environment.
+Status: CODE PREPARED, NOT LIVE. The two sites will continue to use their current browser-only data until the database is configured. No user data is migrated automatically.
 
 ## 1. Create and secure Supabase
 
@@ -35,12 +35,3 @@ This repository does not contain private user passwords, secret credentials, or 
 ## 5. Password setup and recovery
 
 Invited users can click **Set or reset account password** in the sign-in screen. Supabase sends an email with a secure link to choose a password (12+ characters). Add both full callback URLs to the Auth redirect allowlist: `https://www.rafalwilkai.com/modules/recruitment-hub.html` and `https://gingerek.github.io/rafal-wilk-ai/modules/recruitment-hub.html`. Configure SMTP to deliver invitations and password reset emails reliably. Choose an EU project region for candidate data and confirm the organization's data protection requirements before production use.
-
-## 6. Weekly Saturday archive (enabled in browser; cloud scheduler requires setup)
-Recruitment Hub now keeps newly completed jobs (Filled, Closed, Canceled) on their CSP card for at least 168 hours. They move to Closed on the first Saturday at 12:00 Europe/Amsterdam after that eligibility threshold. Daylight saving changes are handled. Rejected records retain their existing archive behavior, and old already-archived completed jobs remain in Closed.
-
-**Current local-only deployment:** The module checks the weekly archive when opened and every 60 seconds while it stays open. It catches up overdue records on the next visit. Because each origin/browser has its own localStorage, no scheduled operation can run on a switched-off device or archive another device's local jobs. The two sites do not automatically share data in local mode.
-
-**To enable true unattended, shared scheduling:** Create the private Supabase project, execute the base supabase/recruitment_hub.sql, then execute supabase/recruitment_weekly_archive.sql from the SQL Editor as the project administrator. Enable pg_cron if prompted. Configure assets/js/recruitment-cloud-config.js on both websites with the project's public URL and publishable/anon key. Invite CSP users and securely migrate existing job data as described above. Check the named job rh-saturday-noon-archive under Supabase Cron and verify a test run plus its audit log. This script evaluates eligibility every minute in the database, so it archives at Saturday 12:00 Amsterdam time even if nobody opens the browser, and catches up following interruptions. It marks the archive in the shared record; it does not delete jobs.
-
-Do not consider the server-side scheduler live until the Supabase project is actually configured and its cron job reports successful runs. No Supabase credentials or production connection are stored in these repositories.
