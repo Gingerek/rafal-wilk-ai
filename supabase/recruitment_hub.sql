@@ -157,14 +157,14 @@ grant execute on function public.rh_apply_change(text,jsonb,bigint,text,text)
   to authenticated;
 
 -- Enable team refresh events; repeat-safe if already in the publication.
-do $
+do $$
 begin
   alter publication supabase_realtime add table public.rh_jobs;
 exception
   when duplicate_object then null;
   when undefined_object then null;
 end;
-$;
+$$;
 
 -- After inviting each colleague and creating their Auth user in the Dashboard,
 -- assign the real auth.users UUID (not an email or a name from JavaScript):
