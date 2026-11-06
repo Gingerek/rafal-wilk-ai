@@ -87,7 +87,25 @@
       remoteVersions.set(row.job_id,row.version);
     }
     bridge.replaceState({jobs,history});
+    updateLocalMigrationBanner();
     status('Synced · '+new Date().toLocaleTimeString('en-GB'));
+  }
+
+  function updateLocalMigrationBanner(){
+    const panel=$('rhCloudMigrationBanner');
+    if(!panel)return;
+    panel.hidden=true;
+    if(member?.role!=='admin')return;
+    let local;
+    try{local=JSON.parse(localStorage.getItem('recruitment-hub-v3')||'null')}catch(_){return}
+    if(!Array.isArray(local?.jobs)||!local.jobs.length)return;
+    const cloud=bridge.getState().jobs||[];
+    const ids=new Set(cloud.map(j=>String(j.id)));
+    const numbers=new Set(cloud.map(j=>String(j.number||'').trim().toLowerCase()));
+    const count=local.jobs.filter(j=>!ids.has(String(j.id))&&!numbers.has(String(j.number||'').trim().toLowerCase())).length;
+    if(!count)return;
+    $('rhCloudMigrationCount').textContent=count+' original local jobs have not been imported. Notes are included and your browser copy will remain intact.';
+    panel.hidden=false;
   }
   function lastActionFor(id,state){
     return (state.history||[]).find(h=>String(h.jobId||'')===String(id))
@@ -162,6 +180,8 @@
     if(title)title.textContent='Shared database and backups';
     const paragraphs=storage?.closest('.panel')?.querySelectorAll('p.muted.small')||[];
     if(paragraphs.length>1)paragraphs[paragraphs.length-1].textContent='All CSP changes are written to the shared database. Local restore, CSV import and disk synchronisation are disabled in cloud mode. Use JSON backups for recovery.';
+    const notice=document.querySelector('.notice');
+    if(notice)notice.innerHTML='<span id="rhCloudSyncStatus">Shared database connected</span> <b>Secure team workspace</b> · Every CSP can edit job cards. Changes are synchronized in Supabase and recorded under the verified signed-in account. Finished jobs remain visible for at least 7 days before Saturday 12:00 Amsterdam archiving.';
     const note=$('rhCloudImportHelp');
     if(note)note.hidden=member?.role!=='admin';
     const importButton=$('rhCloudImportLocal');
@@ -368,6 +388,7 @@
 
   $('rhCloudSignOut')?.addEventListener('click',()=>void api.logout());
   $('rhCloudImportLocal')?.addEventListener('click',()=>void importLocal());
+  $('rhCloudImportDetected')?.addEventListener('click',()=>void importLocal());
   $('rhCloudImportBackup')?.addEventListener('click',()=>$('rhCloudImportInput')?.click());
   $('rhCloudImportInput')?.addEventListener('change',async(event)=>{
     const file=event.target.files?.[0];
