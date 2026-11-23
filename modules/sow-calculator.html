@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>MSD NL | Kalkulator godzin i budżetu</title>
+<style>
+:root{--blue:#1a73e8;--blue-dark:#1557b0;--green:#188038;--yellow:#fbbc04;--purple:#7e57c2;--text:#202124;--muted:#5f6368;--line:#e3e8f0;--background:#f5f7fb;--white:#fff;--radius:23px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--background);font-family:Arial,Roboto,"Segoe UI",sans-serif;color:var(--text);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit}
+button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #80affb;outline-offset:3px}
+.container{width:min(1250px,calc(100% - 50px));margin:0 auto}
+.topbar{background:white;border-bottom:1px solid #e8ebf2}
+.topbar-inner{display:flex;align-items:center;gap:18px;min-height:81px;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:15px}
+.logo{width:44px;height:44px;display:grid;place-items:center;position:relative;flex:0 0 auto}
+.logo span{position:absolute;border-radius:50%;width:16px;height:16px}
+.logo span:nth-child(1){background:#4285f4;left:2px;top:2px}.logo span:nth-child(2){background:#ea4335;right:2px;top:2px}.logo span:nth-child(3){background:#34a853;left:2px;bottom:2px}.logo span:nth-child(4){background:#fbbc05;right:2px;bottom:2px}
+.brand-name{font-size:20px;font-weight:800;letter-spacing:-.55px}.brand-sub{font-size:12px;letter-spacing:.45px;color:#78808c;font-weight:700}
+.langwrap{display:flex;align-items:center;gap:9px;color:#596276;font-size:13px;font-weight:700}
+.langselect{border:1px solid #dbe2ee;border-radius:12px;padding:10px 31px 10px 13px;background:#f8faff;color:#26374f;font-weight:700;max-width:190px}
+.hero{padding-top:36px;padding-bottom:31px;display:flex;align-items:flex-end;gap:25px;justify-content:space-between}
+.eyebrow{display:inline-flex;gap:8px;align-items:center;background:#e6f0ff;border-radius:999px;padding:7px 13px;color:#2463af;font-size:12px;font-weight:800;letter-spacing:.4px}
+.eyebrow-dot{width:7px;height:7px;border-radius:50%;background:#4285f4}
+h1{font-size:clamp(31px,3.5vw,47px);letter-spacing:-1.7px;line-height:1.13;margin:17px 0 11px;font-weight:800}
+.hero-sub{font-size:16px;color:#5f6368;margin:0;max-width:660px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.action{border-radius:13px;padding:11px 16px;min-height:43px;background:white;border:1px solid #dce4ef;color:#29415e;font-size:14px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;transition:background .15s,transform .15s}
+.action:hover{background:#edf3fb}.action:active{transform:translateY(1px)}.action.primary{background:#1a73e8;color:white;border-color:#1a73e8}.action.primary:hover{background:#1667d1}
+.dashboard{display:grid;grid-template-columns:minmax(350px,.88fr) minmax(0,1.12fr);gap:24px;align-items:start;padding-bottom:40px}
+.panel{background:white;border:1px solid #e7eaf0;border-radius:var(--radius);box-shadow:0 9px 24px rgba(29,59,99,.035)}
+.inputs-panel{padding:26px}
+.panel-heading{display:flex;gap:13px;align-items:center;margin-bottom:24px}
+.heading-icon{width:45px;height:45px;border-radius:15px;display:grid;place-items:center;font-size:23px;flex:0 0 auto}
+.heading-icon.blue{background:#e8f0fe}.heading-icon.green{background:#e5f4e9}
+h2{font-size:22px;letter-spacing:-.6px;line-height:1.18;margin:0;font-weight:800}
+.section-sub{margin:5px 0 0;font-size:13px;color:#767d8b}
+.group-title{font-size:12px;letter-spacing:.6px;font-weight:900;color:#66748b;text-transform:uppercase;margin:25px 0 12px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field label,.field-label{font-size:13px;color:#4d5b70;font-weight:800;display:block;margin-bottom:8px}
+.date-holder{position:relative}
+.date-button{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:73px;background:#f7faff;border:1.5px solid #dce6f5;border-radius:16px;padding:10px 11px 10px 14px;text-align:left;color:#203149;transition:border-color .15s,background .15s}
+.date-button:hover,.date-button[aria-expanded="true"]{border-color:#4285f4;background:#f0f6ff}
+.date-main{font-size:19px;font-weight:800;letter-spacing:-.5px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.date-weekday{display:block;font-size:12px;font-weight:600;color:#7b8494;margin-top:3px}
+.calendar-glyph{width:33px;height:33px;border-radius:10px;background:#e3eeff;flex:0 0 auto;display:grid;place-items:center;color:#1a73e8}
+.calc-input{border:1.5px solid #dce6f5;background:#f7faff;border-radius:16px;min-height:72px;display:flex;align-items:center;justify-content:space-between;padding:7px 11px;gap:8px}
+.rate-input{width:100%;min-width:0;font-size:28px;font-weight:800;letter-spacing:-.75px;background:transparent;border:none;outline:none;text-align:left;color:#203149;font-variant-numeric:tabular-nums}
+.rate-input:focus{outline:none}
+.calc-input:focus-within{border-color:#4285f4;background:#f0f6ff}
+.rate-prefix{font-size:23px;font-weight:800;color:#1a73e8}
+.stepper{display:flex;align-items:center;gap:6px;min-width:0}
+.stepbtn{border:none;border-radius:11px;width:34px;height:39px;display:grid;place-items:center;background:#e5efff;color:#1a73e8;font-size:26px;line-height:1;font-weight:500;flex:0 0 auto}
+.stepbtn:hover{background:#cfdefe}
+.hours-input{max-width:77px;min-width:40px;width:100%;background:transparent;border:0;outline:none;text-align:center;font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;color:#203149;appearance:textfield;-moz-appearance:textfield}
+.hours-input::-webkit-outer-spin-button,.hours-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.mini-help{font-size:12px;margin-top:9px;color:#778295}
+.notice{background:#f2f7ff;border:1px solid #e1ebfc;border-radius:15px;color:#446082;padding:12px 14px;margin-top:22px;display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.5}
+.notice-icon{width:20px;height:20px;line-height:20px;text-align:center;background:#dbeafe;border-radius:50%;color:#226ad4;font-weight:900;flex:0 0 auto}
+.error{display:none;margin-top:16px;padding:13px;border-radius:12px;background:#fce8e6;color:#a1221c;font-size:13px;font-weight:700}
+.error.show{display:block}
+.calendar{position:absolute;z-index:20;top:calc(100% + 9px);left:0;width:315px;max-width:calc(100vw - 46px);padding:14px;background:white;border-radius:20px;box-shadow:0 16px 50px rgba(23,41,71,.22);border:1px solid #e0e7f1}
+.calendar[hidden]{display:none}
+.calendar-header{display:flex;gap:5px;align-items:center;justify-content:space-between}
+.cal-nav{width:31px;height:35px;border:0;border-radius:10px;background:#edf3fc;color:#2764b7;font-size:24px;line-height:1}
+.cal-nav:hover{background:#dce8ff}
+.cal-select{font-size:13px;font-weight:800;color:#273c5c;background:#f7faff;border:1px solid #e1e7f1;padding:9px 5px;border-radius:9px;min-width:0}
+.cal-month{flex:1}.cal-year{width:77px}
+.cal-week,.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center}
+.cal-week{margin-top:14px;margin-bottom:7px;font-size:12px;color:#7d8797;font-weight:700}
+.cal-day{height:37px;border-radius:11px;border:0;background:transparent;color:#34445b;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.cal-day:hover:not(:disabled){background:#e9f1ff}.cal-day.other{color:#b4bbc8}.cal-day.today{outline:1.5px solid #1a73e8;outline-offset:-2px}.cal-day.selected{background:#1a73e8;color:white}.cal-day.selected:hover{background:#155bc0}
+.cal-foot{display:flex;justify-content:space-between;gap:8px;border-top:1px solid #edf0f5;padding-top:12px;margin-top:11px}
+.cal-link{border:none;background:transparent;color:#1a73e8;font-size:13px;font-weight:800;padding:6px 4px}
+.results-panel{padding:25px}
+.result-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:20px}
+.live{display:flex;align-items:center;gap:6px;color:#16803d;font-size:12px;font-weight:800;white-space:nowrap}.live:before{content:"";width:7px;height:7px;background:#34a853;border-radius:50%}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.kpi{border-radius:20px;padding:20px 20px 18px;min-height:159px;position:relative;overflow:hidden;isolation:isolate}
+.kpi:after{content:"";position:absolute;right:-40px;bottom:-65px;width:154px;height:154px;border-radius:50%;background:rgba(255,255,255,.22);z-index:-1}
+.kpi-label{font-size:13px;font-weight:800;margin-bottom:13px;max-width:210px;min-height:20px}
+.kpi-number{font-size:clamp(31px,3vw,41px);font-weight:900;letter-spacing:-1.5px;white-space:nowrap;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi-number.money{font-size:clamp(25px,2.55vw,37px)}
+.kpi-desc{font-size:12px;margin-top:12px;font-weight:600;opacity:.76}
+.kpi.blue{background:#e5efff;color:#185cba}.kpi.green{background:#e5f4e9;color:#17763a}.kpi.gold{background:#fff4d9;color:#8b5b08}.kpi.purple{background:#efe7fa;color:#6e3c9e}
+.total{margin-top:17px;border:1px solid #dfe8f5;background:#f9fbff;border-radius:19px;padding:20px 21px 18px}
+.total-title{font-size:15px;font-weight:900;margin-bottom:18px;display:flex;align-items:center;gap:8px}.total-title>span{width:10px;height:10px;background:#4285f4;border-radius:50%}
+.total-row{display:flex;justify-content:space-between;gap:14px;align-items:center;margin:12px 0;color:#687488;font-size:14px;font-weight:650}
+.total-row strong{color:#2b3a51;font-size:16px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.total-row.final{border-top:1px solid #dce5f1;padding-top:17px;margin-top:17px;margin-bottom:0;color:#1d304b;font-weight:900;font-size:15px}
+.total-row.final strong{font-size:26px;letter-spacing:-.7px;color:#1a73e8}
+.results-actions{display:flex;align-items:center;justify-content:flex-end;margin-top:17px;gap:10px}
+.note-bottom{color:#8a93a1;font-size:12px;text-align:center;padding:0 20px 26px}
+.toast{position:fixed;bottom:25px;left:50%;transform:translate(-50%,15px);opacity:0;pointer-events:none;background:#263b54;color:white;border-radius:12px;padding:11px 17px;box-shadow:0 8px 26px #0002;font-size:14px;font-weight:700;transition:opacity .2s,transform .2s;z-index:50}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1000px){.dashboard{grid-template-columns:1fr}.hero{align-items:flex-start}.results-panel,.inputs-panel{padding:23px}.kpi-number{font-size:40px}.kpi-number.money{font-size:35px}}
+@media(max-width:690px){.container{width:calc(100% - 26px)}.topbar-inner{min-height:69px}.brand-name{font-size:17px}.brand-sub{font-size:10px}.logo{width:37px;height:37px}.logo span{width:14px;height:14px}.langwrap>span{display:none}.langselect{max-width:133px;padding:9px 7px}.hero{display:block;padding-top:24px;padding-bottom:20px}.hero-actions{margin-top:18px;justify-content:flex-start}h1{font-size:32px;letter-spacing:-1.15px}.hero-sub{font-size:14px}.dashboard{gap:16px}.inputs-panel,.results-panel{padding:17px}.fields{gap:10px}.date-button{padding:8px;min-height:68px}.date-main{font-size:16px}.calendar-glyph{width:29px;height:30px}.kpis{gap:10px}.kpi{min-height:145px;padding:16px}.kpi-number{font-size:31px}.kpi-number.money{font-size:clamp(21px,5.2vw,30px)}.kpi-label{font-size:12px}.kpi-desc{font-size:11px}.total{padding:17px}.total-row.final strong{font-size:22px}.calendar{width:300px}.date-holder:last-child .calendar{left:auto;right:0}}
+@media(max-width:380px){.fields{grid-template-columns:1fr}.kpi-number.money{font-size:21px}.langselect{max-width:112px}.results-actions{justify-content:stretch}.results-actions .action{flex:1}}
+@media print{body{background:white}.topbar{border-bottom:2px solid #d9e5f8}.container{width:100%}.topbar-inner{padding:0 12px}.hero-actions,.results-actions,.langwrap,.stepbtn,.calendar,.notice-icon{display:none!important}.hero{padding:15px 0}.dashboard{grid-template-columns:.83fr 1.17fr;gap:13px}.panel{box-shadow:none}.inputs-panel,.results-panel{padding:15px}.kpi{min-height:125px;padding:13px}.kpi-number{font-size:28px}.kpi-number.money{font-size:23px}.kpi-desc{margin-top:5px}.group-title{margin:17px 0 7px}.field label{font-size:11px}.date-button,.calc-input{min-height:55px}.total{padding:13px}.total-row{margin:6px 0}.total-row.final{margin-top:10px;padding-top:10px}.notice{margin-top:10px;padding:8px;font-size:11px}.note-bottom{padding:0;font-size:10px}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="container topbar-inner">
+  <div class="brand"><div class="logo" aria-hidden="true"><span></span><span></span><span></span><span></span></div><div><div class="brand-name">MSD <span style="color:#1a73e8">NL</span></div><div class="brand-sub">SOW HOURS CALCULATOR</div></div></div>
+  <div class="langwrap"><span data-i18n="language">Język</span><select class="langselect" id="language" aria-label="Language"><option value="pl">Polski</option><option value="en">English</option><option value="nl">Nederlands</option></select></div>
+</div></header>
+<main class="container">
+  <section class="hero"><div><div class="eyebrow"><span class="eyebrow-dot"></span><span data-i18n="tag">MSD NL • Kalkulator SOW</span></div><h1 data-i18n="title">Godziny i budżet umowy</h1><p class="hero-sub" data-i18n="subtitle">Wprowadź cztery dane. Pozostałe kwoty obliczą się automatycznie.</p></div><div class="hero-actions"><button class="action" id="example" type="button"><span aria-hidden="true">↺</span><span data-i18n="example">Przykład z Excela</span></button><button class="action" id="clear" type="button"><span aria-hidden="true">✕</span><span data-i18n="clear">Wyczyść</span></button></div></section>
+  <div class="dashboard">
+    <section class="panel inputs-panel" aria-labelledby="input-title"><div class="panel-heading"><div class="heading-icon blue" aria-hidden="true">📅</div><div><h2 id="input-title" data-i18n="inputTitle">Dane umowy</h2><p class="section-sub" data-i18n="inputSub">Wybierz daty, godziny i stawkę.</p></div></div>
+      <div class="group-title" data-i18n="datesTitle">Czas trwania umowy</div><div class="fields">
+        <div class="field"><label id="start-label" data-i18n="start">Data rozpoczęcia</label><div class="date-holder"><button class="date-button" id="start-button" type="button" aria-haspopup="dialog" aria-expanded="false" aria-labelledby="start-label start-value"><span><span class="date-main" id="start-value">09.11.2026</span><span class="date-weekday" id="start-weekday">poniedziałek</span></span><span class="calendar-glyph" aria-hidden="true">▦</span></button><div class="calendar" id="start-calendar" role="dialog" aria-label="Kalendarz: data rozpoczęcia" hidden></div></div></div>
+        <div class="field"><label id="end-label" data-i18n="end">Data zakończenia</label><div class="date-holder"><button class="date-button" id="end-button" type="button" aria-haspopup="dialog" aria-expanded="false" aria-labelledby="end-label end-value"><span><span class="date-main" id="end-value">31.03.2027</span><span class="date-weekday" id="end-weekday">środa</span></span><span class="calendar-glyph" aria-hidden="true">▦</span></button><div class="calendar" id="end-calendar" role="dialog" aria-label="Kalendarz: data zakończenia" hidden></div></div></div>
+      </div>
+      <div class="group-title" data-i18n="workTitle">Godziny i stawka</div><div class="fields">
+        <div class="field"><label for="hours" data-i18n="hoursDay">Godzin dziennie</label><div class="calc-input"><div class="stepper"><button type="button" class="stepbtn" id="hours-minus" aria-label="Minus">−</button><input id="hours" class="hours-input" type="number" inputmode="decimal" step="0.5" min="0" max="24" value="8" aria-label="Godzin dziennie"><button type="button" class="stepbtn" id="hours-plus" aria-label="Plus">+</button></div></div></div>
+        <div class="field"><label for="rate" data-i18n="hourlyRate">Stawka za godzinę bez MSP</label><div class="calc-input"><span class="rate-prefix" aria-hidden="true">€</span><input id="rate" class="rate-input" type="text" inputmode="decimal" autocomplete="off" value="137,43" aria-label="Stawka za godzinę bez MSP"></div></div>
+      </div><p class="mini-help" data-i18n="rateHelp">Stawka przed doliczeniem opłaty MSP.</p>
+      <div class="notice"><span class="notice-icon" aria-hidden="true">i</span><span data-i18n="notice">Dni robocze to poniedziałek - piątek. Święta nie są automatycznie odejmowane.</span></div>
+      <div class="error" id="error" role="alert"></div>
+    </section>
+    <section class="panel results-panel" aria-labelledby="result-title"><div class="result-heading"><div class="panel-heading" style="margin:0"><div class="heading-icon green" aria-hidden="true">✓</div><div><h2 id="result-title" data-i18n="resultTitle">Wynik</h2><p class="section-sub" data-i18n="resultSub">Wszystko oblicza się na bieżąco.</p></div></div><span class="live" data-i18n="live">Na bieżąco</span></div>
+      <div class="kpis">
+        <div class="kpi blue"><div class="kpi-label" data-i18n="daysLabel">Dni robocze</div><div class="kpi-number" id="days">103</div><div class="kpi-desc" data-i18n="daysSub">Poniedziałek - piątek</div></div>
+        <div class="kpi green"><div class="kpi-label" data-i18n="hoursLabel">Łącznie godzin</div><div class="kpi-number" id="total-hours">824</div><div class="kpi-desc" data-i18n="hoursSub">Godziny w całym okresie</div></div>
+        <div class="kpi gold"><div class="kpi-label" data-i18n="budgetLabel">Budżet bez MSP</div><div class="kpi-number money" id="budget">€ 113 242,32</div><div class="kpi-desc" data-i18n="budgetSub">Godziny × stawka</div></div>
+        <div class="kpi purple"><div class="kpi-label" data-i18n="poLabel">Łączna kwota PO</div><div class="kpi-number money" id="po">€ 115 314,65</div><div class="kpi-desc" data-i18n="poSub">Z opłatą MSP</div></div>
+      </div>
+      <div class="total"><div class="total-title"><span aria-hidden="true"></span><span data-i18n="breakdown">Podsumowanie kosztów</span></div><div class="total-row"><span data-i18n="net">Budżet bez MSP</span><strong id="sum-net">€ 113 242,32</strong></div><div class="total-row"><span data-i18n="fee">Opłata MSP (1,83%)</span><strong id="sum-fee">€ 2 072,33</strong></div><div class="total-row final"><span data-i18n="sum">Razem do PO</span><strong id="sum-po">€ 115 314,65</strong></div></div>
+      <div class="results-actions"><button type="button" class="action" id="print"><span aria-hidden="true">⎙</span><span data-i18n="print">Drukuj</span></button><button type="button" class="action primary" id="copy"><span aria-hidden="true">▣</span><span data-i18n="copy">Kopiuj wynik</span></button></div>
+    </section>
+  </div>
+</main>
+<div class="note-bottom" data-i18n="foot">Obliczenia zgodne z kalkulatorem MSD NL zatwierdzonym 20.10.2026.</div><div class="toast" role="status" id="toast"></div>
+<script>
+(()=>{'use strict';
+const FEE=0.0183;
+const EXAMPLE={start:'2026-11-09',end:'2027-03-31',hours:'8',rate:'137,43'};
+const KEY='msd_sow_calculator_20261020';
+const T={
+pl:{language:'Język',tag:'MSD NL • Kalkulator SOW',title:'Godziny i budżet umowy',subtitle:'Wprowadź cztery dane. Pozostałe kwoty obliczą się automatycznie.',example:'Przykład z Excela',clear:'Wyczyść',inputTitle:'Dane umowy',inputSub:'Wybierz daty, godziny i stawkę.',datesTitle:'Czas trwania umowy',start:'Data rozpoczęcia',end:'Data zakończenia',workTitle:'Godziny i stawka',hoursDay:'Godzin dziennie',hourlyRate:'Stawka za godzinę bez MSP',rateHelp:'Stawka przed doliczeniem opłaty MSP.',notice:'Dni robocze to poniedziałek - piątek. Święta nie są automatycznie odejmowane.',resultTitle:'Wynik',resultSub:'Wszystko oblicza się na bieżąco.',live:'Na bieżąco',daysLabel:'Dni robocze',daysSub:'Poniedziałek - piątek',hoursLabel:'Łącznie godzin',hoursSub:'Godziny w całym okresie',budgetLabel:'Budżet bez MSP',budgetSub:'Godziny × stawka',poLabel:'Łączna kwota PO',poSub:'Z opłatą MSP',breakdown:'Podsumowanie kosztów',net:'Budżet bez MSP',fee:'Opłata MSP (1,83%)',sum:'Razem do PO',print:'Drukuj',copy:'Kopiuj wynik',foot:'Obliczenia zgodne z kalkulatorem MSD NL zatwierdzonym 20.10.2026.',today:'Dzisiaj',removeDate:'Usuń datę',chooseDate:'Wybierz datę',errorDates:'Data zakończenia nie może być wcześniejsza niż data rozpoczęcia.',errorHours:'Wpisz liczbę godzin większą od 0 i nie większą niż 24.',errorRate:'Wpisz poprawną stawkę, nie mniejszą niż 0.',copied:'Wynik skopiowany.',copyError:'Nie udało się skopiować. Zaznacz i skopiuj dane ręcznie.',summaryTitle:'MSD NL - podsumowanie',dateFrom:'Od',dateTo:'Do',hoursTxt:'Godzin dziennie',rateTxt:'Stawka za godzinę',dateCalendar:'Kalendarz',empty:'Wybierz datę'},
+en:{language:'Language',tag:'MSD NL • SOW Calculator',title:'Contract hours and budget',subtitle:'Enter four details. All totals update automatically.',example:'Excel example',clear:'Clear',inputTitle:'Contract details',inputSub:'Select dates, daily hours and rate.',datesTitle:'Contract period',start:'Start date',end:'End date',workTitle:'Hours and rate',hoursDay:'Hours per day',hourlyRate:'Hourly rate excluding MSP',rateHelp:'Hourly rate before the MSP fee is added.',notice:'Workdays are Monday to Friday. Public holidays are not automatically excluded.',resultTitle:'Results',resultSub:'Totals update as you type.',live:'Live',daysLabel:'Working days',daysSub:'Monday to Friday',hoursLabel:'Total hours',hoursSub:'Across the full period',budgetLabel:'Budget excluding MSP',budgetSub:'Hours × hourly rate',poLabel:'Total PO amount',poSub:'Including MSP fee',breakdown:'Cost breakdown',net:'Budget excluding MSP',fee:'MSP fee (1.83%)',sum:'Total for PO',print:'Print',copy:'Copy results',foot:'Calculated using the MSD NL calculator approved on 20 Oct 2026.',today:'Today',removeDate:'Clear date',chooseDate:'Choose a date',errorDates:'End date cannot be before the start date.',errorHours:'Enter daily hours greater than 0 and no more than 24.',errorRate:'Enter a valid non-negative hourly rate.',copied:'Results copied.',copyError:'Could not copy automatically. Please select and copy manually.',summaryTitle:'MSD NL - summary',dateFrom:'From',dateTo:'To',hoursTxt:'Hours per day',rateTxt:'Hourly rate',dateCalendar:'Calendar',empty:'Choose a date'},
+nl:{language:'Taal',tag:'MSD NL • SOW-calculator',title:'Contracturen en budget',subtitle:'Vul vier gegevens in. Alle bedragen worden direct berekend.',example:'Excel-voorbeeld',clear:'Wissen',inputTitle:'Contractgegevens',inputSub:'Kies datums, uren en tarief.',datesTitle:'Contractperiode',start:'Startdatum',end:'Einddatum',workTitle:'Uren en tarief',hoursDay:'Uren per dag',hourlyRate:'Uurtarief exclusief MSP',rateHelp:'Uurtarief voordat de MSP-fee wordt toegevoegd.',notice:'Werkdagen zijn maandag t/m vrijdag. Feestdagen worden niet automatisch afgetrokken.',resultTitle:'Resultaat',resultSub:'Alles wordt direct bijgewerkt.',live:'Actueel',daysLabel:'Werkdagen',daysSub:'Maandag t/m vrijdag',hoursLabel:'Totaal uren',hoursSub:'Over de volledige periode',budgetLabel:'Budget excl. MSP',budgetSub:'Uren × uurtarief',poLabel:'Totaal PO-bedrag',poSub:'Inclusief MSP-fee',breakdown:'Kostenoverzicht',net:'Budget excl. MSP',fee:'MSP-fee (1,83%)',sum:'Totaal voor PO',print:'Afdrukken',copy:'Resultaat kopiëren',foot:'Berekend volgens de MSD NL-calculator, goedgekeurd op 20-10-2026.',today:'Vandaag',removeDate:'Datum wissen',chooseDate:'Kies een datum',errorDates:'De einddatum mag niet vóór de startdatum liggen.',errorHours:'Vul meer dan 0 en maximaal 24 uur per dag in.',errorRate:'Vul een geldig uurtarief van 0 of hoger in.',copied:'Resultaat gekopieerd.',copyError:'Kopiëren is niet gelukt. Selecteer en kopieer handmatig.',summaryTitle:'MSD NL - overzicht',dateFrom:'Van',dateTo:'Tot',hoursTxt:'Uren per dag',rateTxt:'Uurtarief',dateCalendar:'Kalender',empty:'Kies een datum'}};
+const LOCALES={pl:'pl-PL',en:'en-GB',nl:'nl-NL'};
+const $=id=>document.getElementById(id);
+let lang='pl';let state={...EXAMPLE};let openCalendar=null;let calendarView={start:{year:2026,month:10},end:{year:2027,month:2}};let output=null;let toastTimer=null;
+function pad(n){return String(n).padStart(2,'0')}
+function parseISO(iso){if(!/^\d{4}-\d{2}-\d{2}$/.test(iso||''))return null;const [y,m,d]=iso.split('-').map(Number);const date=new Date(Date.UTC(y,m-1,d));if(date.getUTCFullYear()!==y||date.getUTCMonth()!==m-1||date.getUTCDate()!==d)return null;return date}
+function formatISO(date){return `${date.getUTCFullYear()}-${pad(date.getUTCMonth()+1)}-${pad(date.getUTCDate())}`}
+function localDateToday(){const d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
+function displayDate(iso){const d=parseISO(iso);if(!d)return T[lang].empty;return new Intl.DateTimeFormat(LOCALES[lang],{day:'2-digit',month:'2-digit',year:'numeric',timeZone:'UTC'}).format(d)}
+function displayWeekday(iso){const d=parseISO(iso);if(!d)return ' ';return new Intl.DateTimeFormat(LOCALES[lang],{weekday:'long',timeZone:'UTC'}).format(d)}
+function formatNumber(n,max=2){return new Intl.NumberFormat(LOCALES[lang],{maximumFractionDigits:max}).format(n)}
+function formatMoney(n){return new Intl.NumberFormat(LOCALES[lang],{style:'currency',currency:'EUR',minimumFractionDigits:2,maximumFractionDigits:2}).format(n)}
+function parseRate(raw){let s=String(raw||'').trim().replace(/[\s\u00a0\u202f€]/g,'');if(!s)return NaN;if(!/^[\d.,]+$/.test(s))return NaN;const lastComma=s.lastIndexOf(',');const lastDot=s.lastIndexOf('.');if(lastComma>=0&&lastDot>=0){const decimal=lastComma>lastDot?',':'.';const grouping=decimal===','?'.':',';s=s.replaceAll(grouping,'');if(decimal===',')s=s.replace(',','.')}else if(lastComma>=0){const parts=s.split(',');if(parts.length>2)return NaN;s=s.replace(',','.')}else if((s.match(/\./g)||[]).length>1)return NaN;return Number(s)}
+function weekdaysInclusive(a,b){const start=Math.round(a.getTime()/86400000);const end=Math.round(b.getTime()/86400000);if(end<start)return null;const days=end-start+1;const full=Math.floor(days/7);let result=full*5;const startDay=a.getUTCDay();for(let i=0;i<days%7;i++){const weekday=(startDay+i)%7;if(weekday!==0&&weekday!==6)result++}return result}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({lang,state}))}catch(e){}}
+function load(){try{const raw=JSON.parse(localStorage.getItem(KEY)||'null');if(raw&&raw.state&&typeof raw.state==='object'){for(const k of ['start','end','hours','rate']){if(typeof raw.state[k]==='string')state[k]=raw.state[k]}}if(raw&&T[raw.lang])lang=raw.lang}catch(e){}}
+function updateInputViews(){for(const key of ['start','end']){$(`${key}-value`).textContent=displayDate(state[key]);$(`${key}-weekday`).textContent=displayWeekday(state[key]);const d=parseISO(state[key]);if(d){calendarView[key]={year:d.getUTCFullYear(),month:d.getUTCMonth()}}}$('hours').value=state.hours;$('rate').value=state.rate}
+function setText(id,val){$(id).textContent=val}
+function runCalc(){const a=parseISO(state.start),b=parseISO(state.end);const h=Number(state.hours),rate=parseRate(state.rate);let error='';if(a&&b&&b<a)error=T[lang].errorDates;else if(state.hours!==''&&(!Number.isFinite(h)||h<=0||h>24))error=T[lang].errorHours;else if(state.rate!==''&&(!Number.isFinite(rate)||rate<0))error=T[lang].errorRate;
+const errorEl=$('error');errorEl.textContent=error;errorEl.classList.toggle('show',!!error);
+if(error||!a||!b||state.hours===''||state.rate===''){output=null;for(const id of ['days','total-hours','budget','po','sum-net','sum-fee','sum-po'])setText(id,'—');return}
+const days=weekdaysInclusive(a,b);const hours=days*h;const budget=hours*rate;const fee=budget*FEE;const po=budget+fee;output={days,hours,budget,fee,po,rate};setText('days',formatNumber(days,0));setText('total-hours',formatNumber(hours,2));setText('budget',formatMoney(budget));setText('po',formatMoney(po));setText('sum-net',formatMoney(budget));setText('sum-fee',formatMoney(fee));setText('sum-po',formatMoney(po));}
+function applyLanguage(){document.documentElement.lang=lang;$('language').value=lang;document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=T[lang][el.dataset.i18n]});$('hours').setAttribute('aria-label',T[lang].hoursDay);$('rate').setAttribute('aria-label',T[lang].hourlyRate);for(const id of ['start','end']){$(`${id}-calendar`).setAttribute('aria-label',`${T[lang].dateCalendar}: ${T[lang][id]}`);$(`${id}-value`).textContent=displayDate(state[id]);$(`${id}-weekday`).textContent=displayWeekday(state[id])}runCalc();if(openCalendar)renderCalendar(openCalendar)}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function renderCalendar(which){const obj=calendarView[which];const selected=state[which];const langLocale=LOCALES[lang];const months=Array.from({length:12},(_,i)=>new Intl.DateTimeFormat(langLocale,{month:'long',timeZone:'UTC'}).format(new Date(Date.UTC(2026,i,1))));let html='<div class="calendar-header">';html+='<button class="cal-nav" type="button" data-shift="-1" aria-label="Previous month">‹</button>';
+html+='<select class="cal-select cal-month" aria-label="Month">'+months.map((m,i)=>`<option value="${i}" ${i===obj.month?'selected':''}>${escapeHtml(m)}</option>`).join('')+'</select>';
+html+='<select class="cal-select cal-year" aria-label="Year">'+Array.from({length:201},(_,i)=>1900+i).map(y=>`<option value="${y}" ${y===obj.year?'selected':''}>${y}</option>`).join('')+'</select>';
+html+='<button class="cal-nav" type="button" data-shift="1" aria-label="Next month">›</button></div>';
+html+='<div class="cal-week">';for(let i=0;i<7;i++){const date=new Date(Date.UTC(2026,10,2+i));const name=new Intl.DateTimeFormat(langLocale,{weekday:'short',timeZone:'UTC'}).format(date);html+=`<span>${escapeHtml(name)}</span>`}html+='</div><div class="cal-days">';
+const first=new Date(Date.UTC(obj.year,obj.month,1));const offset=(first.getUTCDay()+6)%7;const today=localDateToday();for(let n=0;n<42;n++){const d=new Date(Date.UTC(obj.year,obj.month,n-offset+1));const iso=formatISO(d);const other=d.getUTCMonth()!==obj.month;const classes=['cal-day',other?'other':'',iso===selected?'selected':'',iso===today?'today':''].filter(Boolean).join(' ');html+=`<button type="button" class="${classes}" data-date="${iso}" aria-pressed="${iso===selected}">${d.getUTCDate()}</button>`}html+='</div><div class="cal-foot"><button type="button" class="cal-link" data-today="1">'+escapeHtml(T[lang].today)+'</button><button type="button" class="cal-link" data-remove="1">'+escapeHtml(T[lang].removeDate)+'</button></div>';
+$(which+'-calendar').innerHTML=html;
+}
+function closeCal(){if(openCalendar){$(openCalendar+'-calendar').hidden=true;$(openCalendar+'-button').setAttribute('aria-expanded','false');openCalendar=null}}
+function toggleCal(which){if(openCalendar===which){closeCal();return}closeCal();openCalendar=which;const d=parseISO(state[which]);if(d)calendarView[which]={year:d.getUTCFullYear(),month:d.getUTCMonth()};renderCalendar(which);$(which+'-calendar').hidden=false;$(which+'-button').setAttribute('aria-expanded','true')}
+function shiftCal(which,shift){const ob=calendarView[which];const d=new Date(Date.UTC(ob.year,ob.month+shift,1));if(d.getUTCFullYear()<1900||d.getUTCFullYear()>2100)return;ob.year=d.getUTCFullYear();ob.month=d.getUTCMonth();renderCalendar(which)}
+function chooseDate(which,iso){state[which]=iso;updateInputViews();runCalc();save();closeCal();$(which+'-button').focus()}
+function updateHours(delta){const raw=Number(state.hours);const next=Math.min(24,Math.max(.5,Math.round(((Number.isFinite(raw)?raw:8)+delta)*2)/2));state.hours=String(next);$('hours').value=state.hours;runCalc();save()}
+function showToast(message){const el=$('toast');el.textContent=message;el.classList.add('show');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600)}
+function summary(){if(!output)return '';const t=T[lang];return [t.summaryTitle,`${t.dateFrom}: ${displayDate(state.start)}`,`${t.dateTo}: ${displayDate(state.end)}`,`${t.hoursTxt}: ${formatNumber(Number(state.hours))}`,`${t.rateTxt}: ${formatMoney(output.rate)}`,`${t.daysLabel}: ${formatNumber(output.days,0)}`,`${t.hoursLabel}: ${formatNumber(output.hours)}`,`${t.net}: ${formatMoney(output.budget)}`,`${t.fee}: ${formatMoney(output.fee)}`,`${t.sum}: ${formatMoney(output.po)}`].join('\n')}
+async function copyResult(){const s=summary();if(!s)return;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(s)}else{const ta=document.createElement('textarea');ta.value=s;ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();const ok=document.execCommand('copy');ta.remove();if(!ok)throw new Error('copy failed')}showToast(T[lang].copied)}catch(e){showToast(T[lang].copyError)}}
+load();updateInputViews();applyLanguage();
+$('language').addEventListener('change',e=>{lang=T[e.target.value]?e.target.value:'pl';applyLanguage();save()});
+for(const which of ['start','end']){$(which+'-button').addEventListener('click',()=>toggleCal(which));$(which+'-calendar').addEventListener('click',e=>{const btn=e.target.closest('button');if(!btn)return;if(btn.dataset.shift)shiftCal(which,Number(btn.dataset.shift));else if(btn.dataset.date)chooseDate(which,btn.dataset.date);else if(btn.dataset.today)chooseDate(which,localDateToday());else if(btn.dataset.remove)chooseDate(which,'')});$(which+'-calendar').addEventListener('change',e=>{const ob=calendarView[which];if(e.target.matches('.cal-month'))ob.month=Number(e.target.value);else if(e.target.matches('.cal-year'))ob.year=Number(e.target.value);renderCalendar(which)})}
+document.addEventListener('pointerdown',e=>{if(openCalendar&&!e.target.closest('.date-holder'))closeCal()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&openCalendar){const which=openCalendar;closeCal();$(which+'-button').focus()}});
+$('hours').addEventListener('input',e=>{state.hours=e.target.value;runCalc();save()});$('rate').addEventListener('input',e=>{state.rate=e.target.value;runCalc();save()});$('hours-minus').addEventListener('click',()=>updateHours(-.5));$('hours-plus').addEventListener('click',()=>updateHours(.5));
+$('clear').addEventListener('click',()=>{state={start:'',end:'',hours:'',rate:''};updateInputViews();runCalc();save();closeCal()});$('example').addEventListener('click',()=>{state={...EXAMPLE};updateInputViews();runCalc();save();closeCal()});$('copy').addEventListener('click',copyResult);$('print').addEventListener('click',()=>window.print());
+})();
+</script>
+</body>
+</html>
