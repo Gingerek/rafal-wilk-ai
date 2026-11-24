@@ -441,6 +441,39 @@ h2 {margin:0;color:#222b34;font-size:20px;font-weight:850;letter-spacing:-.5px;l
 @media(min-width:1001px) {.dashboard {align-items:start}}
 @media(max-width:390px) {.kpi-number.money {font-size:clamp(15px,calc(8vw - 12px),20px);letter-spacing:-.8px;white-space:nowrap}}
 </style>
+
+<style id="sow-calendar-days-addon-v1">
+/* A distinct, accessible calendar-day counter. */
+.sow-elapsed-panel{margin:0 0 34px;padding:27px 30px 30px;border:1px solid #d2d6db;border-radius:22px;background:#f7f8f9;box-shadow:0 12px 28px rgba(43,50,59,.055);position:relative}
+.sow-elapsed-panel:before{content:"";position:absolute;top:0;left:29px;width:73px;height:4px;border-radius:0 0 5px 5px;background:#e36f25}
+.sow-elapsed-head{display:flex;gap:16px;align-items:center;margin-bottom:24px}
+.sow-elapsed-icon{width:48px;height:48px;display:grid;place-items:center;flex:0 0 48px;border:1px solid #f3d0b7;border-radius:14px;background:#fff0e4;color:#d56119}
+.sow-elapsed-kicker{font-size:11px;letter-spacing:1.3px;font-weight:800;text-transform:uppercase;color:#ad5b24;margin:0 0 4px}
+.sow-elapsed-head h2{font-size:clamp(21px,2.2vw,26px);font-weight:850;letter-spacing:-.7px;color:#26303a;margin:0}
+.sow-elapsed-sub{font-size:13px;color:#68737e;margin:6px 0 0}
+.sow-elapsed-grid{display:grid;grid-template-columns:minmax(250px,1fr) minmax(0,1.06fr);gap:19px;align-items:stretch}
+.sow-elapsed-inputs{padding:20px 22px;background:#e9ecef;border:1px solid #d9dde2;border-radius:16px}
+.sow-elapsed-inputs label{display:block;margin-bottom:9px;font-size:13px;font-weight:800;color:#3b4752}
+.sow-elapsed-date-wrap{display:flex;align-items:center;background:#fff;border:1.5px solid #ccd3d9;border-radius:12px;min-height:62px;transition:border-color .18s,box-shadow .18s;overflow:hidden}
+.sow-elapsed-date-wrap:focus-within{border-color:#de6c22;box-shadow:0 0 0 4px #e36f2520}
+.sow-elapsed-date-wrap svg{margin-left:17px;flex:0 0 auto;color:#d16621}
+.sow-elapsed-date{font-size:20px;font-weight:800;letter-spacing:.15px;color:#252f39;width:100%;min-width:0;padding:13px 13px 13px 12px;background:transparent;border:0;outline:0;font-variant-numeric:tabular-nums;cursor:pointer}
+.sow-elapsed-date:focus{outline:0}
+.sow-elapsed-date::-webkit-calendar-picker-indicator{cursor:pointer;padding:5px;opacity:.8}
+.sow-elapsed-today{display:flex;justify-content:space-between;align-items:center;gap:15px;padding-top:18px;margin-top:19px;border-top:1px solid #d3d8dd;font-size:13px;color:#62707c;font-weight:650}
+.sow-elapsed-today strong{font-weight:850;color:#26323b;font-size:17px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sow-elapsed-result{display:flex;flex-direction:column;justify-content:center;min-height:196px;padding:24px 30px;background:linear-gradient(130deg,#e77a2c 0%,#d6651d 90%);border:1px solid #d3631d;border-radius:16px;color:#fff;box-shadow:0 9px 20px #c8582225;overflow:hidden;position:relative}
+.sow-elapsed-result:after{content:"";width:230px;height:230px;position:absolute;border-radius:50%;background:#fff1;right:-112px;bottom:-150px;pointer-events:none}
+.sow-elapsed-result-label{font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:800;opacity:.88}
+.sow-elapsed-result-row{display:flex;align-items:baseline;gap:13px;flex-wrap:wrap;margin:8px 0}
+.sow-elapsed-count{font-size:clamp(46px,5vw,72px);font-weight:900;letter-spacing:-2.4px;line-height:1.1;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.sow-elapsed-unit{font-size:15px;font-weight:750;max-width:180px}
+.sow-elapsed-note{font-size:12px;line-height:1.5;opacity:.91;margin:3px 0 0;max-width:400px}
+.sow-elapsed-error{display:none;color:#a92316;font-weight:700;font-size:13px;margin:13px 0 0}
+.sow-elapsed-error:not(:empty){display:block}
+@media(max-width:760px){.sow-elapsed-panel{padding:21px 17px 22px;margin-bottom:22px}.sow-elapsed-grid{grid-template-columns:1fr;gap:12px}.sow-elapsed-head{gap:12px;margin-bottom:19px}.sow-elapsed-icon{width:42px;height:42px;flex-basis:42px}.sow-elapsed-inputs{padding:17px}.sow-elapsed-result{min-height:160px;padding:21px}.sow-elapsed-count{font-size:58px}}
+@media print{.sow-elapsed-panel{break-inside:avoid;box-shadow:none;margin-top:12px;padding:15px}.sow-elapsed-grid{gap:10px}.sow-elapsed-result{min-height:125px;padding:15px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.sow-elapsed-count{font-size:40px}}
+</style>
 </head>
 <body>
 <header class="topbar"><div class="container topbar-inner">
@@ -473,6 +506,36 @@ h2 {margin:0;color:#222b34;font-size:20px;font-weight:850;letter-spacing:-.5px;l
       <div class="results-actions"><button type="button" class="action" id="print"><span aria-hidden="true">⎙</span><span data-i18n="print">Drukuj</span></button><button type="button" class="action primary" id="copy"><span aria-hidden="true">▣</span><span data-i18n="copy">Kopiuj wynik</span></button></div>
     </section>
   </div>
+
+<section class="sow-elapsed-panel" id="sow-calendar-days-tool" aria-labelledby="sow-elapsed-title">
+  <div class="sow-elapsed-head">
+    <div class="sow-elapsed-icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 14h3M8 17h3"/></svg></div>
+    <div>
+      <div class="sow-elapsed-kicker" data-days-key="kicker">Dodatkowe narzędzie</div>
+      <h2 id="sow-elapsed-title" data-days-key="title">Dni kalendarzowe do dziś</h2>
+      <p class="sow-elapsed-sub" data-days-key="subtitle">Wybierz datę początkową, a wynik obliczy się automatycznie.</p>
+    </div>
+  </div>
+  <div class="sow-elapsed-grid">
+    <div class="sow-elapsed-inputs">
+      <label for="sow-elapsed-from" data-days-key="from">Data początkowa</label>
+      <div class="sow-elapsed-date-wrap">
+        <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>
+        <input class="sow-elapsed-date" id="sow-elapsed-from" type="date" autocomplete="off" aria-describedby="sow-elapsed-error"/>
+      </div>
+      <div class="sow-elapsed-today"><span data-days-key="today">Dzisiaj</span><strong id="sow-elapsed-today">-</strong></div>
+      <p class="sow-elapsed-error" id="sow-elapsed-error" role="alert"></p>
+    </div>
+    <div class="sow-elapsed-result" aria-live="polite" aria-atomic="true">
+      <div class="sow-elapsed-result-label" data-days-key="result">Upłynęło</div>
+      <div class="sow-elapsed-result-row">
+        <strong class="sow-elapsed-count" id="sow-elapsed-count">-</strong>
+        <span class="sow-elapsed-unit" data-days-key="unit">dni kalendarzowych</span>
+      </div>
+      <p class="sow-elapsed-note" data-days-key="note">Liczone są również weekendy i święta. Dzień początkowy = 0.</p>
+    </div>
+  </div>
+</section>
 </main>
 <div class="note-bottom" data-i18n="foot">Obliczenia zgodne z kalkulatorem MSD NL zatwierdzonym 20.10.2026.</div><div class="toast" role="status" id="toast"></div>
 <script>
@@ -529,6 +592,65 @@ for(const which of ['start','end']){$(which+'-button').addEventListener('click',
 document.addEventListener('pointerdown',e=>{if(openCalendar&&!e.target.closest('.date-holder'))closeCal()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&openCalendar){const which=openCalendar;closeCal();$(which+'-button').focus()}});
 $('hours').addEventListener('input',e=>{state.hours=e.target.value;runCalc();save()});$('rate').addEventListener('input',e=>{state.rate=e.target.value;runCalc();save()});$('hours-minus').addEventListener('click',()=>updateHours(-.5));$('hours-plus').addEventListener('click',()=>updateHours(.5));
 $('clear').addEventListener('click',()=>{state={start:'',end:'',hours:'',rate:''};updateInputViews();runCalc();save();closeCal()});$('example').addEventListener('click',()=>{state={...EXAMPLE};updateInputViews();runCalc();save();closeCal()});$('copy').addEventListener('click',copyResult);$('print').addEventListener('click',()=>window.print());
+})();
+</script>
+
+<script id="sow-calendar-days-addon-script-v1">
+(function(){
+  'use strict';
+  const input=document.getElementById('sow-elapsed-from');
+  const count=document.getElementById('sow-elapsed-count');
+  const todayEl=document.getElementById('sow-elapsed-today');
+  const errorEl=document.getElementById('sow-elapsed-error');
+  const languageEl=document.getElementById('language');
+  const storageKey='sow_elapsed_start_date_v1';
+  const zone='Europe/Amsterdam';
+  const messages={
+    pl:{kicker:'Dodatkowe narzędzie',title:'Dni kalendarzowe do dziś',subtitle:'Wybierz datę początkową, a wynik obliczy się automatycznie.',from:'Data początkowa',today:'Dzisiejsza data',result:'Upłynęło',unit:'dni kalendarzowych',note:'Liczone są również weekendy i święta. Dzień początkowy = 0.',future:'Data początkowa nie może być późniejsza niż dzisiaj.'},
+    en:{kicker:'Additional tool',title:'Calendar days until today',subtitle:'Choose a start date and the total updates automatically.',from:'Start date',today:"Today's date",result:'Days elapsed',unit:'calendar days',note:'Weekends and public holidays are included. The start day counts as 0.',future:'The start date cannot be later than today.'},
+    nl:{kicker:'Extra hulpmiddel',title:'Kalenderdagen tot vandaag',subtitle:'Kies een begindatum. Het aantal dagen wordt automatisch berekend.',from:'Begindatum',today:'Datum van vandaag',result:'Verstreken',unit:'kalenderdagen',note:'Weekenden en feestdagen tellen mee. De begindag telt als 0.',future:'De begindatum mag niet na vandaag liggen.'}
+  };
+  const locale={pl:'pl-PL',en:'en-GB',nl:'nl-NL'};
+  function currentLang(){const value=languageEl&&languageEl.value;return messages[value]?value:'pl'}
+  function todayISO(){
+    const parts=new Intl.DateTimeFormat('en-GB',{timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+    const part=(k)=>parts.find(x=>x.type===k).value;
+    return part('year')+'-'+part('month')+'-'+part('day');
+  }
+  function utcDay(iso){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(iso))return null;
+    const vals=iso.split('-').map(Number);
+    const d=new Date(Date.UTC(vals[0],vals[1]-1,vals[2]));
+    return d.getUTCFullYear()===vals[0] && d.getUTCMonth()===vals[1]-1 && d.getUTCDate()===vals[2]?d:null;
+  }
+  function pretty(iso,lang){
+    const d=utcDay(iso);
+    return d?new Intl.DateTimeFormat(locale[lang],{timeZone:'UTC',year:'numeric',month:'2-digit',day:'2-digit'}).format(d):'-';
+  }
+  function update(){
+    const lang=currentLang(),t=messages[lang],today=todayISO();
+    todayEl.textContent=pretty(today,lang);
+    input.max=today;
+    document.querySelectorAll('[data-days-key]').forEach(el=>{
+      const val=t[el.getAttribute('data-days-key')];if(val)el.textContent=val;
+    });
+    const start=utcDay(input.value),end=utcDay(today);
+    errorEl.textContent='';
+    if(!start){count.textContent='-';return}
+    if(start.getTime()>end.getTime()){count.textContent='-';errorEl.textContent=t.future;return}
+    count.textContent=new Intl.NumberFormat(locale[lang]).format(Math.round((end-start)/86400000));
+  }
+  try{const saved=localStorage.getItem(storageKey);if(saved && utcDay(saved))input.value=saved}catch(_){}
+  input.addEventListener('input',()=>{
+    try{localStorage.setItem(storageKey,input.value)}catch(_){}
+    update();
+  });
+  input.addEventListener('change',update);
+  if(languageEl)languageEl.addEventListener('change',update);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)update()});
+  window.addEventListener('focus',update);
+  window.setInterval(update,60000);
+  update();
 })();
 </script>
 </body>
