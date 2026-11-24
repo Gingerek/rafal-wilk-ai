@@ -638,7 +638,14 @@ $('clear').addEventListener('click',()=>{state={start:'',end:'',hours:'',rate:''
     errorEl.textContent='';
     if(!start){count.textContent='-';return}
     if(start.getTime()>end.getTime()){count.textContent='-';errorEl.textContent=t.future;return}
-    count.textContent=new Intl.NumberFormat(locale[lang]).format(Math.round((end-start)/86400000));
+    const days=Math.round((end-start)/86400000);
+    count.textContent=new Intl.NumberFormat(locale[lang]).format(days);
+    const unitEl=document.querySelector('.sow-elapsed-unit');
+    if(unitEl){
+      if(lang==='pl')unitEl.textContent=days===1?'dzień kalendarzowy':(days%10>=2&&days%10<=4&&!(days%100>=12&&days%100<=14)?'dni kalendarzowe':'dni kalendarzowych');
+      else if(lang==='nl')unitEl.textContent=days===1?'kalenderdag':'kalenderdagen';
+      else unitEl.textContent=days===1?'calendar day':'calendar days';
+    }
   }
   try{const saved=localStorage.getItem(storageKey);if(saved && utcDay(saved))input.value=saved}catch(_){}
   input.addEventListener('input',()=>{
