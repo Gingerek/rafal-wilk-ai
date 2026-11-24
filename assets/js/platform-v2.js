@@ -3331,7 +3331,7 @@
 
   function applyPremiumModuleTheme(frame){
     try {
-      if (frame?.id === 'redukcja' || frame?.id === 'rolerange' || frame?.id === 'recruitmenthub') return;
+      if (frame?.id === 'redukcja' || frame?.id === 'rolerange' || frame?.id === 'recruitmenthub' || frame?.id === 'sowcalculator') return;
       const doc = frame?.contentDocument;
       if (!doc || !doc.documentElement) return;
       const srcdoc = frame.getAttribute('srcdoc') || '';
