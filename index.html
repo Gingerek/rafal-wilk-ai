@@ -46,7 +46,7 @@
 <link rel="preload" as="style" href="assets/css/platform-v2.min.css?v=20260806-cleanwall-2">
 <link rel="preload" as="style" href="assets/css/platform-nextlevel.css?v=20261102-stable-scroll-v4">
 <link rel="preload" as="style" href="assets/css/platform-face-clarity.css?v=20260923-preid-3">
-<link rel="preload" as="script" href="assets/js/platform-v2.js?v=20261124-sow-theme-optout">
+<link rel="preload" as="script" href="assets/js/platform-v2.js?v=20261126-studio">
 <title>Rafal Wilk AI ©</title>
 <style id="rw-critical-startup-guard">
   html{background:#05080d}
@@ -94,167 +94,11 @@
 <link rel="stylesheet" href="assets/css/platform-v2.min.css?v=20260806-cleanwall-2">
 <link rel="stylesheet" href="assets/css/platform-nextlevel.css?v=20261102-stable-scroll-v4">
 <link rel="stylesheet" href="assets/css/platform-face-clarity.css?v=20260923-preid-3">
-<script id="rw-module-pin-bootstrap">
-(function(){
-  var DEFAULT_PIN = '4685';
-  var PRE_ID_PIN = '135';
-  var pendingPin = DEFAULT_PIN;
-  var pendingOpen = null;
-  var authorizedOnce = false;
-  function modulePinFor(moduleTitle){
-    var title = String(moduleTitle || '').toLowerCase();
-    return title.indexOf('pre id') !== -1 ? PRE_ID_PIN : DEFAULT_PIN;
-  }
-  function configurePinInput(input, pin){
-    if (!input) return;
-    var len = String(pin || DEFAULT_PIN).length;
-    input.maxLength = len;
-    input.placeholder = Array(len + 1).join('\u2022');
-  }
-  window.__rwModulePinForTitle = modulePinFor;
-  window.__rwModulePinLengthForTitle = function(moduleTitle){
-    return modulePinFor(moduleTitle).length;
-  };
-  function parts(){
-    var gate = document.getElementById('mc_gate');
-    return {
-      gate: gate,
-      pin: document.getElementById('mc_pin'),
-      err: document.getElementById('mc_err'),
-      ok: document.getElementById('mc_ok'),
-      cancel: document.getElementById('mc_cancel'),
-      title: document.getElementById('mc_title'),
-      text: gate ? gate.querySelector('p') : null
-    };
-  }
-  window.__rwModulePinConsume = function(){
-    if (!authorizedOnce) return false;
-    authorizedOnce = false;
-    return true;
-  };
-  window.__rwRequestModulePin = function(callback, moduleTitle){
-    pendingOpen = callback;
-    authorizedOnce = false;
-    pendingPin = modulePinFor(moduleTitle);
-    var p = parts();
-    if (p.title) p.title.textContent = 'Dostęp do modułu';
-    if (p.text) p.text.textContent = moduleTitle ? 'Wpisz PIN, aby otworzyć: ' + moduleTitle : 'Wpisz PIN, aby otworzyć wybrany moduł.';
-    if (p.err) p.err.textContent = '';
-    configurePinInput(p.pin, pendingPin);
-    if (p.pin) p.pin.value = '';
-    if (p.gate) {
-      p.gate.style.display = 'flex';
-      p.gate.setAttribute('aria-hidden', 'false');
-    }
-    setTimeout(function(){
-      try { p.pin && p.pin.focus({ preventScroll: true }); } catch(_e) { if (p.pin) p.pin.focus(); }
-    }, 0);
-  };
-  function closeGate(){
-    var p = parts();
-    pendingOpen = null;
-    authorizedOnce = false;
-    pendingPin = DEFAULT_PIN;
-    if (p.gate) {
-      p.gate.style.display = 'none';
-      p.gate.setAttribute('aria-hidden', 'true');
-    }
-  }
-  function tryUnlock(){
-    var p = parts();
-    if (!p.pin) return;
-    if (p.pin.value === pendingPin) {
-      authorizedOnce = true;
-      if (p.gate) {
-        p.gate.style.display = 'none';
-        p.gate.setAttribute('aria-hidden', 'true');
-      }
-      var next = pendingOpen;
-      pendingOpen = null;
-      if (typeof next === 'function') next();
-      return;
-    }
-    if (p.err) p.err.textContent = 'Nieprawidlowy kod. Sprobuj ponownie.';
-    p.pin.value = '';
-    try { p.pin.focus({ preventScroll: true }); } catch(_e) { p.pin.focus(); }
-  }
-  function bindGate(){
-    var p = parts();
-    if (!p.gate || p.gate.dataset.rwPinBootstrapBound === 'true') return;
-    p.gate.dataset.rwPinBootstrapBound = 'true';
-    if (p.ok) p.ok.addEventListener('click', tryUnlock);
-    if (p.cancel) p.cancel.addEventListener('click', closeGate);
-    if (p.pin) {
-      p.pin.addEventListener('keydown', function(event){
-        if (event.key === 'Enter') tryUnlock();
-        if (event.key === 'Escape') closeGate();
-      });
-      p.pin.addEventListener('input', function(){
-        p.pin.value = p.pin.value.replace(/\D/g, '').slice(0, pendingPin.length);
-        if (p.pin.value === pendingPin) tryUnlock();
-      });
-    }
-  }
-  window.openApp = window.openApp || function(id, title){
-    if (!window.__rwModulePinConsume()){
-      window.__rwRequestModulePin(function(){ window.openApp(id, title); }, title || id || 'Module');
-      return;
-    }
-    document.querySelectorAll('iframe').forEach(function(frame){ frame.classList.remove('show'); });
-    var frame = document.getElementById(id);
-    if (frame) {
-      if (!frame.getAttribute('src') && frame.dataset.src) frame.setAttribute('src', frame.dataset.src);
-      frame.classList.add('show');
-    }
-    var viewport = document.querySelector('.viewport');
-    if (viewport) viewport.classList.add('active');
-    document.body.classList.add('app-open');
-    var placeholder = document.querySelector('.viewport .placeholder');
-    if (placeholder) placeholder.style.display = 'none';
-  };
-  window.openMc = window.openMc || function(){
-    window.__rwRequestModulePin(function(){
-      if (typeof openMyCompany === 'function') {
-        openMyCompany();
-      } else {
-        window.openApp('mycompany', 'My Projects');
-      }
-    }, 'My Projects');
-  };
-  document.addEventListener('DOMContentLoaded', bindGate);
-  document.addEventListener('click', function(event){
-    var btn = event.target && event.target.closest ? event.target.closest('main.wrap .grid .card .btn, main.wrap .btn[data-idx]') : null;
-    if (!btn || btn.dataset.rwPinBypass === 'true') return;
-    var inline = btn.getAttribute('onclick') || '';
-    var moduleMatch = inline.match(/openApp\('([^']+)'/);
-    var card = btn.closest('.card');
-    var moduleTitle = (card && card.querySelector('.title') ? card.querySelector('.title').textContent : '') || btn.textContent || 'Module';
-    var dataIdx = btn.getAttribute('data-idx');
-    var href = btn.getAttribute('href');
-    if (!moduleMatch && dataIdx === null && !href) return;
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-    window.__rwRequestModulePin(function(){
-      if (moduleMatch) {
-        window.openApp(moduleMatch[1], moduleTitle);
-        return;
-      }
-      if (dataIdx !== null && typeof window.loadApp === 'function') {
-        window.loadApp(Number(dataIdx));
-        return;
-      }
-      if (href && btn.hasAttribute('download')) {
-        var link = document.createElement('a');
-        link.href = href;
-        link.download = btn.getAttribute('download') || '';
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      } else if (href) window.location.href = href;
-    }, moduleTitle);
-  }, true);
-})();
+<script>
+// Compatibility callbacks for the original embedded applications.
+window.__rwModulePinConsume = () => true;
+window.__rwRequestModulePin = callback => callback();
+window.openMc = () => window.openApp('mycompany','My Projects');
 </script>
 <!-- injected: clean start screen over full-screen photo -->
 <!-- injected: remove orange border, keep layout intact -->
@@ -479,6 +323,23 @@ body.rw-v2-ready.rw-v2-command-open:not(.app-open) .rw-v2-command-trigger {visib
 body.rw-v2-ready.rw-v2-command-open:not(.app-open) .rw-v2-command-trigger::before {visibility:hidden!important}
 
 </style>
+<style>
+#rw-studio-host{position:fixed!important;inset:0!important;z-index:2147483000!important;background:#171a20!important}
+#rw-studio-host[hidden],body.app-open #rw-studio-host,body.app-open #rw-studio-return,#rw-studio-return[hidden]{display:none!important}
+#rw-studio-return{position:fixed;bottom:14px;left:16px;z-index:2147482999;border:1px solid #737780;border-radius:8px;background:#22262e;color:white;padding:10px 16px;cursor:pointer}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+ const host=document.createElement('div');host.id='rw-studio-host';host.hidden=true;
+ const frame=document.createElement('iframe');frame.title='Rafał Wilk AI';frame.style.cssText='display:block;width:100%;height:100%;border:0';frame.src='studio-launcher.html?v=20261126-1';
+ const back=document.createElement('button');back.id='rw-studio-return';back.type='button';back.hidden=true;
+ const setLabel=()=>{back.textContent='← '+({pl:'Pulpit',en:'Dashboard',nl:'Dashboard'}[document.documentElement.lang]||'Pulpit')};setLabel();
+ new MutationObserver(setLabel).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+ window.showWorkshopOptions=function(show){host.hidden=show;back.hidden=!show;if(!show)frame.focus()};
+ window.studioReady=()=>window.showWorkshopOptions(false);back.onclick=()=>window.showWorkshopOptions(false);
+ host.attachShadow({mode:'open'}).append(frame);document.body.append(host,back);
+});
+</script>
 </head>
 <body>
 <div class="rw-identity" aria-label="Rafał Wilk AI — Digital Workshop"><span class="rw-identity-mark" aria-hidden="true">RW</span><div><span class="rw-identity-name">Rafał Wilk AI</span><span class="rw-identity-caption">Digital Workshop</span></div></div>
@@ -615,7 +476,7 @@ body.rw-v2-ready.rw-v2-command-open:not(.app-open) .rw-v2-command-trigger::befor
 </article>
 <div class="card"><div class="title" data-title-key="My Projects">My Projects</div><a class="btn" onclick="openMc()">Open</a></div></section>
 <section class="viewport">
-<iframe id="recruitmenthub" title="Recruitment Hub" data-src="modules/recruitment-hub.html?v=20261105-supplier-next-action-v16" loading="lazy"></iframe>
+<iframe id="recruitmenthub" title="Recruitment Hub" data-src="modules/recruitment-hub.html?v=20261126-profiles" loading="lazy"></iframe>
 <iframe id="sowcalculator" title="SOW Calculator" data-src="modules/sow-calculator.html?v=20261124-calendar-days-2" loading="lazy"></iframe>
 <iframe id="fieldglassassistant" title="Fieldglass | Asystent Procedur" data-src="modules/asystent-procedur-fieldglass.html?v=20261105-label-v2" loading="lazy"></iframe>
 <iframe id="appframe" title="Aplikacja" loading="lazy"></iframe>
@@ -1117,7 +978,7 @@ function openApp(id, title){
   render();
 })();
 </script>
-<script src="assets/js/platform-v2.js?v=20261124-sow-theme-optout" defer></script>
+<script src="assets/js/platform-v2.js?v=20261126-studio" defer></script>
 
 
 <script id="rw-intake-call-fixes-20261103">

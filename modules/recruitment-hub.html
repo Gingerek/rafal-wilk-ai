@@ -902,7 +902,7 @@ html.rh-cloud-configured:not(.rh-cloud-ready) #modal{display:none!important}
   <div class="rh-csp-welcome-main">
    <div class="rh-csp-step">Workspace access</div>
    <h1 id="rhCspWelcomeTitle">Welcome back.</h1>
-   <p class="rh-csp-welcome-sub">Select your CSP profile and enter the access code to continue.</p>
+   <p class="rh-csp-welcome-sub">Select your CSP profile to continue.</p>
    <form id="rhCspWelcomeForm" autocomplete="off">
     <fieldset class="rh-csp-profiles"><legend>Choose your profile</legend>
      <label class="rh-csp-choice"><input type="radio" name="rhCspName" value="Rafal" required><span class="rh-csp-initial" aria-hidden="true">R</span><span>Rafal</span><span class="rh-csp-choice-check" aria-hidden="true">✓</span></label>
@@ -910,15 +910,9 @@ html.rh-cloud-configured:not(.rh-cloud-ready) #modal{display:none!important}
      <label class="rh-csp-choice"><input type="radio" name="rhCspName" value="Daim" required><span class="rh-csp-initial" aria-hidden="true">D</span><span>Daim</span><span class="rh-csp-choice-check" aria-hidden="true">✓</span></label>
      <label class="rh-csp-choice"><input type="radio" name="rhCspName" value="Tanja" required><span class="rh-csp-initial" aria-hidden="true">T</span><span>Tanja</span><span class="rh-csp-choice-check" aria-hidden="true">✓</span></label>
     </fieldset>
-    <label class="rh-csp-pin-label" for="rhCspWelcomePin">Access code</label>
-    <div class="rh-csp-code-wrap">
-     <svg class="rh-csp-code-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-     <input id="rhCspWelcomePin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="off" placeholder="Enter your 4-digit code" required aria-describedby="rhCspWelcomeError">
-    </div>
     <p id="rhCspWelcomeError" class="rh-csp-welcome-error" role="alert" aria-live="polite"></p>
     <button class="rh-csp-submit" type="submit">Open my workspace <span class="rh-csp-submit-icon" aria-hidden="true">→</span></button>
    </form>
-   <p class="rh-csp-welcome-foot"><span class="rh-csp-foot-icon" aria-hidden="true">◎</span><span>This code unlocks the local workspace interface. Existing job data and settings are unchanged.</span></p>
   </div>
  </div>
 </div>
@@ -932,19 +926,7 @@ html.rh-cloud-configured:not(.rh-cloud-ready) #modal{display:none!important}
 <section class="view" id="closed"><div class="panel"><h2>Filled / Closed / Canceled archive</h2><div class="tablewrap"><table><thead><tr><th>Job</th><th>Location</th><th>Owner</th><th>Status</th><th>Closed date</th><th>Reopen</th></tr></thead><tbody id="closedTable"></tbody></table></div></div></section>
 <section class="view" id="data"><div class="panel"><h2>Data management</h2><div class="panel" style="background:#f7faff"><h3 style="margin-top:0">Automatic local saving</h3><p id="storageStatus" class="muted small">Checking storage...</p><p class="muted small" id="rhCloudImportHelp" hidden>Admin only: imports existing local browser jobs and notes into an EMPTY shared database. Create a JSON backup first.</p><button class="btn" type="button" id="rhCloudImportLocal" hidden>Import local workspace into cloud</button><button class="btn" type="button" id="rhCloudImportBackup" hidden>Import saved JSON backup into cloud</button><input id="rhCloudImportInput" type="file" accept=".json,application/json" hidden><div class="toolbar"><button class="btn primary" id="connectDisk">Connect data file on disk</button><button class="btn" id="saveDiskNow">Save to connected file now</button><button class="btn" id="downloadBackup">Download JSON backup</button></div><p class="muted small">Changes are automatically saved in this browser. On supported browsers, connect a JSON file once to also save your data to disk automatically. The file selector requires a user click and browser permission. A local HTML file may not support direct disk writing in every browser. Store regular backups outside the browser.</p></div><div class="statrow" id="dataStats"></div><p>Import a previously exported JSON backup to restore tracker data, or import CSV to add/update jobs by job number. CSV columns include cvNeeded (Yes / No / On hold / Not set) in addition to existing job fields.</p><div class="toolbar"><button class="btn" id="importJsonBtn">Restore JSON</button><button class="btn" id="importCsvBtn">Import CSV</button><button class="btn" id="fullCsv">Export all jobs CSV</button><button class="btn danger" id="resetDemo">Reset to original sample</button></div><p class="muted small">JSON restore replaces the current data after confirmation. CSV import merges by job number. No data is sent to a server.</p><h2>Activity history</h2><div class="rh-history-filter"><label class="rh-history-number-filter">Job Number<input id="historyJobNumber" inputmode="numeric" aria-label="Filter activity history by job number" autocomplete="off" placeholder="Enter job number"></label><button type="button" class="btn" id="rhHistoryClear">Clear</button><span id="rhHistoryFilterCount" role="status"></span></div><div class="tablewrap scroll"><table><thead><tr><th>When</th><th>Edited by</th><th>Action</th><th>Job</th><th>Detail</th></tr></thead><tbody id="historyTable"></tbody></table></div></div></section>
 </main></div>
-<div id="rhDataAccess" class="rh-data-access" hidden>
- <div class="rh-data-access-dialog" role="dialog" aria-modal="true" aria-labelledby="rhDataAccessTitle" aria-describedby="rhDataAccessInfo">
-  <div class="rh-data-access-icon" aria-hidden="true">🔒</div>
-  <h2 id="rhDataAccessTitle">Data &amp; Backup</h2>
-  <p id="rhDataAccessInfo">Enter the 4-digit access code to continue.</p>
-  <form id="rhDataAccessForm" autocomplete="off">
-   <label for="rhDataAccessPin">Access code</label>
-   <input id="rhDataAccessPin" name="rh-data-access-code" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" required autocomplete="off" placeholder="••••" aria-describedby="rhDataAccessError">
-   <p id="rhDataAccessError" class="rh-data-access-error" role="alert" aria-live="polite"></p>
-   <div class="rh-data-access-actions"><button type="button" id="rhDataAccessCancel" class="btn">Cancel</button><button type="submit" class="btn primary">Unlock</button></div>
-  </form>
- </div>
-</div>
+
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="dialogTitle"><div class="dialog"><div class="split"><h2 id="dialogTitle">Job</h2><button class="btn" id="closeModal">Close</button></div><div id="jobEditMeta" class="rw-editor-context"></div><form id="jobForm"><div class="formgrid"><label>Job number *<input name="number" required maxlength="40"></label><label>Location *<select name="location" required></select></label><label>Owner *<select name="owner" required></select></label><label class="wide">Job title *<input name="title" required maxlength="250"></label><label>Status *<select name="status" required></select></label><label>Supplier CV instruction<select name="cvNeeded"><option value="Not set">Await instructions</option><option value="Yes">Submit additional CVs</option><option value="No">No additional CVs needed</option><option value="On hold">Pause CV submissions</option></select></label><label>Priority<select name="priority"><option>Normal</option><option>High</option><option>Low</option></select></label><label>Positions *<input name="positions" type="number" min="1" max="1000" required></label><label>Opening date<input name="openDate" type="date"></label><label>Next action due<input name="dueDate" type="date"></label><label>Closed / filled date<input name="closedDate" type="date"></label><label class="wide">Hiring manager<input name="manager" maxlength="200"></label><label>Supplier<input name="supplier" maxlength="160"></label><label>Candidate<input name="candidate" maxlength="160"></label><label class="wide">Next action<div class="rh-next-form-fields"><select id="jobNextPreset" aria-label="Choose predefined next action"><option value="">Select next action...</option></select><input name="next" maxlength="600" placeholder="Select above or enter a custom next action"><span class="rh-next-helper">Select a common action, or type a custom one. Changes are saved when you click Save job.</span></div></label><label class="wide">Internal summary (private)<textarea name="notes" rows="3" placeholder="Current context, blockers and handover information"></textarea></label><label class="wide" style="flex-direction:row;align-items:center"><input name="hidden" type="checkbox" style="width:auto"> Hide from Suppliers (excluded from supplier update)</label></div><div class="formfooter"><button type="button" class="btn danger" id="deleteJob">Delete job</button><div><button type="button" class="btn" id="cancelModal">Cancel</button> <button type="submit" class="btn primary">Save job</button></div></div></form><div class="jobnotes"><h3>Job activity & notes <span class="note-hint">• Internal only, never included in supplier PDF</span></h3><div class="note-list" id="jobNoteList"></div><div class="jobnote-form"><textarea id="jobNoteText" placeholder="Add a dated update: supplier feedback, manager decision, interviews, next steps..." maxlength="12000"></textarea><div class="note-actions"><button type="button" class="btn primary" id="addJobNote">Add note</button></div><div class="note-hint">Notes record the selected editor and time. Save a new job first before adding its activity notes.</div></div></div><section id="jobChangeHistory" class="rw-job-audit" hidden><h3>Internal change history</h3><p>Changes made by all CSPs to this job, including edits by someone other than its owner.</p><div id="jobChangeList" class="rw-audit-list"></div></section></div></div><input class="hide" type="file" id="jsonFile" accept=".json,application/json"><input class="hide" type="file" id="csvFile" accept=".csv,text/csv"><div class="toast" id="toast"></div>
 <script> 'use strict';
 const SEED=[]
@@ -1021,21 +1003,13 @@ function rhCspLock(){
 function rhCspUnlock(event){
  event.preventDefault();
  const chosen=document.querySelector('#rhCspWelcomeForm input[name="rhCspName"]:checked');
- const password=$('rhCspWelcomePin').value;
  const error=$('rhCspWelcomeError');
  if(!chosen||!owners.includes(chosen.value)){
   error.textContent='Select your CSP profile.';
   return;
  }
- if(password!=='4685'){
-  error.textContent='Incorrect access code. Please try again.';
-  $('rhCspWelcomePin').value='';
-  $('rhCspWelcomePin').focus();
-  return;
- }
  rhCspSelected=chosen.value;
  rhCspUnlocked=true;
- $('rhCspWelcomePin').value='';
  error.textContent='';
  $('rhCspWelcome').hidden=true;
  if(!CLOUD_ENABLED){
@@ -1047,7 +1021,6 @@ function rhCspUnlock(event){
  navigate(rhCspSelected.toLowerCase());
 }
 $('rhCspWelcomeForm').addEventListener('submit',rhCspUnlock);
-$('rhCspWelcomePin').addEventListener('input',()=>$('rhCspWelcomeError').textContent='');
 $('rhSwitchCsp').addEventListener('click',()=>{
  if(typeof closeEditor==='function')closeEditor();
  if(current==='data')rhDataLeaveModule();
@@ -1265,56 +1238,9 @@ function navigate(v){if(v==='data'){rhDataRequest(()=>{rhDataViewUnlocked=true;r
 function rhDataEnterView(v){if(v!=='data')rhDataViewUnlocked=false;if(['rafal','tanja','daim','ivana'].includes(v)){const nextOwner=v[0].toUpperCase()+v.slice(1);if(nextOwner!==personalOwner){for(const id of ['personalJobNumber','personalSearch','personalLocation','personalStatus','personalPriority','personalVisibility'])if($(id))$(id).value=id==='personalStatus'?'Current':''}personalOwner=nextOwner;v='personal'}current=v;document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===v));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',(v==='personal'?x.dataset.view.toLowerCase()===personalOwner.toLowerCase():x.dataset.view===v)));$('pageTitle').textContent=({dashboard:'Recruitment Dashboard',jobs:'All Jobs',actions:'Action List',team:'Team Views',personal:personalOwner+' · My Jobs',supplier:'Weekly Supplier Update',closed:'Closed / Filled',data:'Data & Backup',notes:'Quick Notes'})[v];render()}
 
 let rhDataViewUnlocked=false;
-let rhDataPendingAction=null;
-let rhDataPreviouslyFocused=null;
-function rhDataClosePrompt(restoreFocus=true){
- const dialog=$('rhDataAccess');
- if(!dialog)return;
- dialog.hidden=true;
- $('rhDataAccessPin').value='';
- $('rhDataAccessError').textContent='';
- rhDataPendingAction=null;
- if(restoreFocus&&rhDataPreviouslyFocused?.isConnected)rhDataPreviouslyFocused.focus();
- rhDataPreviouslyFocused=null;
-}
-function rhDataRequest(action){
- if(typeof action!=='function')return;
- rhDataPreviouslyFocused=document.activeElement;
- rhDataPendingAction=action;
- $('rhDataAccessPin').value='';
- $('rhDataAccessError').textContent='';
- $('rhDataAccess').hidden=false;
- $('rhDataAccessPin').focus();
-}
-$('rhDataAccessForm').addEventListener('submit',e=>{
- e.preventDefault();
- if($('rhDataAccessPin').value!=='4685'){
-  $('rhDataAccessError').textContent='Incorrect code. Try again.';
-  $('rhDataAccessPin').value='';
-  $('rhDataAccessPin').focus();
-  return;
- }
- const action=rhDataPendingAction;
- rhDataClosePrompt(false);
- if(action)action();
-});
-$('rhDataAccessCancel').addEventListener('click',()=>rhDataClosePrompt());
-$('rhDataAccessPin').addEventListener('input',()=>$('rhDataAccessError').textContent='');
-$('rhDataAccess').addEventListener('click',e=>{if(e.target===$('rhDataAccess'))rhDataClosePrompt()});
-document.addEventListener('keydown',e=>{
- if($('rhDataAccess')?.hidden===false){
-  if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();rhDataClosePrompt();return}
-  if(e.key==='Tab'){
-   const elements=[$('rhDataAccessPin'),$('rhDataAccessCancel'),$('rhDataAccessForm').querySelector('[type="submit"]')];
-   const i=elements.indexOf(document.activeElement);
-   if(e.shiftKey&&i===0){e.preventDefault();elements[elements.length-1].focus()}
-   if(!e.shiftKey&&i===elements.length-1){e.preventDefault();elements[0].focus()}
-  }
- }
-},true);
+function rhDataRequest(action){ if(typeof action === 'function') action(); }
 function rhDataLeaveModule(){
  rhDataViewUnlocked=false;
- rhDataClosePrompt(false);
  if(current==='data')rhDataEnterView('dashboard');
 }
 window.addEventListener('pagehide',rhDataLeaveModule);
