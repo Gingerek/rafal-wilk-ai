@@ -41,13 +41,25 @@
 <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 <meta name="description" content="Rafal Wilk AI provides business tools and calculators for HR, recruitment, staffing, budgeting, workforce planning, and business administration.">
 <link rel="canonical" href="https://www.rafalwilkai.com/">
-<link rel="preload" as="image" href="assets/images/private-command-center-hero-personal-bg-day-v18-cleanwall-mobile.webp?v=20260806-cleanwall-2" type="image/webp" media="(max-width: 760px)">
-<link rel="preload" as="image" href="assets/images/private-command-center-hero-personal-bg-day-v18-cleanwall.webp?v=20260806-cleanwall-2" type="image/webp" media="(min-width: 761px)">
 <link rel="preload" as="style" href="assets/css/platform-v2.min.css?v=20260806-cleanwall-2">
 <link rel="preload" as="style" href="assets/css/platform-nextlevel.css?v=20261102-stable-scroll-v4">
 <link rel="preload" as="style" href="assets/css/platform-face-clarity.css?v=20260923-preid-3">
 <link rel="preload" as="script" href="assets/js/platform-v2.js?v=20261126-native">
 <title>Rafal Wilk AI ©</title>
+<style id="rw-studio-first-paint">
+  html, body:not(.app-open):not(.rw-workshop-options) { background:#171a20!important }
+  body:not(.app-open):not(.rw-workshop-options)>:not(#rw-studio-host):not(script):not(style) { opacity:0!important; pointer-events:none!important }
+  body.app-open .viewport { background:#171a20!important }
+  .viewport iframe.show:not([data-view-ready]) { opacity:0!important; pointer-events:none!important }
+</style>
+<script>
+  document.addEventListener('load', function(event) {
+    const frame = event.target;
+    if (!(frame instanceof HTMLIFrameElement) || !frame.closest('.viewport')) return;
+    if (frame.contentDocument && frame.contentDocument.URL === 'about:blank') return;
+    frame.setAttribute('data-view-ready', '');
+  }, true);
+</script>
 <style id="rw-critical-startup-guard">
   html{background:#05080d}
   /* Keep the lazy-loaded voice assistant from rendering as raw content on the homepage. */
@@ -330,12 +342,12 @@ body.rw-v2-ready.rw-v2-command-open:not(.app-open) .rw-v2-command-trigger::befor
 </style>
 <script>
 document.addEventListener('DOMContentLoaded',function(){
- const host=document.createElement('div');host.id='rw-studio-host';host.hidden=true;
+ const host=document.createElement('div');host.id='rw-studio-host';
  const frame=document.createElement('iframe');frame.title='Rafał Wilk AI';frame.style.cssText='display:block;width:100%;height:100%;border:0';frame.src='studio-launcher.html?v=20261126-native';
  const back=document.createElement('button');back.id='rw-studio-return';back.type='button';back.hidden=true;
  const setLabel=()=>{back.textContent='← '+({pl:'Pulpit',en:'Dashboard',nl:'Dashboard'}[document.documentElement.lang]||'Pulpit')};setLabel();
  new MutationObserver(setLabel).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
- window.showWorkshopOptions=function(show){host.hidden=show;back.hidden=!show;if(!show)frame.focus()};
+ window.showWorkshopOptions=function(show){document.body.classList.toggle('rw-workshop-options',show);host.hidden=show;back.hidden=!show;if(!show)frame.focus()};
  window.studioReady=()=>window.showWorkshopOptions(false);back.onclick=()=>window.showWorkshopOptions(false);
  host.attachShadow({mode:'open'}).append(frame);document.body.append(host,back);
 });
@@ -1028,7 +1040,10 @@ function openApp(id, title){
       enumerable: descriptor.enumerable,
       get: function(){ return descriptor.get.call(this); },
       set: function(value){
-        if (this.id === 'appframe') value = patchIntakeHtml(value);
+        if (this.id === 'appframe') {
+          this.removeAttribute('data-view-ready');
+          value = patchIntakeHtml(value);
+        }
         return descriptor.set.call(this, value);
       }
     });
