@@ -33,7 +33,7 @@ let bundlePromise;
 async function embeddedApps(){
  if(!bundlePromise){
   bundlePromise=(async()=>{
-   const response=await fetch(new URL('assets/js/legacy-apps-bundle.js',outer.baseURI));
+   const response=await fetch(new URL('assets/js/legacy-apps-bundle.js?v=20261126-native',outer.baseURI));
    if(!response.ok)throw Error('Bundle '+response.status);
    const source=await response.text();
    const data=source.match(/\bconst\s+APPS\s*=\s*(\[[\s\S]*?\]);/);

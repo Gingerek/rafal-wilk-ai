@@ -1,10 +1,668 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html data-workshop-module="21" lang="pl">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mijn Projecten - Factuur Studio</title>
   <style>:root {
+--bg:#171a20;--card:#272c34;--ink:#f1f3f6;--muted:#c1c8d2;--line:#444c58;--accent:var(--work-accent)}
+* {
+box-sizing:border-box
+}
+body {
+margin:0;background:#171a20;color:#f1f3f6;font:14px/1.45 system-ui,Segoe UI,Roboto,Helvetica,Arial
+}
+.page {
+max-width:1100px;margin:18px auto;padding:0 16px
+}
+.toolbar {
+display:flex;gap:8px;align-items:center;justify-content:flex-end;margin:12px auto
+}
+.btn {
+border:1px solid var(--line);background:#282d35;border-radius:10px;padding:8px 12px;cursor:pointer
+}
+.btn.primary {
+background:var(--work-selected);color:#f1f3f6;border-color:transparent}
+.btn.success {
+background:#234237;color:#a0e5bf;border-color:transparent}
+.doc {
+background:#282d35;border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 22px rgba(0,0,0,.19);padding:18px
+}
+.header {
+display:grid;grid-template-columns:1.6fr 1fr;gap:16px;align-items:start
+}
+.brand h1 {
+font-size:20px;margin:0 0 8px;letter-spacing:.2px
+}
+.brand .meta {
+font-size:12px;color:#c1c8d2}
+.subgrid {
+display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px
+}
+.stamp {
+border:1px solid var(--line);border-radius:12px;padding:12px
+}
+.stamp h2 {
+font-size:14px;margin:0 0 6px
+}
+.stamp select {
+min-width: 100%;
+  white-space: normal;
+}
+.grid-2 {
+display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px
+}
+.grid-3 {
+display:grid;grid-template-columns:1.7fr 0.9fr 1.1fr;gap:12px;margin-top:14px
+}
+.section h3 {
+font-size:14px;margin:14px 0 6px;color:#f1f3f6;letter-spacing:.2px
+}
+label {
+font-weight:600;font-size:13px
+}
+input,select,textarea {
+width:100%;padding:8px;border:1px solid var(--line);border-radius:10px;background:#191d24;font-size:14px
+}
+.readonly {
+background:#191d24}
+.hr {
+height:1px;background:#282d35;margin:14px 0
+}
+table {
+width:100%;border-collapse:collapse;margin-top:6px
+}
+th,td {
+border:1px solid var(--line);padding:8px;text-align:left;font-size:13px
+}
+th {
+background:#222730;font-weight:700
+}
+.right {
+text-align:right
+}
+.mono {
+font-variant-numeric:tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
+}
+.totals {
+display:grid;grid-template-columns:1fr .56fr;gap:10px;margin-top:6px
+}
+.totals .box {
+border:1px solid var(--line);border-radius:10px;padding:10px;background:#282d35}
+.small {
+font-size:12px;color:#c1c8d2}
+.sig-grid {
+display:grid;grid-template-columns:1fr 1fr;gap:16px
+}
+.sign {
+height:60px;border:1px dashed var(--line);border-radius:10px
+}
+.foot {
+font-size:11.5px;color:#f1f3f6;margin-top:10px;line-height:1.45
+}
+.note {
+background:#282d35;border:1px dashed var(--line);border-radius:10px;padding:10px
+}
+@page {
+size: A4; margin: 12mm
+}
+/* Professional look for right-side panel */
+.stamp select, .stamp input[type="date"], .stamp input[type="text"], .stamp .btn, .stamp input[type="email"], .stamp input[type="tel"], .stamp input[type="number"] {
+height: 40px;
+  line-height: 40px;
+}
+.stamp label {
+margin-bottom:4px; display:block;
+}
+.stamp .status-one {
+grid-template-columns: 1fr;
+}
+/* ==== ONE-PAGE PDF MODE ==== */
+body.pdf-mode * {
+-webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+body.pdf-mode #belastingcalc,
+body.pdf-mode #tikkie_controls_row,
+body.pdf-mode .sig-grid,
+body.pdf-mode .foot,
+body.pdf-mode #label_tikkie_url,
+body.pdf-mode #tikkie_url,
+body.pdf-mode #btn-qr,
+body.pdf-mode #qr_help,
+body.pdf-mode #qr_title {
+display:none !important;
+}
+body.pdf-mode .page {
+max-width: 780px; padding: 0 8px;
+}
+body.pdf-mode .header {
+gap:10px;
+}
+body.pdf-mode .grid-3 {
+gap:8px;
+}
+body.pdf-mode .grid-2 {
+gap:8px;
+}
+body.pdf-mode .note {
+padding:6px;
+}
+body.pdf-mode table th, body.pdf-mode table td {
+padding:6px; font-size:12.5px;
+}
+body.pdf-mode .brand h1 {
+font-size:18px;
+}
+body.pdf-mode label {
+font-size:12.5px;
+}
+body.pdf-mode .small {
+font-size:11px;
+}
+body.pdf-mode .hr {
+margin:10px 0;
+}
+body.pdf-mode #qr_block {
+border:none !important; background:#282d35 !important; padding:0!important; margin-top:6px;
+}
+/* ===== Typography & row alignment fixes (non-invasive) ===== */
+:root {
+--lineHeightBase: 1.35;
+}
+/* Prevent clipped text across the UI */
+label, input, select, textarea, th, td, .meta, .brand h1, .small {
+line-height: var(--lineHeightBase);
+  overflow: visible;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+/* Ensure table alignment: numeric columns right-aligned */
+table thead th:nth-child(2),
+table thead th:nth-child(3),
+table thead th:nth-child(4),
+table tbody td:nth-child(2),
+table tbody td:nth-child(3),
+table tbody td:nth-child(4) {
+text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+/* Avoid fixed control heights that cause clipping on long labels */
+.stamp select,
+.stamp input[type="date"],
+.stamp input[type="text"],
+.stamp input[type="email"],
+.stamp input[type="tel"],
+.stamp input[type="number"],
+.stamp .btn {
+height: auto;
+  line-height: var(--lineHeightBase);
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+/* Print-specific safety nets to keep everything on ONE page and avoid clipping */
+@media print {
+html, body { zoom: 0.83; } /* keep single page */
+  #docRoot, .doc, .section, table, #qr_block { page-break-inside: avoid; }
+  label, input, select, textarea, th, td, .meta, .brand h1, .small {
+    line-height: 1.35;
+    overflow: visible !important;
+    word-break: normal;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+  input, select, textarea { height: auto !important; min-height: 28px; }
+}
+/* PDF-mode (html2canvas snapshot) – avoid clipping and keep rows consistent */
+body.pdf-mode label,
+body.pdf-mode input,
+body.pdf-mode select,
+body.pdf-mode textarea,
+body.pdf-mode th,
+body.pdf-mode td,
+body.pdf-mode .meta,
+body.pdf-mode .brand h1,
+body.pdf-mode .small {
+line-height: 1.33 !important;
+  overflow: visible !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+  hyphens: auto !important;
+}
+body.pdf-mode input,
+body.pdf-mode select,
+body.pdf-mode textarea {
+height: auto !important;
+  min-height: 26px;
+}
+/* -- PDF-only signatures under QR -- */
+.sig-grid-print {
+display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px
+}
+.sig-grid-print .sig-box {
+height:60px;border:1px dashed var(--line);border-radius:10px
+}
+/* --- Improved font for PDF clarity --- */
+body, * {
+font-family: Arial, Helvetica, sans-serif !important;
+  color:#f1f3f6 !important;
+}
+.pdf-mode *, @media print {
+font-size: 12px !important;
+  font-weight: 500 !important;
+  color:#f1f3f6 !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+/* --- PDF signatures under QR --- */
+@media print {
+.pdf-mode #pdf_sig { display: grid !important; grid-template-columns: 1fr 1fr; gap: 12mm; margin-top: 8mm; }
+  .pdf-mode #pdf_sig .sig-box { border:1px solid var(--work-line); height: 22mm; }
+}
+/* --- Fix word cutting in PDF export --- */
+@media print {
+.pdf-mode, 
+  .pdf-mode * {
+    hyphens: none !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+    white-space: normal !important;
+  }
+}
+/* === PDF/PRINT CLEANUP & SIGNATURE ALIGN === */
+body.pdf-mode #pay_method,
+@media print {
+#pay_method { -webkit-appearance:none !important; -moz-appearance:none !important; appearance:none !important; background:transparent !important; border:none !important; box-shadow:none !important; }
+}
+body.pdf-mode #pay_method::-ms-expand {
+display:none !important;
+}
+body.pdf-mode #pay_method + svg,
+body.pdf-mode #pay_method + i,
+body.pdf-mode #pay_method ~ .arrow,
+body.pdf-mode #pay_method ~ .caret,
+body.pdf-mode #pay_method ~ .chevron,
+body.pdf-mode .caret, body.pdf-mode .chevron, body.pdf-mode .arrow {
+display:none !important;
+}
+body.pdf-mode [class*="select"]::after, body.pdf-mode [class*="dropdown"]::after {
+content:none !important; display:none !important;
+}
+/* Remove dotted baselines under signatures (both modes) */
+body.pdf-mode #provider_name_line, body.pdf-mode #client_name_line {
+display:none !important; height:0 !important; border:0 !important; margin:0 !important; padding:0 !important;
+}
+/* Make signatures two equal columns and align */
+body.pdf-mode #pdf_sig {
+display:grid !important; grid-template-columns:1fr 1fr !important; column-gap: 12mm !important; align-items:start !important;
+}
+body.pdf-mode #pdf_sig .sig-box {
+height: 14mm !important; border:none !important; box-shadow:none !important;
+}
+body.pdf-mode #label_pdf_sign_provider, body.pdf-mode #label_pdf_sign_client {
+margin:0 !important; font-weight:700 !important;
+}
+/* CUSTOM_SIGNATURE_EXPORT_FIXES */
+.sig-grid-print {
+display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px
+}
+/* Hide the right “Dane dokumentu” panel (the .stamp box) in PDF export and print */
+body.pdf-mode .stamp {
+display:none !important;
+}
+/* Przesunięcie podpisu zleceniodawcy maksymalnie w prawo w trybie PDF i druku */
+body.pdf-mode #pdf_sig,
+@media print {
+#pdf_sig {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    column-gap: 120mm !important; /* zwiększony odstęp między podpisami */
+    justify-content: space-between !important;
+  }
+  #pdf_sig > div:last-child {
+    justify-self: end !important;
+  }
+}
+/* Lepsze proporcje marginesów w PDF i przy druku */
+@media print, screen {
+body.pdf-mode .page {
+    padding: 10mm 14mm !important;
+  }
+  body.pdf-mode .doc {
+    padding: 10mm 12mm !important;
+    margin: 0 auto !important;
+    border:none !important;
+    box-shadow: none !important;
+  }
+  body.pdf-mode #qr_area {
+    margin-top: 10mm !important;
+    margin-bottom: 8mm !important;
+  }
+  body.pdf-mode #pdf_sig {
+    margin-top: 10mm !important;
+    margin-bottom: 10mm !important;
+  }
+}
+/* Symetryczne wypełnienie A4: szerokość obszaru dokumentu zbliżona do A4 minus marginesy */
+body.pdf-mode .page {
+width: 190mm !important; max-width: 190mm !important;
+}
+/* Maksymalne wypełnienie strony A4 w trybie PDF */
+body.pdf-mode .page {
+width: 202mm !important; max-width: 202mm !important; padding: 0 !important;
+}
+body.pdf-mode .doc {
+padding: 2mm 2mm !important; margin: 0 !important; border:none !important; box-shadow: none !important;
+}
+body.pdf-mode #qr_area {
+margin-top: 4mm !important; margin-bottom: 4mm !important;
+}
+body.pdf-mode #pdf_sig {
+margin-top: 4mm !important; margin-bottom: 4mm !important;
+}
+/* Maksymalne przesunięcie podpisu zleceniodawcy do prawej krawędzi strony */
+body.pdf-mode #pdf_sig,
+@media print {
+#pdf_sig {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    column-gap: 0 !important;
+    justify-content: space-between !important;
+  }
+  #pdf_sig > div:last-child {
+    justify-self: end !important;
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+/* HARD RIGHT: ustaw podpis zleceniodawcy maksymalnie przy prawej krawędzi */
+body.pdf-mode #pdf_sig {
+display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  width: 100% !important;
+  column-gap: 0 !important;
+}
+body.pdf-mode #pdf_sig > div {
+flex: 0 0 auto !important;
+}
+body.pdf-mode #pdf_sig > div:last-child {
+margin-left: auto !important;
+  text-align: right !important;
+  padding-right: 0 !important;
+}
+/* === POPRAWA CZYTELNOŚCI CZCIONKI W PDF/DRUKU === */
+@media print, screen {
+body.pdf-mode, body.pdf-mode * {
+    color:#f1f3f6 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  /* Minimalny rozmiar i waga tekstu */
+  body.pdf-mode .doc, 
+  body.pdf-mode .doc * {
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 13.5px !important;
+    line-height: 1.35 !important;
+  }
+  body.pdf-mode h1, 
+  body.pdf-mode h2, 
+  body.pdf-mode h3, 
+  body.pdf-mode label, 
+  body.pdf-mode th {
+    font-weight: 700 !important;
+  }
+  body.pdf-mode td, 
+  body.pdf-mode input, 
+  body.pdf-mode select, 
+  body.pdf-mode textarea, 
+  body.pdf-mode .small, 
+  body.pdf-mode .meta {
+    font-weight: 600 !important;
+  }
+  /* Pogrubione liczby i kolumny monetarne */
+  body.pdf-mode .mono, 
+  @media print { .mono { font-weight: 700 !important; } }
+}
+/* === PDF: tylko nagłówki tabeli wyraźnie pogrubione, reszta czytelna === */
+@media print, screen {
+/* Tytuł: 'Rachunek' lekko większy, ale bez przesady */
+  body.pdf-mode #screen_title {
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.2px !important;
+  }
+  /* Obramowania wyraźne, ale nie przesadzone */
+  body.pdf-mode table,
+  body.pdf-mode th,
+  body.pdf-mode td {
+    border:1px solid var(--work-line) !important;
+  }
+  /* Nagłówki — mocno wyróżnione */
+  body.pdf-mode th {
+    background:#222730 !important;
+    color:#f1f3f6 !important;
+    font-weight: 800 !important;
+  }
+  /* Komórki — zwykła waga, dobra czytelność */
+  body.pdf-mode td {
+    background:#282d35 !important;
+    color:#f1f3f6 !important;
+    font-weight: 450 !important; /* półgrube dla czytelności, ale wyraźnie mniej niż nagłówki */
+  }
+  /* Wizualne pasy co drugiego wiersza (delikatne) */
+  body.pdf-mode tbody tr:nth-child(even) td { background:#282d35 !important; }
+}
+/* === FINALNY WYGLĄD PDF: tytuł „Rachunek za usługi fotograficzne”, pogrubione tylko nagłówki === */
+@media print, screen {
+/* Tytuł dokumentu */
+  body.pdf-mode #screen_title {
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.3px !important;
+    margin-bottom: 6px !important;
+  }
+  /* Normalny tekst w dokumencie */
+  body.pdf-mode .doc,
+  body.pdf-mode .doc * {
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-weight: 400 !important;
+    color:#f1f3f6 !important;
+  }
+  /* Nagłówki sekcji i etykiety */
+  body.pdf-mode h2,
+  body.pdf-mode h3,
+  body.pdf-mode label {
+    font-weight: 600 !important;
+  }
+  /* Tabela: wyraźne obramowania i kontrastowe nagłówki */
+  body.pdf-mode table,
+  body.pdf-mode th,
+  body.pdf-mode td {
+    border:1px solid var(--work-line) !important;
+  }
+  body.pdf-mode th {
+    background:#222730 !important;
+    color:#f1f3f6 !important;
+    font-weight: 800 !important;
+  }
+  body.pdf-mode td {
+    background:#282d35 !important;
+    font-weight: 400 !important;
+    color:#f1f3f6 !important;
+  }
+  /* Czytelne pasy wierszy */
+  body.pdf-mode tbody tr:nth-child(even) td {
+    background:#282d35 !important;
+  }
+}
+@media print {
+#lang_inline, #belastingcalc, .no-print {
+display:none!important;
+}
+body {
+background:#171a20}
+.page {
+padding:0;margin:0
+}
+.doc {
+border:none;box-shadow:none;border-radius:0
+}
+/* hide Tikkie edit controls */
+  #label_tikkie_url, #tikkie_url, #btn-qr, #qr_help, #qr_title {
+display:none !important;
+}
+/* simplify the QR container */
+  #qr_block {
+border:none !important; padding:0 !important; background:#282d35 !important;
+}
+/* center the QR on print */
+  #qr_area {
+display:flex; justify-content:center; align-items:center; padding:0; margin-top:0;
+}
+#belastingcalc {
+display:none !important;
+}
+/* Hide all Tikkie controls and texts */
+  #label_tikkie_url, #tikkie_url, #btn-qr, #qr_help, #qr_title {
+display:none !important;
+}
+/* Hide the container of the controls row completely */
+  #label_tikkie_url, #tikkie_url, #btn-qr {
+visibility:hidden !important; height:0 !important; padding:0 !important; margin:0 !important;
+}
+/* Make QR block minimal and clean */
+  #qr_block {
+border:none !important; padding:0 !important; background:#282d35 !important;
+}
+/* Ensure QR area is centered and with some top margin */
+  #qr_area {
+display:flex; justify-content:center; align-items:center; margin:24px 0 0 0 !important; padding:0 !important;
+}
+/* hide Tikkie row, signatures, legal notes, tax calculator */
+  #tikkie_controls_row {
+display:none !important;
+}
+.sig-grid {
+display:none !important;
+}
+.foot {
+display:none !important;
+}
+/* keep only QR at the bottom */
+  #qr_block {
+border:none !important; padding:0 !important; background:#282d35 !important;
+}
+#qr_area {
+display:flex; justify-content:center; align-items:center; margin:24px 0 0 0 !important; padding:0 !important;
+}
+html, body {
+zoom: 0.83;
+}
+#pay_method + svg, #pay_method + i, #pay_method ~ .arrow, #pay_method ~ .caret, #pay_method ~ .chevron,
+  .caret, .chevron, .arrow,
+  [class*="select"]::after, [class*="dropdown"]::after {
+display:none !important; content:none !important;
+}
+#provider_name_line, #client_name_line {
+display:none !important; height:0 !important; border:0 !important; margin:0 !important; padding:0 !important;
+}
+.stamp {
+display:none !important;
+}
+#pdf_sig {
+display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    width: 100% !important;
+    column-gap: 0 !important;
+}
+#pdf_sig > div {
+flex: 0 0 auto !important;
+}
+#pdf_sig > div:last-child {
+margin-left: auto !important;
+    text-align: right !important;
+    padding-right: 0 !important;
+}
+}
+
+@media print, screen {
+/* Tytuł dokumentu większy, ale całość nadal mieści się na 1 stronie (skalowanie w exportPDF) */
+  body.pdf-mode #screen_title {
+font-size: 24px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.2px !important;
+    margin-bottom: 6px !important;
+}
+/* Obudowa sekcji, aby nic nie „ucinało się” na zrzucie */
+  body.pdf-mode #docRoot, 
+  body.pdf-mode .doc, 
+  body.pdf-mode .section, 
+  body.pdf-mode table {
+page-break-inside: avoid !important;
+}
+/* Tabela: mocniejsze obramowanie i kontrast */
+  body.pdf-mode table,
+  body.pdf-mode th,
+  body.pdf-mode td {
+border:1.2px solid var(--work-line) !important;
+}
+/* Cieniowanie wierszy dla lepszej czytelności kwot */
+  body.pdf-mode tbody tr:nth-child(even) td {
+background:#282d35 !important;
+}
+/* Wyrównania i tablicowy wygląd cyfr */
+  body.pdf-mode .mono {
+font-variant-numeric: tabular-nums !important;
+    letter-spacing: 0 !important;
+}
+/* Nagłówki kolumn liczb prawostronnie */
+  body.pdf-mode table thead th:nth-child(2),
+  body.pdf-mode table thead th:nth-child(3),
+  body.pdf-mode table thead th:nth-child(4),
+  body.pdf-mode table tbody td:nth-child(2),
+  body.pdf-mode table tbody td:nth-child(3),
+  body.pdf-mode table tbody td:nth-child(4) {
+text-align: right !important;
+}
+/* Tytuł dokumentu – lekko większy i pogrubiony */
+  body.pdf-mode #screen_title {
+font-size: 22px !important;
+    font-weight: 700 !important;
+}
+/* Tabela: tylko nagłówki pogrubione */
+  body.pdf-mode table,
+  body.pdf-mode th,
+  body.pdf-mode td {
+border:1px solid var(--work-line) !important;
+}
+body.pdf-mode th {
+background:#222730 !important;
+    font-weight: 700 !important;
+    color:#f1f3f6 !important;
+    padding: 6px 7px !important;
+}
+body.pdf-mode td {
+background:#282d35 !important;
+    font-weight: 500 !important;
+    color:#f1f3f6 !important;
+    padding: 6px 7px !important;
+}
+/* Cieniowanie wierszy dla czytelności */
+  body.pdf-mode tbody tr:nth-child(even) td {
+background:#282d35 !important;
+}
+/* Zachowaj proporcje na jednej stronie */
+  body.pdf-mode .page,
+  body.pdf-mode .doc,
+  body.pdf-mode table {
+page-break-inside: avoid !important;
+}
+}
+
+</style><style media="print">:root {
 --bg:#f5f7fa;--card:#ffffff;--ink:#0f172a;--muted:#475569;--line:#d8dee6;--accent:#1f4acc
 }
 * {
@@ -674,6 +1332,14 @@ page-break-inside: avoid !important;
 <style>
 #paid_stamp {
   display:none; position:absolute; top:14px; right:14px;
+  border:2px solid var(--work-line); color:#f1f3f6; padding:6px 10px; border-radius:8px;
+  font-weight:800; font-size:13px; transform: rotate(-4deg);
+  background:#282d35;
+}
+body.pdf-mode.receipt-mode #paid_stamp { display:block; }
+</style><style media="print">
+#paid_stamp {
+  display:none; position:absolute; top:14px; right:14px;
   border:2px solid #0a0; color:#0a0; padding:6px 10px; border-radius:8px;
   font-weight:800; font-size:13px; transform: rotate(-4deg);
   background:#fff;
@@ -682,6 +1348,67 @@ body.pdf-mode.receipt-mode #paid_stamp { display:block; }
 </style>
 
 <style>
+/* Professional receipt PDF layout */
+.pro-receipt {
+  font-family: Arial, Helvetica, sans-serif;
+  max-width: 860px;
+  margin: 24px auto;
+  padding: 0;
+  border-radius: 16px;
+  box-shadow:0 6px 22px rgba(0,0,0,.19);
+  overflow: hidden;
+  background:#282d35;
+}
+.pro-receipt .header-bar {
+  height: 16px;
+  background:#222730; /* business blue */
+}
+.pro-receipt .pad {
+  padding: 22px 26px;
+}
+.pro-receipt h1 {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+}
+.pro-receipt .row {
+  display: flex;
+  gap: 24px;
+}
+.pro-receipt .col {
+  flex: 1;
+}
+.pro-receipt .muted { color:#c1c8d2; }
+.pro-receipt table.items {
+  width: 100%;
+  border-collapse:collapse;
+  margin-top: 14px;
+  font-size: 14px;
+}
+.pro-receipt table.items th,
+.pro-receipt table.items td {
+  padding: 10px 8px;
+  border-bottom:1px solid var(--work-line);
+  text-align: left;
+}
+.pro-receipt table.items th.qty,
+.pro-receipt table.items td.qty { width: 10%; text-align:center; }
+.pro-receipt table.items th.unit,
+.pro-receipt table.items td.unit { width: 20%; text-align:right; }
+.pro-receipt table.items th.amount,
+.pro-receipt table.items td.amount { width: 20%; text-align:right; }
+.pro-receipt .total-line {
+  display:flex; justify-content:flex-end; margin-top:12px;
+  font-size: 18px; font-weight: 700;
+}
+.pro-receipt .total-line .label { margin-right: 12px; }
+.pro-receipt .signature {
+  margin-top: 28px;
+  display:flex; justify-content:flex-end; align-items:center; gap:16px;
+}
+.pro-receipt .signature .line {
+  width: 220px; border-top:1px solid var(--work-line); height: 1px;
+}
+</style><style media="print">
 /* Professional receipt PDF layout */
 .pro-receipt {
   font-family: Arial, Helvetica, sans-serif;
@@ -746,6 +1473,203 @@ body.pdf-mode.receipt-mode #paid_stamp { display:block; }
 
 
 <style id="rw-modern-projects-ui">
+:root{
+  --bg:#171a20;
+  --bg2:#272c34;
+  --card:#272c34;
+  --ink:#f1f3f6;
+  --muted:#c1c8d2;
+  --line:#444c58;
+  --accent:var(--work-accent);
+  --accent2:var(--work-accent);
+  --accent3:var(--work-accent);
+  --danger:#ea4335;
+  --soft-blue:#272c34;
+  --soft-green:#272c34;
+  --shadow:0 18px 45px rgba(31,74,204,.12);
+  --radius:8px;
+}
+html{background:#171a20}
+body{
+  min-height:100vh;
+  margin:0;
+  color:#f1f3f6;
+  font-family:Inter, "Google Sans", "Segoe UI", Roboto, Arial, sans-serif;
+  background:
+    linear-gradient(135deg, rgba(66,133,244,.12), transparent 34%),
+    linear-gradient(220deg, rgba(52,168,83,.10), transparent 42%),
+    linear-gradient(180deg, var(--bg2), var(--bg));
+}
+.page{
+  max-width:1320px;
+  margin:0 auto;
+  padding:18px clamp(14px,2vw,28px) 30px;
+}
+.toolbar.no-print{
+  position:sticky;
+  top:0;
+  z-index:20;
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin:0 0 14px;
+  padding:10px 0 12px;
+  background:#222730);
+  backdrop-filter:blur(14px) saturate(140%);
+}
+.btn,
+button.btn,
+input[type="button"]{
+  min-height:38px;
+  border:1px solid var(--work-line);
+  border-radius:999px;
+  padding:8px 14px;
+  color:#f1f3f6;
+  background:#191d24;
+  font-weight:700;
+  letter-spacing:0;
+  box-shadow:0 6px 22px rgba(0,0,0,.19);
+  transition:transform .12s ease, box-shadow .12s ease, background .12s ease, border-color .12s ease;
+}
+.btn:hover,
+button.btn:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(0,0,0,.19);background:#282d35}
+.btn:active,
+button.btn:active{transform:translateY(0);box-shadow:0 6px 22px rgba(0,0,0,.19)}
+.btn.primary{background:var(--work-selected);border-color:var(--accent);color:#f1f3f6}
+.btn.success{background:#234237;border-color:var(--accent2);color:#a0e5bf}
+.doc{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--work-line);
+  border-radius:18px;
+  padding:clamp(16px,2vw,26px);
+  background:#282d35;
+  box-shadow:0 6px 22px rgba(0,0,0,.19);
+  backdrop-filter:blur(18px) saturate(130%);
+}
+.doc:before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto 0;
+  height:5px;
+  background:#282d35;
+}
+.header{
+  display:grid;
+  grid-template-columns:minmax(280px,1.25fr) minmax(320px,.9fr);
+  gap:16px;
+  align-items:stretch;
+}
+.brand,
+.stamp,
+.section,
+.note,
+.totals .box{
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#282d35;
+  box-shadow:0 6px 22px rgba(0,0,0,.19);
+}
+.brand{padding:18px;min-height:100%}
+.brand h1,
+#screen_title{
+  margin:0 0 12px;
+  color:#f1f3f6;
+  font-size:clamp(24px,3vw,40px);
+  line-height:1.05;
+  font-weight:850;
+  letter-spacing:0;
+}
+.brand .meta,.small,.foot{color:#c1c8d2}
+.subgrid,
+.grid-2,
+.grid-3{
+  gap:12px;
+}
+.stamp{padding:16px}
+.stamp h2,
+.section h3,
+#h_taxcalc{
+  margin:0 0 12px;
+  color:#f1f3f6;
+  font-size:15px;
+  font-weight:850;
+  letter-spacing:0;
+}
+.section{
+  margin-top:14px;
+  padding:16px;
+}
+.section h3{margin-bottom:14px}
+label{
+  display:block;
+  margin:0 0 5px;
+  color:#c1c8d2;
+  font-size:12px;
+  font-weight:760;
+}
+input,select,textarea{
+  min-height:42px;
+  border:1px solid var(--work-line);
+  border-radius:10px;
+  background:#191d24;
+  color:#f1f3f6;
+  padding:10px 12px;
+  font-size:14px;
+  box-shadow:0 6px 22px rgba(0,0,0,.19);
+  transition:border-color .12s ease, box-shadow .12s ease, background .12s ease;
+}
+input:focus,select:focus,textarea:focus{
+  outline:none;
+  border-color:var(--work-line);
+  box-shadow:0 6px 22px rgba(0,0,0,.19);
+}
+input.readonly,.readonly{
+  color:#f1f3f6;
+  background:#191d24;
+  border-color:var(--work-line);
+}
+table{
+  overflow:hidden;
+  border-collapse:separate;
+  border-spacing:0;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#282d35;
+}
+th,td{border:0;border-bottom:1px solid var(--work-line);padding:10px 12px}
+thead th,th{background:#222730;color:#f1f3f6;font-weight:850}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#282d35}
+.totals{align-items:stretch;gap:14px}
+.totals .box{padding:14px;background:#282d35}
+.totals .box > div{padding:7px 0;border-bottom:1px solid var(--work-line)}
+.totals .box > div:last-child{border-bottom:0}
+#sum_total{color:#f1f3f6;font-size:18px;font-weight:900}
+.hr{height:1px;background:#282d35;margin:16px 0}
+.sign,.sig-box{
+  border:1px dashed var(--work-line);
+  border-radius:12px;
+  background:#282d35;
+}
+#belastingcalc{
+  border-style:solid;
+  background:#282d35;
+}
+#qr_block{background:#282d35;border-style:solid}
+::placeholder{color:#c1c8d2}
+@media (max-width:900px){
+  .header,.grid-2,.grid-3,.totals{grid-template-columns:1fr!important}
+  .toolbar.no-print{justify-content:flex-start;overflow:auto}
+  .btn{white-space:nowrap}
+}
+@media print{
+  body{background:#171a20 !important}
+  .doc,.brand,.stamp,.section,.note,.totals .box{box-shadow:none!important;backdrop-filter:none!important}
+  .doc{border-color:var(--work-line) !important;border-radius:0!important}
+  .doc:before{display:none!important}
+}
+</style><style media="print">
 :root{
   --bg:#eef4ff;
   --bg2:#f8fbff;
@@ -944,7 +1868,7 @@ tbody tr:nth-child(even){background:#fafcff}
 }
 </style>
 
-</head>
+<style media="screen">:root{--work-accent:#ecbd87;--work-line:#57524f;--work-selected:#4d4640;--work-art:url("data:image/webp;base64,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");color-scheme:dark}html{background:#171a20}body{font-family:"Segoe UI",Arial,sans-serif;background:#171a20;color:#f1f3f6}button,input,select,textarea{font-family:inherit}h1,h2,h3{letter-spacing:-.035em}input:not([type=checkbox]):not([type=radio]),select,textarea{color-scheme:dark}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--work-accent);outline-offset:3px}.work-art{display:block;flex:0 1 auto;width:110px;height:70px;background:var(--work-art) center/contain no-repeat;pointer-events:none}.panel,.card,.section-card,.search-panel,.admin-card{border-radius:14px}.header-row{display:flex;gap:16px;align-items:center}.header-row .top-controls{margin-inline-start:auto}::selection{background:var(--work-selected);color:#fff}body{background:linear-gradient(130deg,#2d2c2d 0%,#171a20 70%);min-height:100vh}.work-art{mask-image:linear-gradient(to bottom,transparent,#000 9%,#000 88%,transparent);width:clamp(96px,10vw,150px);height:clamp(62px,6.5vw,90px)}.admin-hero{display:flex;align-items:center;gap:18px}.admin-health{margin-inline-start:auto}.admin-card{border-top:2px solid var(--work-accent)}body,.page{background:#191c20!important}.admin-shell .admin-hero{background:linear-gradient(115deg,#3a3027,#24272c 80%)!important;color:#f5eadc}.admin-hero::before,.admin-hero::after{display:none}.admin-hero .admin-kicker{color:var(--work-accent)}@media(max-width:760px){.intro,.hero,.hero-main{grid-template-columns:minmax(0,1fr)}.intro .work-art,.hero .work-art,.hero-main .work-art{grid-row:auto;grid-column:1;width:90px;height:54px}.hero>div:first-of-type{grid-row:auto}.dashboard,.rh-csp-welcome-card{grid-template-columns:1fr}.header-row,.work-heading,.admin-hero{flex-wrap:wrap}.work-art{width:76px;height:50px}.rh-csp-welcome-visual .work-art{height:75px}}</style><style media="print">.work-art{display:none!important}</style></head>
 <body>
   <div class="page">
     <div class="toolbar no-print">
@@ -956,7 +1880,7 @@ tbody tr:nth-child(even){background:#fafcff}
 
     
     <section class="admin-shell no-print" aria-label="Administracja dokumentami">
-      <div class="admin-hero">
+      <div class="admin-hero"><span class="work-art" aria-hidden="true"></span>
         <div class="admin-title-block">
           <div class="admin-kicker">Mijn Projecten</div>
           <h2>Administracyjne centrum dokumentów</h2>
@@ -2111,6 +3035,18 @@ applyPlaceholders();
   #pdf-invoice-wrapper, #pdf-invoice-wrapper * { visibility: visible !important; }
   #pdf-invoice-wrapper { position: absolute; left: 0; top: 0; width: 100%; padding: 20mm 18mm; box-sizing: border-box; }
 }
+#pdf-invoice-wrapper { display:none; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:#f1f3f6; }
+#pdf-invoice-wrapper h1 { font-size: 18px; margin: 0 0 10px 0; }
+#pdf-invoice-wrapper p { margin: 0 0 8px 0; }
+#pdf-invoice-wrapper .kv { line-height: 1.5; }
+#pdf-invoice-wrapper .kv div { margin: 2px 0; }
+</style><style media="print">
+/* Only print our unified block to avoid duplicates */
+@media print {
+  body * { visibility: hidden !important; }
+  #pdf-invoice-wrapper, #pdf-invoice-wrapper * { visibility: visible !important; }
+  #pdf-invoice-wrapper { position: absolute; left: 0; top: 0; width: 100%; padding: 20mm 18mm; box-sizing: border-box; }
+}
 #pdf-invoice-wrapper { display:none; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:#111; }
 #pdf-invoice-wrapper h1 { font-size: 18px; margin: 0 0 10px 0; }
 #pdf-invoice-wrapper p { margin: 0 0 8px 0; }
@@ -2493,6 +3429,12 @@ function openEmail(){
 
 <!-- === Auto language-dependent legal notice (PL/NL/EN) === -->
 <style>
+#legal_notice{font-size:12px;color:#f1f3f6;margin-top:10px}
+@media print{
+  #legal_notice{visibility:hidden!important} /* only show PDF version inside pdf wrapper */
+}
+#pdf-legal{font-size:12px;color:#f1f3f6;margin-top:8px}
+</style><style media="print">
 #legal_notice{font-size:12px;color:#222;margin-top:10px}
 @media print{
   #legal_notice{visibility:hidden!important} /* only show PDF version inside pdf wrapper */
@@ -3186,6 +4128,25 @@ function openEmail(){
 })();
 </script>
 <style id="rw-modern-projects-final-ui">
+body{font-size:14px!important;background:#171a20 !important;overflow-x:hidden!important}
+.page{max-width:1280px!important;margin:0 auto!important;padding:14px 18px 28px!important}
+.toolbar.no-print{position:sticky!important;top:0!important;z-index:999!important;display:flex!important;justify-content:flex-end!important;gap:8px!important;margin:0!important;padding:10px 0 12px!important;background:#222730 !important;backdrop-filter:blur(14px)!important}
+.btn{border-radius:999px!important;min-height:38px!important;padding:8px 14px!important;font-weight:760!important;box-shadow:0 6px 22px rgba(0,0,0,.19) !important}
+.doc{border-radius:18px!important;border:1px solid var(--work-line) !important;background:#282d35 !important;box-shadow:0 6px 22px rgba(0,0,0,.19) !important;padding:22px!important;overflow:visible!important}
+.header{grid-template-columns:minmax(300px,1.05fr) minmax(340px,.95fr)!important;gap:16px!important}
+.brand,.stamp,.section,.note,.totals .box{border-radius:14px!important;border:1px solid var(--work-line) !important;background:#282d35 !important;box-shadow:0 6px 22px rgba(0,0,0,.19) !important}
+.brand{padding:18px!important}.stamp,.section{padding:16px!important}
+.brand h1,#screen_title{font-size:clamp(25px,2.2vw,38px)!important;line-height:1.08!important;letter-spacing:0!important;margin:0 0 12px!important}
+.stamp h2,.section h3,#h_taxcalc{font-size:15px!important;color:#f1f3f6 !important;font-weight:850!important;margin:0 0 13px!important}
+.grid-2,.grid-3,.subgrid{gap:12px!important}label{font-size:12px!important;font-weight:780!important;color:#c1c8d2 !important;margin-bottom:5px!important}
+input,select,textarea{min-height:42px!important;border-radius:10px!important;border:1px solid var(--work-line) !important;background:#191d24 !important;color:#f1f3f6 !important;padding:10px 12px!important;font-size:14px!important;box-shadow:0 6px 22px rgba(0,0,0,.19) !important}
+input:focus,select:focus,textarea:focus{outline:none!important;border-color:var(--work-line) !important;box-shadow:0 6px 22px rgba(0,0,0,.19) !important}
+input.readonly,.readonly{background:#191d24 !important;color:#f1f3f6 !important;border-color:var(--work-line) !important}
+table{border-collapse:separate !important;border-spacing:0 !important;border:1px solid var(--work-line) !important;border-radius:12px!important;overflow:hidden!important;background:#282d35 !important}th,td{border:0 !important;border-bottom:1px solid var(--work-line) !important;padding:10px 12px!important}th{background:#222730 !important;color:#f1f3f6 !important;font-weight:850!important}tbody tr:last-child td{border-bottom:0 !important}tbody tr:nth-child(even){background:#282d35 !important}
+#sum_total{color:#f1f3f6 !important;font-size:18px!important;font-weight:900!important}.privacy-footer{display:none!important}
+@media(max-width:900px){.header,.grid-2,.grid-3,.totals{grid-template-columns:1fr!important}.toolbar.no-print{justify-content:flex-start!important;overflow:auto!important}.btn{white-space:nowrap!important}}
+@media print{.toolbar.no-print{display:none!important}.doc,.brand,.stamp,.section,.note,.totals .box{box-shadow:none!important;backdrop-filter:none!important}.doc{border-radius:0!important}.privacy-footer{display:none!important}}
+</style><style media="print">
 body{font-size:14px!important;background:linear-gradient(180deg,#f8fbff,#eef4ff)!important;overflow-x:hidden!important}
 .page{max-width:1280px!important;margin:0 auto!important;padding:14px 18px 28px!important}
 .toolbar.no-print{position:sticky!important;top:0!important;z-index:999!important;display:flex!important;justify-content:flex-end!important;gap:8px!important;margin:0!important;padding:10px 0 12px!important;background:rgba(248,251,255,.9)!important;backdrop-filter:blur(14px)!important}
@@ -3237,6 +4198,53 @@ body:after{
   pointer-events:none;
   z-index:-1;
   opacity:.24;
+  border:1px solid var(--work-line);
+  border-radius:50%;
+  box-shadow:0 0 80px rgba(66,133,244,.25), inset 0 0 80px rgba(52,168,83,.12);
+  transform:rotate(-18deg);
+}
+.doc{
+  background:#282d35)!important;
+  backdrop-filter:blur(22px) saturate(145%)!important;
+}
+.doc:before{
+  box-shadow:0 6px 22px rgba(0,0,0,.19) !important;
+}
+.toolbar.no-print{
+  background:#222730)!important;
+}
+</style><style media="print">
+html,body{min-height:100%!important}
+body{
+  background:
+    radial-gradient(circle at 12% 8%, rgba(66,133,244,.24), transparent 28%),
+    radial-gradient(circle at 88% 14%, rgba(52,168,83,.20), transparent 30%),
+    radial-gradient(circle at 78% 82%, rgba(251,188,4,.14), transparent 32%),
+    linear-gradient(135deg,#f8fbff 0%,#eef4ff 42%,#f6fff9 100%)!important;
+  position:relative!important;
+}
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-1;
+  opacity:.62;
+  background-image:
+    linear-gradient(rgba(26,115,232,.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,115,232,.08) 1px, transparent 1px);
+  background-size:42px 42px;
+  mask-image:linear-gradient(180deg, rgba(0,0,0,.82), rgba(0,0,0,.22));
+}
+body:after{
+  content:"";
+  position:fixed;
+  inset:auto 8% 4% auto;
+  width:min(48vw,620px);
+  height:min(48vw,620px);
+  pointer-events:none;
+  z-index:-1;
+  opacity:.24;
   border:1px solid rgba(26,115,232,.42);
   border-radius:50%;
   box-shadow:0 0 80px rgba(66,133,244,.25), inset 0 0 80px rgba(52,168,83,.12);
@@ -3254,6 +4262,17 @@ body:after{
 }
 </style>
 <style id="rw-admin-pro-ui">
+.admin-shell{margin:12px 0 18px;display:grid;gap:14px}
+.admin-hero{position:relative;overflow:hidden;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px;border:1px solid var(--work-line);border-radius:20px;background:#282d35);box-shadow:0 6px 22px rgba(0,0,0,.19);backdrop-filter:blur(22px) saturate(145%)}
+.admin-hero:before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:#282d35}
+.admin-title-block{position:relative;z-index:1}.admin-kicker{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;background:#282d35;color:var(--work-accent);font-size:12px;font-weight:850;letter-spacing:.02em}.admin-title-block h2{margin:10px 0 4px;font-size:clamp(24px,2.5vw,38px);line-height:1.05;letter-spacing:0;color:#f1f3f6}.admin-title-block p{margin:0;color:#f1f3f6;font-weight:600;max-width:720px}.admin-health{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;border:1px solid var(--work-line);border-radius:999px;padding:8px 12px;background:#282d35;color:#f1f3f6;font-weight:850}.health-dot{width:9px;height:9px;border-radius:999px;background:#282d35;box-shadow:0 6px 22px rgba(0,0,0,.19)}
+.admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.admin-card{position:relative;overflow:hidden;min-height:112px;border:1px solid var(--work-line);border-radius:16px;padding:14px;background:#282d35;box-shadow:0 6px 22px rgba(0,0,0,.19)}.admin-card:after{content:"";position:absolute;right:-26px;top:-26px;width:90px;height:90px;border-radius:50%;opacity:.16;background:#282d35}.admin-card span{display:block;color:#f1f3f6;font-size:12px;font-weight:850;text-transform:uppercase;letter-spacing:.04em}.admin-card strong{display:block;margin-top:8px;color:#f1f3f6;font-size:clamp(22px,2vw,31px);line-height:1.05;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.admin-card small{display:block;margin-top:8px;color:#c1c8d2;font-weight:650}.accent-blue{--admin-accent:var(--work-accent)}.accent-green{--admin-accent:var(--work-accent)}.accent-yellow{--admin-accent:var(--work-accent)}.accent-red{--admin-accent:var(--work-accent)}
+.admin-workbench{display:grid;grid-template-columns:minmax(260px,.85fr) minmax(360px,1.15fr);gap:12px}.admin-actions-panel,.admin-saved-panel{border:1px solid var(--work-line);border-radius:16px;padding:14px;background:var(--work-selected);box-shadow:0 6px 22px rgba(0,0,0,.19)}.admin-actions-panel h3,.admin-saved-panel h3{margin:0 0 10px;color:#f1f3f6;font-size:15px;font-weight:900}.admin-action-row{display:flex;flex-wrap:wrap;gap:8px}.admin-chip,.admin-mini{border:1px solid var(--work-line);border-radius:999px;background:var(--work-selected);color:#f1f3f6;font-weight:850;cursor:pointer;min-height:34px;padding:7px 11px;box-shadow:0 6px 22px rgba(0,0,0,.19)}.admin-chip:hover,.admin-mini:hover{background:var(--work-selected)}.saved-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.saved-list{display:grid;gap:8px;max-height:230px;overflow:auto;padding-right:4px}.saved-empty{padding:12px;border:1px dashed var(--work-line);border-radius:12px;color:#f1f3f6;background:#282d35}.saved-item{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;border:1px solid var(--work-line);border-radius:12px;padding:10px;background:#282d35}.saved-title{font-weight:900;color:#f1f3f6}.saved-meta{margin-top:3px;color:#c1c8d2;font-size:12px}.saved-actions{display:flex;gap:6px}.saved-actions button{border:0;border-radius:999px;padding:7px 10px;font-weight:850;cursor:pointer}.saved-load{background:#282d35;color:#f1f3f6}.saved-delete{background:#282d35;color:#f1f3f6}
+body.admin-compact .admin-shell{display:none}
+@media(max-width:980px){.admin-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-workbench{grid-template-columns:1fr}.admin-hero{flex-direction:column}.admin-health{white-space:normal}}
+@media(max-width:620px){.admin-grid{grid-template-columns:1fr}.saved-item{grid-template-columns:1fr}.saved-actions{justify-content:flex-start}}
+@media print{.admin-shell{display:none!important}}
+</style><style media="print">
 .admin-shell{margin:12px 0 18px;display:grid;gap:14px}
 .admin-hero{position:relative;overflow:hidden;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:18px;border:1px solid rgba(26,115,232,.16);border-radius:20px;background:linear-gradient(135deg,rgba(255,255,255,.88),rgba(238,244,255,.74));box-shadow:0 18px 44px rgba(31,74,204,.12);backdrop-filter:blur(22px) saturate(145%)}
 .admin-hero:before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(90deg,#4285f4,#34a853,#fbbc04,#ea4335)}
