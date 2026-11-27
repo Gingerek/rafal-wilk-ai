@@ -1205,7 +1205,7 @@
 [data-rw-symbol]>svg{display:none!important}
 .compositionMetricIcon,svg.search-glass{filter:drop-shadow(0 1px 0 #fff8) drop-shadow(1px 2px 1px #0008)}
 </style><script>(()=>{
-  const targets='button,a[download],h2,.section-title,.search-icon,.compositionMetricIcon,.calendar-glyph,.notice-icon,.heading-icon,.sow-elapsed-icon,.disclaimer-icon,.incIcon';
+  const targets='button,a[download],.search-icon,.compositionMetricIcon,.calendar-glyph,.notice-icon,.heading-icon,.sow-elapsed-icon,.disclaimer-icon,.incIcon';
   const rules=[
     ['copy',/copy|kopiuj|kopieer|clipboard/],['print',/print|druk|afdruk/],
     ['download',/download|pobierz|export|eksport|pdf|xlsx|excelbestand/],
@@ -1227,10 +1227,11 @@
     let icon=name?named[name]:null;
     if(el.matches('button[onclick^=setYear]'))icon='calendar';
     if(el.matches('.search-button'))icon='search';
-    if(!icon && el.matches('h2,.section-title'))icon=rules.find(([,r])=>r.test(key))?.[0]||'folder';
+
     if(!icon && el.matches('button,a[download]'))icon=glyphs[text]||(el.hasAttribute('download')?'download':rules.find(([,r])=>r.test(key))?.[0]);
     if(!icon)return;
-    if(!name && (el.querySelector(Object.keys(named).map(k=>'.'+k).join(','))||el.querySelector('.work-art')))return;
+    if(!name && el.querySelector('svg,img,i,[aria-hidden="true"],.work-art,'+Object.keys(named).map(k=>'.'+k).join(',')))return;
+    if(!name && !glyphs[text] && /[\p{Extended_Pictographic}↺⎙▣➜→✓✔]/u.test(text))return;
     if(name||glyphs[text]||(!text&&el.querySelector('svg')))el.setAttribute('data-rw-symbol-only','');
     el.setAttribute('data-rw-symbol',icon);
   }
