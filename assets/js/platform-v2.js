@@ -377,7 +377,9 @@
   function scheduleLanguagePush(nextLang){
     const requestedLang = normalizePlatformLang(nextLang || lang());
     [0, 80, 360, 900].forEach((delay) => {
-      setTimeout(() => pushLanguageToModules(requestedLang), delay);
+      setTimeout(() => {
+        if (requestedLang === lang()) pushLanguageToModules(requestedLang);
+      }, delay);
     });
   }
   function findMeta(card){

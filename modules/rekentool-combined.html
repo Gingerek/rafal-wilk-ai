@@ -635,6 +635,7 @@
           <div class="language-switch">
             <span class="language-switch-label" id="languageSwitchLabel"></span>
             <div class="language-switch-buttons">
+              <button id="langPl" type="button">PL</button>
               <button id="langEn" type="button">EN</button>
               <button id="langNl" type="button">NL</button>
             </div>
@@ -706,7 +707,8 @@
     };
     const languageStorageKey = 'rekentoolLanguage_combined';
     const agencyStorageKey = 'rekentoolAgency_combined';
-    let currentLanguage = localStorage.getItem(languageStorageKey) || 'en';
+    const savedLanguage = (window.parent !== window && localStorage.getItem('rw_lang')) || localStorage.getItem(languageStorageKey);
+    let currentLanguage = ['pl', 'en', 'nl'].includes(savedLanguage) ? savedLanguage : 'en';
     let currentAgencyKey = localStorage.getItem(agencyStorageKey) || 'general';
 
     const rates = [
@@ -721,6 +723,50 @@
     ];
 
     const translations = {
+      pl: {
+        pageTitle: 'Flexcenter Rekentool 2026',
+        headerTitle: 'Flexcenter Rekentool 2026',
+        headerSubtitle: '',
+        markupLabel: 'Mnożnik',
+        languageSwitchLabel: 'Język',
+        inputTitle: 'Dane wejściowe',
+        agencySelectLabel: 'Rodzaj zatrudnienia',
+        payRateLabel: 'Stawka pracownika (€/godz.)',
+        tenureDiscountLabel: 'Rabat po 1000 godzinach pracy',
+        exampleTitle: 'Przykładowe obliczenie',
+        displayPayRateLabel: 'Stawka pracownika',
+        displayBillRateLabel: 'Stawka rozliczeniowa za godzinę podstawową',
+        rateOverviewTitle: 'Zestawienie stawek',
+        colHourType: 'Rodzaj godzin',
+        colFactor: 'Współczynnik',
+        colWorkerRate: 'Stawka pracownika',
+        colSupplierRate: 'Stawka dostawcy',
+        groupLabels: {
+          standard: 'Godziny podstawowe',
+          shift: 'Praca zmianowa',
+          deferred: 'Praca w przesuniętych godzinach',
+          overtime: 'Nadgodziny'
+        },
+        rateLabels: {
+          standardHours: 'Godziny podstawowe: pon.-pt. 7:00-18:00',
+          shiftWorkWeekdaySaturdayMorning: 'Praca zmianowa: pon.-pt. 18:00-7:00, sob. 0:00-12:00',
+          deferredWorkWeekend: 'Przesunięte godziny: sob.-niedz. 0:00-24:00',
+          overtimeWeekAndFridayDay: 'Nadgodziny: pon.-czw. 0:00-24:00, pt. 6:00-22:00',
+          overtimeFridayNightWeekend: 'Nadgodziny: pt. 22:00-24:00, sob.-niedz. 0:00-24:00',
+          holidayOvertimeDeferred: 'Nadgodziny lub przesunięte godziny w święta 0:00-24:00',
+          deferredWorkWeekdays: 'Przesunięte godziny: pon.-pt. 0:00-24:00',
+          shiftWorkWeekend: 'Praca zmianowa: sob. 12:00-24:00, niedz. 0:00-24:00'
+        },
+        dayLabels: {
+          mondayFriday: 'Poniedziałek - piątek',
+          saturdaySunday: 'Sobota - niedziela',
+          holiday: 'Święto'
+        },
+        timeLabels: {
+          '0700_2200': '7:00 - 22:00',
+          '2200_0700': '22:00 - 7:00'
+        }
+      },
       en: {
         pageTitle: 'Flexcenter Rekentool 2026',
         headerTitle: 'Flexcenter Rekentool 2026',
@@ -817,6 +863,7 @@
     const ratesTable = document.getElementById('ratesTable');
     const displayPayRate = document.getElementById('displayPayRate');
     const displayBillRate = document.getElementById('displayBillRate');
+    const langPlButton = document.getElementById('langPl');
     const langEnButton = document.getElementById('langEn');
     const langNlButton = document.getElementById('langNl');
 
@@ -825,7 +872,7 @@
     }
 
     function formatCurrency(value) {
-      const locale = currentLanguage === 'nl' ? 'nl-NL' : 'en-IE';
+      const locale = ({ pl: 'pl-PL', nl: 'nl-NL', en: 'en-IE' })[currentLanguage];
       return new Intl.NumberFormat(locale, {
         style: 'currency',
         currency: 'EUR',
@@ -857,6 +904,7 @@
       document.getElementById('colFactor').textContent = t.colFactor;
       document.getElementById('colWorkerRate').textContent = t.colWorkerRate;
       document.getElementById('colSupplierRate').textContent = t.colSupplierRate;
+      langPlButton.classList.toggle('active', currentLanguage === 'pl');
       langEnButton.classList.toggle('active', currentLanguage === 'en');
       langNlButton.classList.toggle('active', currentLanguage === 'nl');
     }
@@ -911,6 +959,7 @@
     }
 
     function setLanguage(language) {
+      if (!Object.hasOwn(translations, language)) return;
       currentLanguage = language;
       localStorage.setItem(languageStorageKey, language);
       applyStaticTexts();
@@ -927,6 +976,7 @@
     agencySelect.addEventListener('change', (event) => setAgency(event.target.value));
     payRateInput.addEventListener('input', calculate);
     tenureDiscount.addEventListener('change', calculate);
+    langPlButton.addEventListener('click', () => setLanguage('pl'));
     langEnButton.addEventListener('click', () => setLanguage('en'));
     langNlButton.addEventListener('click', () => setLanguage('nl'));
 

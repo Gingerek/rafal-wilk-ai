@@ -44,7 +44,7 @@
 <link rel="preload" as="style" href="assets/css/platform-v2.min.css?v=20260806-cleanwall-2">
 <link rel="preload" as="style" href="assets/css/platform-nextlevel.css?v=20261102-stable-scroll-v4">
 <link rel="preload" as="style" href="assets/css/platform-face-clarity.css?v=20260923-preid-3">
-<link rel="preload" as="script" href="assets/js/platform-v2.js?v=20261127-icons">
+<link rel="preload" as="script" href="assets/js/platform-v2.js?v=20261127-lang">
 <title>Rafal Wilk AI ©</title>
 <style id="rw-studio-first-paint">
   html, body:not(.app-open):not(.rw-workshop-options) { background:#171a20!important }
@@ -417,22 +417,22 @@ document.addEventListener('DOMContentLoaded',function(){
 <article class="card">
 <div class="title" data-title-key="RekenTool Professional & General Staffing">RekenTool Professional & General Staffing</div>
 <a class="btn" onclick="openApp('rekentoolcombined', this.parentElement.querySelector('.title').textContent)">Open</a>
-<a class="btn rw-rekentool-download" href="modules/rekentool-combined.html?v=20261127-icons" download="RekenTool_PS_GS.html">Download</a>
+<a class="btn rw-rekentool-download" href="modules/rekentool-combined.html?v=20261127-lang" download="RekenTool_PS_GS.html">Download</a>
 </article>
 <article class="card">
 <div class="title" data-title-key="RekenTool General Staffing">RekenTool General Staffing</div>
 <a class="btn" onclick="openApp('rekentoolgeneralstaffing', this.parentElement.querySelector('.title').textContent)">Open</a>
-<a class="btn rw-rekentool-download" href="modules/rekentool-general-staffing.html?v=20261127-icons" download="RekenTool_GS.html">Download</a>
+<a class="btn rw-rekentool-download" href="modules/rekentool-general-staffing.html?v=20261127-lang" download="RekenTool_GS.html">Download</a>
 </article>
 <article class="card">
 <div class="title" data-title-key="RekenTool Professional Staffing">RekenTool Professional Staffing</div>
 <a class="btn" onclick="openApp('rekentoolprofessionalstaffing', this.parentElement.querySelector('.title').textContent)">Open</a>
-<a class="btn rw-rekentool-download" href="modules/rekentool-professional-staffing.html?v=20261127-icons" download="RekenTool_PS.html">Download</a>
+<a class="btn rw-rekentool-download" href="modules/rekentool-professional-staffing.html?v=20261127-lang" download="RekenTool_PS.html">Download</a>
 </article>
 <article class="card">
 <div class="title" data-title-key="RekenTool Payroll">RekenTool Payroll</div>
 <a class="btn" onclick="openApp('rekentoolpayroll', this.parentElement.querySelector('.title').textContent)">Open</a>
-<a class="btn rw-rekentool-download" href="modules/rekentool-pay-roll.html?v=20261127-icons" download="RekenTool_Payroll.html">Download</a>
+<a class="btn rw-rekentool-download" href="modules/rekentool-pay-roll.html?v=20261127-lang" download="RekenTool_Payroll.html">Download</a>
 </article>
 <article class="card">
 <div class="title" data-title-key="Intake Call">Intake Call</div>
@@ -497,10 +497,10 @@ document.addEventListener('DOMContentLoaded',function(){
 
 <iframe id="homeofficetracker" title="Home Office Tracker" data-src="modules/home-office-tracker.html?v=20261127-icons" loading="lazy"></iframe>
 <iframe id="redukcja" title="Redukcja" data-src="modules/redukcja.html?v=20261127-icons" loading="lazy"></iframe>
-<iframe id="rekentoolcombined" title="RekenTool Professional & General Staffing" data-src="modules/rekentool-combined.html?v=20261127-icons" loading="lazy"></iframe>
-<iframe id="rekentoolgeneralstaffing" title="RekenTool General Staffing" data-src="modules/rekentool-general-staffing.html?v=20261127-icons" loading="lazy"></iframe>
-<iframe id="rekentoolprofessionalstaffing" title="RekenTool Professional Staffing" data-src="modules/rekentool-professional-staffing.html?v=20261127-icons" loading="lazy"></iframe>
-<iframe id="rekentoolpayroll" title="RekenTool Payroll" data-src="modules/rekentool-pay-roll.html?v=20261127-icons" loading="lazy"></iframe>
+<iframe id="rekentoolcombined" title="RekenTool Professional & General Staffing" data-src="modules/rekentool-combined.html?v=20261127-lang" loading="lazy"></iframe>
+<iframe id="rekentoolgeneralstaffing" title="RekenTool General Staffing" data-src="modules/rekentool-general-staffing.html?v=20261127-lang" loading="lazy"></iframe>
+<iframe id="rekentoolprofessionalstaffing" title="RekenTool Professional Staffing" data-src="modules/rekentool-professional-staffing.html?v=20261127-lang" loading="lazy"></iframe>
+<iframe id="rekentoolpayroll" title="RekenTool Payroll" data-src="modules/rekentool-pay-roll.html?v=20261127-lang" loading="lazy"></iframe>
 <iframe id="rolerange" title="Role &amp; Range" data-src="modules/role-range.html?v=20261127-icons" loading="lazy"></iframe>
 <iframe id="msdcaosalarycheck" title="MSD CAO Salary Check" data-src="modules/msd-cao-salary-check.html?v=20261127-icons" loading="lazy"></iframe>
 <iframe id="mycompany" data-src="modules/my-company.html?v=20261127-icons" title="My Projects" loading="lazy"></iframe></section>
@@ -575,7 +575,7 @@ function __rwApplyLangToFrame(frame, requestedLang){
       ].join(' ').toLowerCase();
       if (!/(lang|language|taal|jezyk|język)/.test(marker)) return;
       var option = Array.from(select.options || []).find(function(opt){
-        return __rwNormalizePlatformLang(opt.value || opt.textContent) === lang;
+        return String(opt.value || opt.textContent).trim().toLowerCase().slice(0, 2) === lang;
       });
       if (!option || select.value === option.value) return;
       select.value = option.value;
@@ -585,7 +585,7 @@ function __rwApplyLangToFrame(frame, requestedLang){
 
     Array.from(doc.querySelectorAll('[data-lang],[data-language],[data-locale],[data-lang-btn],.lang-btn,.language-btn')).forEach(function(btn){
       var value = btn.getAttribute('data-lang') || btn.getAttribute('data-language') || btn.getAttribute('data-locale') || btn.getAttribute('data-lang-btn') || '';
-      if (__rwNormalizePlatformLang(value) !== lang) return;
+      if (!value || value.toLowerCase().slice(0, 2) !== lang) return;
       var active = btn.classList.contains('active') || btn.getAttribute('aria-pressed') === 'true';
       if (!active && typeof btn.click === 'function') btn.click();
       btn.setAttribute('aria-pressed', 'true');
@@ -597,7 +597,7 @@ function __rwApplyLangToFrame(frame, requestedLang){
         nestedFrame.__rwNestedLangBound = true;
         nestedFrame.addEventListener('load', function(){
           [40, 180, 600].forEach(function(delay){
-            setTimeout(function(){ __rwApplyLangToFrame(nestedFrame, lang); }, delay);
+            setTimeout(function(){ __rwApplyLangToFrame(nestedFrame, document.documentElement.lang); }, delay);
           });
         }, true);
       }
@@ -614,13 +614,13 @@ function __rwPushLang(requestedLang){
     document.querySelectorAll('iframe').forEach(function(frame){
       __rwApplyLangToFrame(frame, lang);
       [80, 350, 900].forEach(function(delay){
-        setTimeout(function(){ __rwApplyLangToFrame(frame, lang); }, delay);
+        setTimeout(function(){ __rwApplyLangToFrame(frame, document.documentElement.lang); }, delay);
       });
       if (!frame.__rwLangPushBound){
         frame.__rwLangPushBound = true;
         frame.addEventListener('load', function(){
           [40, 180, 600].forEach(function(delay){
-            setTimeout(function(){ __rwApplyLangToFrame(frame, lang); }, delay);
+            setTimeout(function(){ __rwApplyLangToFrame(frame, document.documentElement.lang); }, delay);
           });
         }, true);
       }
@@ -990,7 +990,7 @@ function openApp(id, title){
   render();
 })();
 </script>
-<script src="assets/js/platform-v2.js?v=20261127-icons" defer></script>
+<script src="assets/js/platform-v2.js?v=20261127-lang" defer></script>
 
 
 <script id="rw-intake-call-fixes-20261103">
